@@ -20,13 +20,13 @@ export default async function AdminPage() {
     .select('*')
     .order('match_number', { ascending: true })
 
-  const { data: stats } = await supabase
+  const { count: statsCount } = await supabase
     .from('profiles')
-    .select('id', { count: 'exact', head: true })
+    .select('*', { count: 'exact', head: true })
 
-  const { data: predStats } = await supabase
+  const { count: predStatsCount } = await supabase
     .from('predictions')
-    .select('id', { count: 'exact', head: true })
+    .select('*', { count: 'exact', head: true })
 
   return (
     <div className="min-h-screen py-8 px-4">
@@ -37,10 +37,9 @@ export default async function AdminPage() {
           <p className="text-gray-400">Admin: {user.email}</p>
         </div>
 
-        {/* Stats */}
         <div className="grid md:grid-cols-4 gap-4 mb-8">
           <div className="bg-blue-600/20 border border-blue-500 rounded-xl p-6">
-            <div className="text-3xl font-bold text-blue-400">{stats?.count || 0}</div>
+            <div className="text-3xl font-bold text-blue-400">{statsCount || 0}</div>
             <div className="text-sm text-gray-400">Usuarios</div>
           </div>
           <div className="bg-green-600/20 border border-green-500 rounded-xl p-6">
@@ -48,7 +47,7 @@ export default async function AdminPage() {
             <div className="text-sm text-gray-400">Partidos</div>
           </div>
           <div className="bg-yellow-600/20 border border-yellow-500 rounded-xl p-6">
-            <div className="text-3xl font-bold text-yellow-400">{predStats?.count || 0}</div>
+            <div className="text-3xl font-bold text-yellow-400">{predStatsCount || 0}</div>
             <div className="text-sm text-gray-400">Pronósticos</div>
           </div>
           <div className="bg-purple-600/20 border border-purple-500 rounded-xl p-6">
@@ -59,7 +58,6 @@ export default async function AdminPage() {
           </div>
         </div>
 
-        {/* Sincronización automática */}
         <div className="bg-gradient-to-r from-blue-900/20 to-blue-800/10 border-2 border-blue-600/50 rounded-xl p-6 mb-8">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
@@ -77,7 +75,6 @@ export default async function AdminPage() {
           </div>
         </div>
 
-        {/* Gestión manual */}
         <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
           <h2 className="text-2xl font-bold mb-6">📝 Gestión Manual de Partidos</h2>
           
