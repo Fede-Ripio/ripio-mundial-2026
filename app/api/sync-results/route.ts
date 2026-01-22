@@ -8,15 +8,12 @@ const supabase = createClient(
 
 const API_FOOTBALL_KEY = process.env.API_FOOTBALL_KEY!
 
-export async function POST(request: Request) {
+async function syncResults() {
   try {
-    // Verificar que sea admin (opcional, lo hacemos en el client)
-    
     const logs: string[] = []
     let updatedCount = 0
     let errorCount = 0
 
-    // Obtener todos los partidos que están "live" o "finished" o próximos
     const { data: matches } = await supabase
       .from('matches')
       .select('*')
@@ -24,17 +21,14 @@ export async function POST(request: Request) {
       .order('match_number', { ascending: true })
 
     if (!matches) {
-      return NextResponse.json({ error: 'No matches found' }, { status: 404 })
+      return { error: 'No matches found', logs: ['❌ No hay partidos'] }
     }
 
     logs.push(`📊 Total de partidos a verificar: ${matches.length}`)
 
-    // Para testing: usar Mundial 2022 (ID: 1) ya que 2026 aún no tiene datos
-    // Cuando sea 2026 real, cambiar a league: 1, season: 2026
-    const LEAGUE_ID = 1 // World Cup
-    const SEASON = 2022 // Cambiar a 2026 cuando esté disponible
+    const LEAGUE_ID = 1
+    const SEASON = 2022
 
-    // Llamar a API-Football para obtener fixtures
     const apiUrl = `https://v3.football.api-sports.io/fixtures?league=${LEAGUE_ID}&season=${SEASON}`
     
     logs.push(`🔄 Consultando API-Football...`)
@@ -53,27 +47,24 @@ export async function POST(request: Request) {
     
     if (!apiData.response || apiData.response.length === 0) {
       logs.push('⚠️ No hay datos disponibles en la API')
-      return NextResponse.json({ 
+      return { 
         success: true, 
         logs,
-        message: 'No hay datos del Mundial 2026 todavía. Probá con edición manual o esperá al torneo.' 
-      })
+        message: 'No hay datos del Mundial 2026 todavía.' 
+      }
     }
 
     logs.push(`✅ Recibidos ${apiData.response.length} partidos de la API`)
 
-    // Mapear y actualizar
-    for (const apiMatch of apiData.response.slice(0, 20)) { // Limitamos a 20 para testing
+    for (const apiMatch of apiData.response.slice(0, 20)) {
       try {
         const fixture = apiMatch.fixture
         const teams = apiMatch.teams
         const goals = apiMatch.goals
 
-        // Buscar partido por equipos (aproximación)
         const homeTeam = teams.home.name
         const awayTeam = teams.away.name
 
-        // Buscar match en nuestra DB (por nombre de equipo aproximado)
         const matchToUpdate = matches.find(m => 
           m.home_team.toLowerCase().includes(homeTeam.toLowerCase().split(' ')[0]) ||
           m.away_team.toLowerCase().includes(awayTeam.toLowerCase().split(' ')[0])
@@ -81,7 +72,6 @@ export async function POST(request: Request) {
 
         if (!matchToUpdate) continue
 
-        // Determinar estado
         let status = 'scheduled'
         if (fixture.status.short === 'FT' || fixture.status.short === 'AET' || fixture.status.short === 'PEN') {
           status = 'finished'
@@ -89,7 +79,6 @@ export async function POST(request: Request) {
           status = 'live'
         }
 
-        // Actualizar solo si cambió algo
         if (
           matchToUpdate.status !== status ||
           matchToUpdate.home_score !== goals.home ||
@@ -123,21 +112,29 @@ export async function POST(request: Request) {
     logs.push(`   • Partidos actualizados: ${updatedCount}`)
     logs.push(`   • Errores: ${errorCount}`)
 
-    return NextResponse.json({
+    return {
       success: true,
       updated: updatedCount,
       errors: errorCount,
       logs
-    })
+    }
 
   } catch (error: any) {
     console.error('Sync error:', error)
-    return NextResponse.json(
-      { 
-        error: error.message || 'Error sincronizando resultados',
-        logs: ['❌ Error fatal: ' + error.message]
-      },
-      { status: 500 }
-    )
+    return { 
+      error: error.message || 'Error sincronizando resultados',
+      logs: ['❌ Error fatal: ' + error.message]
+    }
   }
+}
+
+// Manejar tanto GET (cron) como POST (manual)
+export async function GET() {
+  const result = await syncResults()
+  return NextResponse.json(result)
+}
+
+export async function POST() {
+  const result = await syncResults()
+  return NextResponse.json(result)
 }
