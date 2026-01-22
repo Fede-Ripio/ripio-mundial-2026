@@ -11,7 +11,6 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Obtener liga
   const { data: league } = await supabase
     .from('leagues')
     .select('*')
@@ -20,7 +19,6 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
 
   if (!league) notFound()
 
-  // Verificar que el usuario sea miembro
   const { data: membership } = await supabase
     .from('league_members')
     .select('*')
@@ -42,29 +40,23 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
     )
   }
 
-  // Obtener TODOS los miembros con sus profiles
   const { data: membersData } = await supabase
     .from('league_members')
-    .select(`
-      user_id,
-      role,
-      profiles!inner (
-        id,
-        email,
-        display_name,
-        created_at
-      )
-    `)
+    .select('user_id, role')
     .eq('league_id', id)
 
-  // Obtener TODAS las predicciones de TODOS los usuarios de la liga
   const { data: allPredictions } = await supabase
     .from('predictions')
     .select('*, matches(*)')
 
-  // Calcular puntos por cada miembro
-  const leaderboard = (membersData || []).map(member => {
-    const profile = member.profiles
+  const userIds = membersData?.map(m => m.user_id) || []
+  
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('id, email, display_name')
+    .in('id', userIds)
+
+  const leaderboard = (profiles || []).map(profile => {
     const userPredictions = allPredictions?.filter(p => p.user_id === profile.id) || []
     
     let points = 0
@@ -73,18 +65,13 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
 
     userPredictions.forEach(pred => {
       const match = pred.matches
-      if (match?.status === 'finished' && match.home_score !== null && match.away_score !== null) {
-        // Exacto: +3
+      if (match?.status === 'finished' && match.home_score !== null) {
         if (pred.home_goals === match.home_score && pred.away_goals === match.away_score) {
           points += 3
           exactHits += 1
         } else {
-          // Acierto de ganador/empate: +1
-          const predOutcome = pred.home_goals > pred.away_goals ? 'home' : 
-                             pred.home_goals < pred.away_goals ? 'away' : 'draw'
-          const matchOutcome = match.home_score > match.away_score ? 'home' : 
-                              match.home_score < match.away_score ? 'away' : 'draw'
-          
+          const predOutcome = pred.home_goals > pred.away_goals ? 'home' : pred.home_goals < pred.away_goals ? 'away' : 'draw'
+          const matchOutcome = match.home_score > match.away_score ? 'home' : match.home_score < match.away_score ? 'away' : 'draw'
           if (predOutcome === matchOutcome) {
             points += 1
             correctOutcomes += 1
@@ -97,7 +84,6 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
       id: profile.id,
       email: profile.email,
       display_name: profile.display_name,
-      created_at: profile.created_at,
       points,
       exactHits,
       correctOutcomes,
@@ -106,8 +92,7 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
   }).sort((a, b) => {
     if (b.points !== a.points) return b.points - a.points
     if (b.exactHits !== a.exactHits) return b.exactHits - a.exactHits
-    if (b.correctOutcomes !== a.correctOutcomes) return b.correctOutcomes - a.correctOutcomes
-    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    return b.correctOutcomes - a.correctOutcomes
   })
 
   return (
@@ -130,12 +115,11 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
           </div>
         </div>
 
-        {/* Podio */}
         {leaderboard.length >= 3 && (
           <div className="grid md:grid-cols-3 gap-4 mb-8">
-            {leaderboard.slice(0, 3).map((user, index) => (
+            {leaderboard.slice(0, 3).map((playerUser, index) => (
               <div
-                key={user.id}
+                key={playerUser.id}
                 className={`rounded-xl p-6 text-center ${
                   index === 0 ? 'bg-yellow-600/20 border-2 border-yellow-500' :
                   index === 1 ? 'bg-gray-400/20 border-2 border-gray-400' :
@@ -145,14 +129,13 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
                 <div className="text-4xl mb-2">
                   {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
                 </div>
-                <div className="font-semibold">{user.display_name || user.email.split('@')[0]}</div>
-                <div className="text-2xl font-bold mt-2">{user.points} pts</div>
+                <div className="font-semibold">{playerUser.display_name || playerUser.email.split('@')[0]}</div>
+                <div className="text-2xl font-bold mt-2">{playerUser.points} pts</div>
               </div>
             ))}
           </div>
         )}
 
-        {/* Tabla */}
         <div className="bg-gray-800/50 border border-gray-700 rounded-xl overflow-hidden">
           <table className="w-full">
             <thead className="bg-gray-900/50">
@@ -165,38 +148,29 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700/50">
-              {leaderboard.map((userItem, index) => (
+              {leaderboard.map((playerUser, index) => (
                 <tr
-                  key={userItem.id}
-                  className={`hover:bg-gray-700/30 ${userItem.id === user.id ? 'bg-blue-900/20' : ''}`}
+                  key={playerUser.id}
+                  className={`hover:bg-gray-700/30 ${playerUser.id === user?.id ? 'bg-blue-900/20' : ''}`}
                 >
                   <td className="px-4 py-3 font-semibold">{index + 1}</td>
                   <td className="px-4 py-3">
-                    <div className="font-semibold">
-                      {userItem.display_name || userItem.email.split('@')[0]}
-                      {userItem.id === user.id && <span className="text-blue-400 ml-2">(Tú)</span>}
-                    </div>
+                    <div className="font-semibold">{playerUser.display_name || playerUser.email.split('@')[0]}</div>
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <span className="text-lg font-bold text-blue-400">{userItem.points}</span>
+                    <span className="text-lg font-bold text-blue-400">{playerUser.points}</span>
                   </td>
                   <td className="px-4 py-3 text-center hidden sm:table-cell text-green-400">
-                    {userItem.exactHits}
+                    {playerUser.exactHits}
                   </td>
                   <td className="px-4 py-3 text-center hidden sm:table-cell text-yellow-400">
-                    {userItem.correctOutcomes}
+                    {playerUser.correctOutcomes}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-
-        {leaderboard.length === 0 && (
-          <div className="text-center py-12 bg-gray-800/30 rounded-xl border border-gray-700">
-            <p className="text-gray-400">Todavía no hay participantes en esta liga</p>
-          </div>
-        )}
 
       </div>
     </div>

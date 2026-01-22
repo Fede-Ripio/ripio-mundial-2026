@@ -1,28 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import MatchCard from './MatchCard'
-
-type Match = {
-  id: string
-  home_team: string
-  away_team: string
-  home_team_code: string | null
-  away_team_code: string | null
-  kickoff_at: string | null
-  venue: string | null
-  city: string | null
-  stage: string
-  status: string
-  home_score: number | null
-  away_score: number | null
-}
-
-type Prediction = {
-  match_id: string
-  home_goals: number
-  away_goals: number
-}
+import { Match, Prediction } from '@/types/match'
 
 export default function MatchesList({ 
   matches, 
@@ -31,81 +10,94 @@ export default function MatchesList({
 }: { 
   matches: Match[]
   userPredictions: Prediction[]
-  isLoggedIn: boolean
+  isLoggedIn: boolean 
 }) {
-  const [filter, setFilter] = useState<'all' | 'upcoming' | 'finished'>('upcoming')
-
-  const predictionsMap = new Map(
-    userPredictions.map(p => [p.match_id, p])
-  )
-
-  const now = new Date()
+  const predictionsMap = new Map(userPredictions.map(p => [p.match_id, p]))
   
-  const filteredMatches = matches.filter(match => {
-    const kickoff = match.kickoff_at ? new Date(match.kickoff_at) : null
-    
-    if (filter === 'upcoming') {
-      return !kickoff || kickoff > now
-    }
-    if (filter === 'finished') {
-      return match.status === 'finished'
-    }
-    return true
-  })
+  const groupMatches = matches.filter(m => m.stage === 'group')
+  const ro32Matches = matches.filter(m => m.stage === 'ro32')
+  const ro16Matches = matches.filter(m => m.stage === 'ro16')
+  const qfMatches = matches.filter(m => m.stage === 'qf')
+  const sfMatches = matches.filter(m => m.stage === 'sf')
+  const finalMatches = matches.filter(m => m.stage === 'final' || m.stage === 'third_place')
 
   return (
-    <div>
-      {/* Filters */}
-      <div className="flex gap-2 mb-6 overflow-x-auto">
-        <button
-          onClick={() => setFilter('upcoming')}
-          className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${
-            filter === 'upcoming'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-          }`}
-        >
-          Próximos
-        </button>
-        <button
-          onClick={() => setFilter('all')}
-          className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${
-            filter === 'all'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-          }`}
-        >
-          Todos
-        </button>
-        <button
-          onClick={() => setFilter('finished')}
-          className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap ${
-            filter === 'finished'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-          }`}
-        >
-          Finalizados
-        </button>
-      </div>
+    <div className="space-y-6">
+      {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].map(group => {
+        const groupGames = groupMatches.filter(m => m.group_code === group)
+        if (groupGames.length === 0) return null
+        
+        return (
+          <section key={group} className="bg-gray-800/30 border border-gray-700 rounded-xl p-4">
+            <h3 className="text-lg font-bold mb-3 text-blue-400">Grupo {group}</h3>
+            <div className="space-y-2">
+              {groupGames.map(match => (
+                <MatchCard
+                  key={match.id}
+                  match={match}
+                  prediction={predictionsMap.get(match.id)}
+                  isLoggedIn={isLoggedIn}
+                />
+              ))}
+            </div>
+          </section>
+        )
+      })}
 
-      {/* Matches */}
-      <div className="space-y-4">
-        {filteredMatches.length === 0 ? (
-          <div className="text-center py-12 text-gray-400">
-            No hay partidos para mostrar
+      {ro32Matches.length > 0 && (
+        <section className="bg-purple-900/10 border border-purple-700/50 rounded-xl p-4">
+          <h2 className="text-xl font-bold mb-3">🔥 Ronda de 32</h2>
+          <div className="space-y-2">
+            {ro32Matches.slice(0, 8).map(match => (
+              <MatchCard key={match.id} match={match} prediction={predictionsMap.get(match.id)} isLoggedIn={isLoggedIn} />
+            ))}
           </div>
-        ) : (
-          filteredMatches.map(match => (
-            <MatchCard
-              key={match.id}
-              match={match}
-              prediction={predictionsMap.get(match.id)}
-              isLoggedIn={isLoggedIn}
-            />
-          ))
-        )}
-      </div>
+        </section>
+      )}
+
+      {ro16Matches.length > 0 && (
+        <section className="bg-orange-900/10 border border-orange-700/50 rounded-xl p-4">
+          <h2 className="text-xl font-bold mb-3">⚡ Octavos de Final</h2>
+          <div className="space-y-2">
+            {ro16Matches.map(match => (
+              <MatchCard key={match.id} match={match} prediction={predictionsMap.get(match.id)} isLoggedIn={isLoggedIn} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {qfMatches.length > 0 && (
+        <section className="bg-red-900/10 border border-red-700/50 rounded-xl p-4">
+          <h2 className="text-xl font-bold mb-3">💥 Cuartos de Final</h2>
+          <div className="space-y-2">
+            {qfMatches.map(match => (
+              <MatchCard key={match.id} match={match} prediction={predictionsMap.get(match.id)} isLoggedIn={isLoggedIn} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {sfMatches.length > 0 && (
+        <section className="bg-pink-900/10 border border-pink-700/50 rounded-xl p-4">
+          <h2 className="text-xl font-bold mb-3">🌟 Semifinales</h2>
+          <div className="space-y-2">
+            {sfMatches.map(match => (
+              <MatchCard key={match.id} match={match} prediction={predictionsMap.get(match.id)} isLoggedIn={isLoggedIn} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {finalMatches.length > 0 && (
+        <section className="bg-gradient-to-r from-yellow-900/30 to-yellow-700/20 border-2 border-yellow-500/70 rounded-xl p-4">
+          <h2 className="text-2xl font-bold mb-3">👑 FINAL</h2>
+          <div className="space-y-2">
+            {finalMatches.sort((a, b) => b.match_number - a.match_number).map(match => (
+              <MatchCard key={match.id} match={match} prediction={predictionsMap.get(match.id)} isLoggedIn={isLoggedIn} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   )
 }

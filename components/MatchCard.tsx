@@ -3,29 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
-
-interface Match {
-  id: string
-  stage: string
-  group_code?: string
-  match_number: number
-  home_team: string
-  away_team: string
-  home_team_code?: string
-  away_team_code?: string
-  kickoff_at?: string
-  venue: string
-  city: string
-  status: string
-  home_score?: number
-  away_score?: number
-  notes?: string
-}
-
-interface Prediction {
-  home_goals: number
-  away_goals: number
-}
+import { Match, Prediction } from '@/types/match'
 
 export default function MatchCard({ 
   match, 
@@ -93,7 +71,7 @@ export default function MatchCard({
     }
   }
 
-  const getFlagEmoji = (code?: string) => {
+  const getFlagEmoji = (code?: string | null) => {
     if (!code) return '⚽'
     const codePoints = code.toUpperCase().split('').map(c => 127397 + c.charCodeAt(0))
     return String.fromCodePoint(...codePoints)
@@ -102,7 +80,6 @@ export default function MatchCard({
   return (
     <div className="bg-gray-900/40 border border-gray-700/50 rounded-lg p-3 hover:border-blue-500/30 transition-all">
       
-      {/* Header compacto */}
       <div className="flex items-center justify-between mb-2 text-xs">
         <div className="flex items-center gap-2 text-gray-500">
           <span>#{match.match_number}</span>
@@ -114,14 +91,10 @@ export default function MatchCard({
         </div>
         <div className="flex items-center gap-2">
           {isFinished && (
-            <span className="bg-green-600/20 text-green-400 px-2 py-0.5 rounded text-xs font-semibold">
-              FT
-            </span>
+            <span className="bg-green-600/20 text-green-400 px-2 py-0.5 rounded text-xs font-semibold">FT</span>
           )}
           {isClosed && !isFinished && (
-            <span className="bg-red-600/20 text-red-400 px-2 py-0.5 rounded text-xs">
-              Cerrado
-            </span>
+            <span className="bg-red-600/20 text-red-400 px-2 py-0.5 rounded text-xs">Cerrado</span>
           )}
           {prediction && !showPrediction && (
             <span className="bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded text-xs">
@@ -131,10 +104,7 @@ export default function MatchCard({
         </div>
       </div>
 
-      {/* Partido - UNA SOLA LÍNEA */}
       <div className="flex items-center justify-between gap-3">
-        
-        {/* Local */}
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <span className="text-2xl flex-shrink-0">{getFlagEmoji(match.home_team_code)}</span>
           <span className="font-semibold truncate">{match.home_team}</span>
@@ -143,10 +113,8 @@ export default function MatchCard({
           )}
         </div>
 
-        {/* VS */}
         <span className="text-gray-600 font-bold flex-shrink-0">vs</span>
 
-        {/* Visitante */}
         <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
           {isFinished && match.away_score !== null && (
             <span className="text-xl font-bold mr-auto">{match.away_score}</span>
@@ -156,7 +124,6 @@ export default function MatchCard({
         </div>
       </div>
 
-      {/* Info mínima */}
       <div className="text-xs text-gray-500 mt-2 flex items-center justify-between">
         <span>{match.city}</span>
         {match.kickoff_at && (
@@ -171,7 +138,6 @@ export default function MatchCard({
         )}
       </div>
 
-      {/* Pronóstico (expandible) */}
       {isLoggedIn && !isFinished && (
         <>
           {!showPrediction ? (
@@ -220,9 +186,7 @@ export default function MatchCard({
                 </button>
               </div>
               {message && (
-                <div className="text-xs mt-1 text-center text-gray-400">
-                  {message}
-                </div>
+                <div className="text-xs mt-1 text-center text-gray-400">{message}</div>
               )}
             </div>
           )}

@@ -5,20 +5,18 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 export default async function Home() {
   const supabase = await createServerSupabaseClient()
   
-  // Get top 10 leaderboard
   const { data: matches } = await supabase
     .from('matches')
     .select('*')
     .order('kickoff_at', { ascending: true })
     .limit(5)
 
-  const { data: stats } = await supabase
+  const { count: statsCount } = await supabase
     .from('profiles')
-    .select('id', { count: 'exact', head: true })
+    .select('*', { count: 'exact', head: true })
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-blue-900/20 to-gray-950 py-20 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
@@ -28,7 +26,6 @@ export default async function Home() {
             El prode más grande del Mundial. Pronosticá resultados y ganá premios increíbles.
           </p>
           
-          {/* Premios */}
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
             <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-600/5 border border-yellow-500/30 rounded-2xl p-6">
               <div className="text-4xl mb-2">🥇</div>
@@ -64,13 +61,12 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Stats */}
       <section className="py-16 px-4 bg-gray-900/50">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-4 gap-6 text-center">
             <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
               <Users className="w-8 h-8 mx-auto mb-2 text-blue-400" />
-              <div className="text-3xl font-bold">{stats?.count || 0}</div>
+              <div className="text-3xl font-bold">{statsCount || 0}</div>
               <div className="text-sm text-gray-400">Participantes</div>
             </div>
             <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
@@ -92,7 +88,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Próximos Partidos */}
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-center">Próximos Partidos</h2>
@@ -124,7 +119,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Cómo Funciona */}
       <section className="py-16 px-4 bg-gray-900/50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-12 text-center">¿Cómo Funciona?</h2>
@@ -148,7 +142,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* CTA Final */}
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold mb-6">¿Listo para competir?</h2>

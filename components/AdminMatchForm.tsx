@@ -11,27 +11,55 @@ export default function AdminMatchForm({ match }: { match: any }) {
   const [status, setStatus] = useState(match.status)
   const [saving, setSaving] = useState(false)
   const [expanded, setExpanded] = useState(false)
+  const [message, setMessage] = useState('')
 
   const handleSave = async () => {
     setSaving(true)
+    setMessage('')
+    
     try {
       const supabase = createClient()
       
-      const { error } = await supabase
+      // Verificar que hay valores válidos
+      const homeScoreValue = homeScore !== '' ? parseInt(homeScore) : null
+      const awayScoreValue = awayScore !== '' ? parseInt(awayScore) : null
+
+      console.log('Guardando partido:', {
+        id: match.id,
+        home_score: homeScoreValue,
+        away_score: awayScoreValue,
+        status
+      })
+
+      const { data, error } = await supabase
         .from('matches')
         .update({
-          home_score: homeScore ? parseInt(homeScore) : null,
-          away_score: awayScore ? parseInt(awayScore) : null,
-          status
+          home_score: homeScoreValue,
+          away_score: awayScoreValue,
+          status: status,
+          updated_at: new Date().toISOString()
         })
         .eq('id', match.id)
+        .select()
 
-      if (error) throw error
+      if (error) {
+        console.error('Error de Supabase:', error)
+        throw error
+      }
 
-      router.refresh()
-      setExpanded(false)
-    } catch (error) {
-      alert('Error: ' + (error as any).message)
+      console.log('Guardado exitoso:', data)
+      setMessage('✅ Guardado exitosamente')
+      
+      // Esperar 1 segundo antes de refrescar
+      setTimeout(() => {
+        router.refresh()
+        setExpanded(false)
+        setMessage('')
+      }, 1000)
+
+    } catch (error: any) {
+      console.error('Error completo:', error)
+      setMessage('❌ Error: ' + error.message)
     } finally {
       setSaving(false)
     }
@@ -84,7 +112,7 @@ export default function AdminMatchForm({ match }: { match: any }) {
               max="20"
               value={homeScore}
               onChange={(e) => setHomeScore(e.target.value)}
-              placeholder="0"
+              placeholder="Goles local"
               className="w-20 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-center focus:outline-none focus:border-blue-500"
             />
             <span className="text-gray-500">-</span>
@@ -94,7 +122,7 @@ export default function AdminMatchForm({ match }: { match: any }) {
               max="20"
               value={awayScore}
               onChange={(e) => setAwayScore(e.target.value)}
-              placeholder="0"
+              placeholder="Goles visit"
               className="w-20 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-center focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -111,6 +139,14 @@ export default function AdminMatchForm({ match }: { match: any }) {
               <option value="finished">Finalizado</option>
             </select>
           </div>
+
+          {message && (
+            <div className={`text-sm p-2 rounded ${
+              message.startsWith('✅') ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'
+            }`}>
+              {message}
+            </div>
+          )}
 
           <button
             onClick={handleSave}

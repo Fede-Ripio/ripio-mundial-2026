@@ -1,61 +1,24 @@
-import { createClient } from '@supabase/supabase-js'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
-const GENERAL_LEAGUE_ID = '00000000-0000-0000-0000-000000000001'
-
-// Usar service role para acceso completo (solo en servidor)
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-)
 
 export default async function LeaderboardPage() {
-  // Obtener miembros de la liga general
-  const { data: leagueMembers } = await supabaseAdmin
-    .from('league_members')
-    .select('user_id')
-    .eq('league_id', GENERAL_LEAGUE_ID)
+  const supabase = await createServerSupabaseClient()
 
-  if (!leagueMembers || leagueMembers.length === 0) {
-    return (
-      <div className="min-h-screen py-8 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-4xl font-bold mb-8">🏆 Clasificación General</h1>
-          <div className="text-center py-12 bg-gray-800/30 rounded-xl border border-gray-700">
-            <p className="text-gray-400">Todavía no hay participantes</p>
-            <Link href="/register" className="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold">
-              Sé el primero en registrarte
-            </Link>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  const userIds = leagueMembers.map(m => m.user_id)
-
-  // Obtener perfiles
-  const { data: profiles } = await supabaseAdmin
+  const { data: profiles } = await supabase
     .from('profiles')
     .select('id, email, display_name, created_at')
-    .in('id', userIds)
 
-  // Obtener predicciones con service role (bypass RLS)
-  const { data: predictions } = await supabaseAdmin
+  const { data: predictions } = await supabase
     .from('predictions')
     .select('*, matches(*)')
-    .in('user_id', userIds)
 
-  // Calcular puntos
+  const { data: leagueMembers } = await supabase
+    .from('league_members')
+    .select('user_id, league_id')
+    .eq('league_id', '00000000-0000-0000-0000-000000000001')
+
   const leaderboard = (profiles || []).map(profile => {
     const userPredictions = predictions?.filter(p => p.user_id === profile.id) || []
     
@@ -86,9 +49,11 @@ export default async function LeaderboardPage() {
       points,
       exactHits,
       correctOutcomes,
-      totalPredictions: userPredictions.length
+      totalPredictions: userPredictions.length,
+      inGeneralLeague: leagueMembers?.some(m => m.user_id === profile.id) || false
     }
   })
+  .filter(u => u.inGeneralLeague)
   .sort((a, b) => {
     if (b.points !== a.points) return b.points - a.points
     if (b.exactHits !== a.exactHits) return b.exactHits - a.exactHits
@@ -108,7 +73,6 @@ export default async function LeaderboardPage() {
           <p className="text-gray-400">Liga: Ripio Mundial • {leaderboard.length} participantes</p>
         </div>
 
-        {/* Premios */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-600/5 border-2 border-yellow-500/50 rounded-2xl p-6 text-center">
             <div className="text-5xl mb-2">🥇</div>
@@ -147,7 +111,6 @@ export default async function LeaderboardPage() {
           </div>
         </div>
 
-        {/* Tabla */}
         <div className="bg-gray-800/50 border border-gray-700 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -164,7 +127,9 @@ export default async function LeaderboardPage() {
               <tbody className="divide-y divide-gray-700/50">
                 {rest.map((user, index) => (
                   <tr key={user.id} className="hover:bg-gray-700/30 transition-colors">
-                    <td className="px-4 py-3 font-semibold text-gray-400">{index + 4}</td>
+                    <td className="px-4 py-3 font-semibold text-gray-400">
+                      {index + 4}
+                    </td>
                     <td className="px-4 py-3">
                       <div className="font-semibold">{user.display_name || user.email.split('@')[0]}</div>
                       <div className="text-xs text-gray-500 hidden sm:block">{user.email}</div>
@@ -187,6 +152,15 @@ export default async function LeaderboardPage() {
             </table>
           </div>
         </div>
+
+        {leaderboard.length === 0 && (
+          <div className="text-center py-12 bg-gray-800/30 rounded-xl border border-gray-700">
+            <p className="text-gray-400 text-lg">Todavía no hay participantes</p>
+            <Link href="/register" className="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold">
+              Sé el primero en registrarte
+            </Link>
+          </div>
+        )}
 
         <div className="mt-6 bg-blue-600/10 border border-blue-500/30 rounded-lg p-4 text-sm text-gray-300">
           <strong className="text-blue-400">ℹ️ Cómo se calculan los puntos:</strong>
