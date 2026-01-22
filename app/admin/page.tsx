@@ -20,13 +20,17 @@ export default async function AdminPage() {
     .select('*')
     .order('match_number', { ascending: true })
 
-  const { count: statsCount } = await supabase
+  // Stats separados sin conflicto de tipos
+  const profilesQuery = await supabase
     .from('profiles')
-    .select('*', { count: 'exact', head: true })
+    .select('id', { count: 'exact', head: true })
 
-  const { count: predStatsCount } = await supabase
+  const predictionsQuery = await supabase
     .from('predictions')
-    .select('*', { count: 'exact', head: true })
+    .select('id', { count: 'exact', head: true })
+
+  const statsCount = profilesQuery.count || 0
+  const predStatsCount = predictionsQuery.count || 0
 
   return (
     <div className="min-h-screen py-8 px-4">
@@ -39,7 +43,7 @@ export default async function AdminPage() {
 
         <div className="grid md:grid-cols-4 gap-4 mb-8">
           <div className="bg-blue-600/20 border border-blue-500 rounded-xl p-6">
-            <div className="text-3xl font-bold text-blue-400">{statsCount || 0}</div>
+            <div className="text-3xl font-bold text-blue-400">{statsCount}</div>
             <div className="text-sm text-gray-400">Usuarios</div>
           </div>
           <div className="bg-green-600/20 border border-green-500 rounded-xl p-6">
@@ -47,7 +51,7 @@ export default async function AdminPage() {
             <div className="text-sm text-gray-400">Partidos</div>
           </div>
           <div className="bg-yellow-600/20 border border-yellow-500 rounded-xl p-6">
-            <div className="text-3xl font-bold text-yellow-400">{predStatsCount || 0}</div>
+            <div className="text-3xl font-bold text-yellow-400">{predStatsCount}</div>
             <div className="text-sm text-gray-400">Pronósticos</div>
           </div>
           <div className="bg-purple-600/20 border border-purple-500 rounded-xl p-6">
