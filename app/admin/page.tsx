@@ -15,84 +15,55 @@ export default async function AdminPage() {
     redirect('/')
   }
 
-  const { data: matches } = await supabase
-    .from('matches')
-    .select('*')
-    .order('match_number', { ascending: true })
-
-  // Stats separados sin conflicto de tipos
-  const profilesQuery = await supabase
-    .from('profiles')
-    .select('id', { count: 'exact', head: true })
-
-  const predictionsQuery = await supabase
-    .from('predictions')
-    .select('id', { count: 'exact', head: true })
-
-  const statsCount = profilesQuery.count || 0
-  const predStatsCount = predictionsQuery.count || 0
+  const { data: matches } = await supabase.from('matches').select('*').order('match_number', { ascending: true })
+  const { data: stats } = await supabase.from('profiles').select('id', { count: 'exact', head: true })
+  const { data: predStats } = await supabase.from('predictions').select('id', { count: 'exact', head: true })
 
   return (
-    <div className="min-h-screen py-8 px-4">
+    <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
         
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">⚙️ Panel de Administración</h1>
+        <div className="mb-12">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-2">⚙️ Panel de Administración</h1>
           <p className="text-gray-400">Admin: {user.email}</p>
         </div>
 
-        <div className="grid md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-blue-600/20 border border-blue-500 rounded-xl p-6">
-            <div className="text-3xl font-bold text-blue-400">{statsCount}</div>
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          <div className="border border-blue-500/30 bg-blue-900/10 rounded-2xl p-6">
+            <div className="text-4xl font-bold text-blue-400 mb-2">{stats?.count || 0}</div>
             <div className="text-sm text-gray-400">Usuarios</div>
           </div>
-          <div className="bg-green-600/20 border border-green-500 rounded-xl p-6">
-            <div className="text-3xl font-bold text-green-400">{matches?.length || 0}</div>
+          <div className="border border-green-500/30 bg-green-900/10 rounded-2xl p-6">
+            <div className="text-4xl font-bold text-green-400 mb-2">{matches?.length || 0}</div>
             <div className="text-sm text-gray-400">Partidos</div>
           </div>
-          <div className="bg-yellow-600/20 border border-yellow-500 rounded-xl p-6">
-            <div className="text-3xl font-bold text-yellow-400">{predStatsCount}</div>
+          <div className="border border-yellow-500/30 bg-yellow-900/10 rounded-2xl p-6">
+            <div className="text-4xl font-bold text-yellow-400 mb-2">{predStats?.count || 0}</div>
             <div className="text-sm text-gray-400">Pronósticos</div>
           </div>
-          <div className="bg-purple-600/20 border border-purple-500 rounded-xl p-6">
-            <div className="text-3xl font-bold text-purple-400">
-              {matches?.filter(m => m.status === 'finished').length || 0}
-            </div>
+          <div className="border border-purple-500/30 bg-purple-900/10 rounded-2xl p-6">
+            <div className="text-4xl font-bold text-purple-400 mb-2">{matches?.filter(m => m.status === 'finished').length || 0}</div>
             <div className="text-sm text-gray-400">Finalizados</div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-r from-blue-900/20 to-blue-800/10 border-2 border-blue-600/50 rounded-xl p-6 mb-8">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="border-2 border-purple-500/50 bg-purple-900/10 rounded-2xl p-8 mb-12">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div>
-              <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-                🔄 Sincronización con API-Football
-              </h2>
-              <p className="text-sm text-gray-400">
-                Actualiza automáticamente los resultados desde la API oficial
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                ⚠️ Nota: Mundial 2026 aún no tiene datos. Mostrando Mundial 2022 para testing.
-              </p>
+              <h2 className="text-2xl font-bold mb-2 text-purple-400">🔄 Sincronización con API-Football</h2>
+              <p className="text-sm text-gray-400">Actualiza automáticamente los resultados desde la API oficial</p>
             </div>
             <SyncButton />
           </div>
         </div>
 
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
-          <h2 className="text-2xl font-bold mb-6">📝 Gestión Manual de Partidos</h2>
-          
-          <div className="space-y-3">
+        <div className="border border-purple-500/30 rounded-2xl p-8">
+          <h2 className="text-2xl font-bold mb-6 text-purple-400">📝 Gestión Manual de Partidos</h2>
+          <div className="space-y-4">
             {matches?.slice(0, 50).map(match => (
               <AdminMatchForm key={match.id} match={match} />
             ))}
           </div>
-
-          {matches && matches.length > 50 && (
-            <p className="text-center text-gray-500 mt-6">
-              Mostrando 50 de {matches.length} partidos
-            </p>
-          )}
         </div>
 
       </div>

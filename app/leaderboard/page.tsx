@@ -32,7 +32,8 @@ export default async function LeaderboardPage() {
         if (pred.home_goals === match.home_score && pred.away_goals === match.away_score) {
           points += 3
           exactHits += 1
-        } else {
+        }
+        else {
           const predOutcome = pred.home_goals > pred.away_goals ? 'home' : pred.home_goals < pred.away_goals ? 'away' : 'draw'
           const matchOutcome = match.home_score > match.away_score ? 'home' : match.home_score < match.away_score ? 'away' : 'draw'
           
@@ -65,86 +66,88 @@ export default async function LeaderboardPage() {
   const rest = leaderboard.slice(3, 100)
 
   return (
-    <div className="min-h-screen py-8 px-4">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6">
+      <div className="max-w-7xl mx-auto">
         
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">🏆 Clasificación General</h1>
-          <p className="text-gray-400">Liga: Ripio Mundial • {leaderboard.length} participantes</p>
+        <div className="mb-12">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
+            🏆 Clasificación General
+          </h1>
+          <p className="text-gray-400 text-lg">
+            Liga: <span className="text-purple-400 font-semibold">Ripio Mundial</span> • {leaderboard.length} participantes
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-600/5 border-2 border-yellow-500/50 rounded-2xl p-6 text-center">
-            <div className="text-5xl mb-2">🥇</div>
-            <div className="text-3xl font-bold text-yellow-400 mb-1">1MM wARS</div>
-            <div className="text-sm text-gray-400">Primer Puesto</div>
+        {/* PODIO */}
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mb-16">
+          <div className="border border-purple-500/50 rounded-2xl p-8 text-center bg-gradient-to-br from-purple-950/30 to-transparent">
+            <div className="text-6xl mb-4">🥇</div>
+            <div className="text-3xl font-bold text-purple-400 mb-2">1MM wARS</div>
+            <div className="text-sm text-gray-500 mb-4">Primer Puesto</div>
             {top3[0] && (
-              <div className="mt-3 pt-3 border-t border-yellow-500/30">
-                <div className="font-semibold text-yellow-200">{top3[0].display_name || top3[0].email}</div>
-                <div className="text-2xl font-bold text-yellow-400">{top3[0].points} pts</div>
+              <div className="pt-4 border-t border-purple-500/30">
+                <div className="font-bold text-lg">{top3[0].display_name || top3[0].email.split('@')[0]}</div>
+                <div className="text-3xl font-bold text-purple-400 mt-2">{top3[0].points} pts</div>
               </div>
             )}
           </div>
 
-          <div className="bg-gradient-to-br from-gray-400/20 to-gray-500/5 border-2 border-gray-400/50 rounded-2xl p-6 text-center">
-            <div className="text-5xl mb-2">🥈</div>
-            <div className="text-3xl font-bold text-gray-300 mb-1">500K wARS</div>
-            <div className="text-sm text-gray-400">Segundo Puesto</div>
+          <div className="border border-gray-600 rounded-2xl p-8 text-center bg-gradient-to-br from-gray-800/30 to-transparent sm:col-span-2 md:col-span-1">
+            <div className="text-6xl mb-4">🥈</div>
+            <div className="text-3xl font-bold text-gray-300 mb-2">500K wARS</div>
+            <div className="text-sm text-gray-500 mb-4">Segundo Puesto</div>
             {top3[1] && (
-              <div className="mt-3 pt-3 border-t border-gray-400/30">
-                <div className="font-semibold text-gray-200">{top3[1].display_name || top3[1].email}</div>
-                <div className="text-2xl font-bold text-gray-300">{top3[1].points} pts</div>
+              <div className="pt-4 border-t border-gray-700">
+                <div className="font-bold text-lg">{top3[1].display_name || top3[1].email.split('@')[0]}</div>
+                <div className="text-3xl font-bold text-gray-300 mt-2">{top3[1].points} pts</div>
               </div>
             )}
           </div>
 
-          <div className="bg-gradient-to-br from-orange-600/20 to-orange-700/5 border-2 border-orange-600/50 rounded-2xl p-6 text-center">
-            <div className="text-5xl mb-2">🥉</div>
-            <div className="text-3xl font-bold text-orange-400 mb-1">250K wARS</div>
-            <div className="text-sm text-gray-400">Tercer Puesto</div>
+          <div className="border border-orange-600/50 rounded-2xl p-8 text-center bg-gradient-to-br from-orange-950/20 to-transparent sm:col-span-2 md:col-span-1">
+            <div className="text-6xl mb-4">🥉</div>
+            <div className="text-3xl font-bold text-orange-400 mb-2">250K wARS</div>
+            <div className="text-sm text-gray-500 mb-4">Tercer Puesto</div>
             {top3[2] && (
-              <div className="mt-3 pt-3 border-t border-orange-600/30">
-                <div className="font-semibold text-orange-200">{top3[2].display_name || top3[2].email}</div>
-                <div className="text-2xl font-bold text-orange-400">{top3[2].points} pts</div>
+              <div className="pt-4 border-t border-orange-600/30">
+                <div className="font-bold text-lg">{top3[2].display_name || top3[2].email.split('@')[0]}</div>
+                <div className="text-3xl font-bold text-orange-400 mt-2">{top3[2].points} pts</div>
               </div>
             )}
           </div>
         </div>
 
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl overflow-hidden">
+        {/* TABLA */}
+        <div className="border border-purple-500/30 rounded-2xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-900/50">
-                <tr className="text-left text-sm text-gray-400">
-                  <th className="px-4 py-3 w-16">Pos</th>
-                  <th className="px-4 py-3">Usuario</th>
-                  <th className="px-4 py-3 text-center">Puntos</th>
-                  <th className="px-4 py-3 text-center hidden sm:table-cell">Exactos</th>
-                  <th className="px-4 py-3 text-center hidden sm:table-cell">Aciertos</th>
-                  <th className="px-4 py-3 text-center hidden md:table-cell">Pronósticos</th>
+              <thead className="bg-purple-950/30">
+                <tr>
+                  <th className="px-4 py-4 text-left text-sm font-bold text-gray-400">Pos</th>
+                  <th className="px-4 py-4 text-left text-sm font-bold text-gray-400">Usuario</th>
+                  <th className="px-4 py-4 text-center text-sm font-bold text-gray-400">Puntos</th>
+                  <th className="px-4 py-4 text-center text-sm font-bold text-gray-400">Exactos</th>
+                  <th className="px-4 py-4 text-center text-sm font-bold text-gray-400">Aciertos</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-700/50">
+              <tbody>
                 {rest.map((user, index) => (
-                  <tr key={user.id} className="hover:bg-gray-700/30 transition-colors">
-                    <td className="px-4 py-3 font-semibold text-gray-400">
+                  <tr key={user.id} className="border-t border-purple-500/20 hover:bg-purple-950/20 transition-colors">
+                    <td className="px-4 py-4 font-bold text-gray-400">
                       {index + 4}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-4">
                       <div className="font-semibold">{user.display_name || user.email.split('@')[0]}</div>
-                      <div className="text-xs text-gray-500 hidden sm:block">{user.email}</div>
+                      <div className="text-xs text-gray-500">{user.email}</div>
                     </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className="text-lg font-bold text-blue-400">{user.points}</span>
+                    <td className="px-4 py-4 text-center">
+                      <span className="text-xl font-bold text-purple-400">{user.points}</span>
                     </td>
-                    <td className="px-4 py-3 text-center hidden sm:table-cell text-green-400">
+                    <td className="px-4 py-4 text-center text-green-400 font-semibold">
                       {user.exactHits}
                     </td>
-                    <td className="px-4 py-3 text-center hidden sm:table-cell text-yellow-400">
+                    <td className="px-4 py-4 text-center text-yellow-400 font-semibold">
                       {user.correctOutcomes}
-                    </td>
-                    <td className="px-4 py-3 text-center hidden md:table-cell text-gray-400">
-                      {user.totalPredictions}
                     </td>
                   </tr>
                 ))}
@@ -154,20 +157,23 @@ export default async function LeaderboardPage() {
         </div>
 
         {leaderboard.length === 0 && (
-          <div className="text-center py-12 bg-gray-800/30 rounded-xl border border-gray-700">
-            <p className="text-gray-400 text-lg">Todavía no hay participantes</p>
-            <Link href="/register" className="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold">
+          <div className="border border-purple-500/30 rounded-2xl p-12 text-center">
+            <p className="text-gray-400 text-xl mb-6">Todavía no hay participantes</p>
+            <Link href="/register" className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-4 rounded-full transition-colors">
               Sé el primero en registrarte
             </Link>
           </div>
         )}
 
-        <div className="mt-6 bg-blue-600/10 border border-blue-500/30 rounded-lg p-4 text-sm text-gray-300">
-          <strong className="text-blue-400">ℹ️ Cómo se calculan los puntos:</strong>
-          <ul className="mt-2 space-y-1 ml-4 list-disc">
-            <li>Resultado exacto: <strong className="text-green-400">+3 puntos</strong></li>
-            <li>Acertar ganador o empate: <strong className="text-yellow-400">+1 punto</strong></li>
-            <li>Desempate: más exactos → más aciertos → primero en registrarse</li>
+        {/* INFO */}
+        <div className="border border-purple-500/30 rounded-2xl p-6 mt-8">
+          <p className="text-sm text-gray-400 mb-3">
+            <strong className="text-purple-400">ℹ️ Cómo se calculan los puntos:</strong>
+          </p>
+          <ul className="text-sm text-gray-400 space-y-2 ml-6">
+            <li>• Resultado exacto: <strong className="text-green-400">+3 puntos</strong></li>
+            <li>• Acertar ganador o empate: <strong className="text-yellow-400">+1 punto</strong></li>
+            <li>• Desempate: más exactos → más aciertos → primero en registrarse</li>
           </ul>
         </div>
 
