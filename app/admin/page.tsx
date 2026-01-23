@@ -16,8 +16,9 @@ export default async function AdminPage() {
   }
 
   const { data: matches } = await supabase.from('matches').select('*').order('match_number', { ascending: true })
-  const { data: stats } = await supabase.from('profiles').select('id', { count: 'exact', head: true })
-  const { data: predStats } = await supabase.from('predictions').select('id', { count: 'exact', head: true })
+  
+  const { count: statsCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true })
+  const { count: predCount } = await supabase.from('predictions').select('*', { count: 'exact', head: true })
 
   return (
     <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6">
@@ -30,7 +31,7 @@ export default async function AdminPage() {
 
         <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
           <div className="border border-blue-500/30 bg-blue-900/10 rounded-2xl p-6">
-            <div className="text-4xl font-bold text-blue-400 mb-2">{stats?.count || 0}</div>
+            <div className="text-4xl font-bold text-blue-400 mb-2">{statsCount || 0}</div>
             <div className="text-sm text-gray-400">Usuarios</div>
           </div>
           <div className="border border-green-500/30 bg-green-900/10 rounded-2xl p-6">
@@ -38,7 +39,7 @@ export default async function AdminPage() {
             <div className="text-sm text-gray-400">Partidos</div>
           </div>
           <div className="border border-yellow-500/30 bg-yellow-900/10 rounded-2xl p-6">
-            <div className="text-4xl font-bold text-yellow-400 mb-2">{predStats?.count || 0}</div>
+            <div className="text-4xl font-bold text-yellow-400 mb-2">{predCount || 0}</div>
             <div className="text-sm text-gray-400">Pronósticos</div>
           </div>
           <div className="border border-purple-500/30 bg-purple-900/10 rounded-2xl p-6">

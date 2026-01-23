@@ -23,7 +23,7 @@ export default async function MePage() {
 
   const { data: matches } = await supabase
     .from('matches')
-    .select('id', { count: 'exact', head: true })
+    .select('*')
 
   let points = 0
   let exactHits = 0
@@ -42,7 +42,7 @@ export default async function MePage() {
     }
   })
 
-  const totalMatches = matches?.count || 0
+  const totalMatches = matches?.length || 0
   const completionRate = totalMatches > 0 ? Math.round((predictions?.length || 0) / totalMatches * 100) : 0
 
   return (
