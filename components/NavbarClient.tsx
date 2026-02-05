@@ -36,10 +36,26 @@ export default function NavbarClient({ user }: { user: any }) {
   }
 
   const links = [
-    { href: '/matches', label: 'Partidos' },
-    { href: '/leaderboard', label: 'Clasificación' },
-    { href: '/leagues', label: 'Ligas' },
-    { href: '/rules', label: 'Reglas' },
+    { 
+      href: '/matches', 
+      labelDesktop: 'Pronosticar Partidos',
+      labelMobile: 'Partidos'
+    },
+    { 
+      href: '/leaderboard', 
+      labelDesktop: 'Ranking Liga Ripio',
+      labelMobile: 'Liga Ripio'
+    },
+    { 
+      href: '/leagues', 
+      labelDesktop: 'Mis Ligas',
+      labelMobile: 'Mis Ligas'
+    },
+    { 
+      href: '/rules', 
+      labelDesktop: 'Reglas',
+      labelMobile: 'Reglas'
+    },
   ]
 
   return (
@@ -52,6 +68,7 @@ export default function NavbarClient({ user }: { user: any }) {
             <span className="font-bold text-lg sm:text-xl text-white">Mundial 2026</span>
           </Link>
 
+          {/* DESKTOP LINKS */}
           <div className="hidden md:flex items-center gap-8">
             {links.map((link) => (
               <Link
@@ -63,11 +80,12 @@ export default function NavbarClient({ user }: { user: any }) {
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
-                {link.label}
+                {link.labelDesktop}
               </Link>
             ))}
           </div>
 
+          {/* USER MENU DESKTOP */}
           <div className="hidden md:flex items-center gap-3">
             {!user ? (
               <>
@@ -105,6 +123,7 @@ export default function NavbarClient({ user }: { user: any }) {
             )}
           </div>
 
+          {/* MOBILE MENU BUTTON */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 text-gray-400 hover:text-white"
@@ -113,6 +132,7 @@ export default function NavbarClient({ user }: { user: any }) {
           </button>
         </div>
 
+        {/* MOBILE MENU */}
         {isOpen && (
           <div className="md:hidden py-4 border-t border-gray-900">
             <div className="flex flex-col gap-4">
@@ -125,7 +145,7 @@ export default function NavbarClient({ user }: { user: any }) {
                     pathname === link.href ? 'text-purple-400' : 'text-gray-400'
                   }`}
                 >
-                  {link.label}
+                  {link.labelMobile}
                 </Link>
               ))}
               

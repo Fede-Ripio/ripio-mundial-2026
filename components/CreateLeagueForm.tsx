@@ -41,12 +41,12 @@ export default function CreateLeagueForm() {
         onChange={(e) => setName(e.target.value)}
         required
         placeholder="Nombre de la liga (ej: Amigos del Barrio)"
-        className="flex-1 bg-gray-900/80 border border-gray-700 rounded-xl px-6 py-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
+        className="flex-1 bg-gray-900 border border-purple-500/30 rounded-xl px-6 py-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-purple-500 transition-colors"
       />
       <button
         type="submit"
         disabled={loading}
-        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-semibold px-8 py-4 rounded-xl transition-colors whitespace-nowrap"
+        className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 text-white font-semibold px-8 py-4 rounded-xl transition-colors whitespace-nowrap"
       >
         {loading ? 'Creando...' : 'Crear'}
       </button>

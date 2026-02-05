@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
-import MatchCard from '@/components/MatchCard'
+import MatchesList from '@/components/MatchesList'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
@@ -24,84 +24,57 @@ export default async function MatchesPage() {
   }
 
   const all = matches || []
-  const now = new Date()
-  const upcoming = all.filter(m => m.kickoff_at && new Date(m.kickoff_at) > now && m.status === 'scheduled')
-  const groupMatches = all.filter(m => m.stage === 'group')
+
+  const nextMatch = all
+    .filter(m => m.status !== 'finished' && m.kickoff_at)
+    .sort((a, b) => new Date(a.kickoff_at).getTime() - new Date(b.kickoff_at).getTime())
+    [0]
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6">
+    <div className="min-h-screen bg-black text-white py-8 sm:py-12 px-3 sm:px-6">
       <div className="max-w-7xl mx-auto">
         
-        <div className="mb-12">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
-            Partidos del Mundial 2026
+        <div className="mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+            ⚽ Partidos del Mundial 2026
           </h1>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-sm sm:text-base text-gray-400">
+            <span className="flex items-center gap-2">
+              <span>📊</span>
+              <span>{all.length} partidos</span>
+            </span>
+            {user && (
+              <span className="flex items-center gap-2">
+                <span>✅</span>
+                <span>{predictions.length} pronósticos</span>
+              </span>
+            )}
+          </div>
           {!user ? (
-            <div className="border border-purple-500/30 rounded-2xl p-6 mt-6 bg-purple-950/10">
-              <p className="text-gray-300">
+            <div className="border border-purple-500/30 rounded-xl p-4 sm:p-6 mt-4 sm:mt-6">
+              <p className="text-sm sm:text-base text-gray-400">
                 <Link href="/register" className="text-purple-400 font-semibold hover:text-purple-300 underline">
                   Registrate gratis
                 </Link>
-                {' '}para hacer tus pronósticos y competir por los premios
+                {' '}para hacer tus pronósticos
               </p>
             </div>
-          ) : (
-            <p className="text-gray-400 text-lg">
-              {user.email} • <span className="text-purple-400 font-semibold">{predictions.length}/{all.length}</span> pronósticos
-            </p>
-          )}
+          ) : null}
         </div>
 
         {all.length === 0 ? (
-          <div className="border border-purple-500/30 rounded-2xl p-12 text-center">
-            <p className="text-gray-400 text-xl mb-4">⚠️ No hay partidos cargados</p>
-            <p className="text-gray-500">Los partidos se cargarán próximamente</p>
+          <div className="border border-purple-500/30 rounded-xl p-8 sm:p-12 text-center">
+            <p className="text-gray-400 text-lg sm:text-xl">
+              ⚠️ No hay partidos cargados
+            </p>
           </div>
         ) : (
-          <div className="space-y-12">
-
-            {upcoming.length > 0 && (
-              <section>
-                <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-purple-400">
-                  ⏰ Próximos Partidos
-                </h2>
-                <div className="space-y-4">
-                  {upcoming.slice(0, 5).map(match => (
-                    <MatchCard
-                      key={match.id}
-                      match={match}
-                      prediction={predictions.find(p => p.match_id === match.id)}
-                      isLoggedIn={!!user}
-                    />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'].map(group => {
-              const groupGames = groupMatches.filter(m => m.group_code === group)
-              if (groupGames.length === 0) return null
-              
-              return (
-                <section key={group}>
-                  <h3 className="text-xl sm:text-2xl font-bold mb-4 text-gray-300">
-                    Grupo {group}
-                  </h3>
-                  <div className="space-y-4">
-                    {groupGames.map(match => (
-                      <MatchCard
-                        key={match.id}
-                        match={match}
-                        prediction={predictions.find(p => p.match_id === match.id)}
-                        isLoggedIn={!!user}
-                      />
-                    ))}
-                  </div>
-                </section>
-              )
-            })}
-
-          </div>
+          <MatchesList 
+            matches={all} 
+            predictions={predictions} 
+            isLoggedIn={!!user}
+            nextMatch={nextMatch}
+          />
         )}
       </div>
     </div>

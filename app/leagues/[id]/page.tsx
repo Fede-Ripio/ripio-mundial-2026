@@ -1,7 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
-import ShareLeagueButtons from '@/components/ShareLeagueButtons'
+import ShareLeagueCompact from '@/components/ShareLeagueCompact'
 
 export const dynamic = 'force-dynamic'
 
@@ -49,90 +49,105 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
   }).sort((a, b) => b.points - a.points || b.exactHits - a.exactHits || b.correctOutcomes - a.correctOutcomes)
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6">
+    <div className="min-h-screen bg-black text-white py-8 sm:py-12 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
 
-        <Link href="/leagues" className="text-sm text-gray-500 hover:text-gray-400 mb-8 inline-block">
+        <Link href="/leagues" className="text-sm text-gray-400 hover:text-gray-300 mb-6 inline-block">
           ← Volver a Mis Ligas
         </Link>
 
-        <div className="border-2 border-purple-500/50 bg-purple-900/10 rounded-2xl p-8 mb-12">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-4xl sm:text-5xl font-bold mb-2">{league.name}</h1>
-              <div className="flex items-center gap-3 text-sm">
-                {league.is_public ? (
-                  <span className="bg-green-600/20 text-green-400 px-3 py-1 rounded-full">🌐 Pública</span>
-                ) : (
-                  <span className="bg-purple-600/20 text-purple-400 px-3 py-1 rounded-full">🔒 Privada</span>
-                )}
-                <span className="text-gray-400">{members?.length || 0} miembros</span>
-              </div>
-            </div>
+        {/* HEADER */}
+        <div className="mb-8">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-3">{league.name}</h1>
+          <div className="flex items-center gap-4 text-sm">
+            {league.is_public ? (
+              <span className="bg-green-600/20 text-green-400 px-3 py-1 rounded-full flex items-center gap-1">
+                🌐 Pública
+              </span>
+            ) : (
+              <span className="bg-purple-600/20 text-purple-400 px-3 py-1 rounded-full flex items-center gap-1">
+                🔒 Privada
+              </span>
+            )}
+            <span className="text-gray-400">{members?.length || 0} miembros</span>
             {membership?.role === 'owner' && (
-              <div className="bg-yellow-600/20 text-yellow-400 px-4 py-2 rounded-xl text-sm font-semibold">👑 Admin</div>
+              <span className="bg-yellow-600/20 text-yellow-400 px-3 py-1 rounded-full">
+                👑 Admin
+              </span>
             )}
           </div>
+        </div>
 
-          {!league.is_public && (
-            <div className="pt-6 border-t border-purple-500/30 space-y-4">
-              <div>
-                <div className="text-sm text-gray-400 mb-2">Código de invitación:</div>
-                <code className="bg-gray-900 text-purple-400 font-mono text-2xl px-6 py-4 rounded-xl block text-center">
-                  {league.invite_code}
-                </code>
-              </div>
-              
-              <ShareLeagueButtons 
-                leagueName={league.name}
-                inviteCode={league.invite_code}
-                leagueId={league.id}
-              />
+        {/* CLASIFICACIÓN - PROTAGONISTA */}
+        <div className="mb-8">
+          <div className="bg-gray-900/50 border border-purple-500/30 rounded-2xl overflow-hidden">
+            <div className="bg-purple-900/20 px-6 py-4 border-b border-purple-500/30">
+              <h2 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
+                <span>📊</span>
+                <span>Clasificación</span>
+              </h2>
             </div>
-          )}
+            
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-900/50">
+                  <tr>
+                    <th className="px-4 sm:px-6 py-4 text-left text-xs sm:text-sm font-semibold text-gray-400">Pos</th>
+                    <th className="px-4 sm:px-6 py-4 text-left text-xs sm:text-sm font-semibold text-gray-400">Usuario</th>
+                    <th className="px-4 sm:px-6 py-4 text-center text-xs sm:text-sm font-semibold text-gray-400">Puntos</th>
+                    <th className="px-4 sm:px-6 py-4 text-center text-xs sm:text-sm font-semibold text-gray-400 hidden sm:table-cell">Exactos</th>
+                    <th className="px-4 sm:px-6 py-4 text-center text-xs sm:text-sm font-semibold text-gray-400 hidden sm:table-cell">Aciertos</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leaderboard.map((member, index) => (
+                    <tr 
+                      key={member.user_id} 
+                      className={`border-t border-purple-500/20 ${
+                        member.user_id === user.id ? 'bg-purple-900/20' : 'hover:bg-gray-900/30'
+                      }`}
+                    >
+                      <td className="px-4 sm:px-6 py-4">
+                        <span className="text-lg sm:text-xl font-bold">
+                          {index === 0 && '🥇'}
+                          {index === 1 && '🥈'}
+                          {index === 2 && '🥉'}
+                          {index > 2 && <span className="text-gray-500">{index + 1}</span>}
+                        </span>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="font-semibold text-sm sm:text-base">
+                          {member.profiles?.display_name || member.profiles?.email?.split('@')[0] || 'Usuario'}
+                        </div>
+                        {member.user_id === user.id && (
+                          <div className="text-xs text-purple-400">Vos</div>
+                        )}
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 text-center">
+                        <span className="text-xl sm:text-2xl font-bold text-purple-400">{member.points}</span>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 text-center text-green-400 font-semibold hidden sm:table-cell">
+                        {member.exactHits}
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 text-center text-yellow-400 font-semibold hidden sm:table-cell">
+                        {member.correctOutcomes}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
-        <div className="border border-purple-500/30 rounded-2xl overflow-hidden">
-          <div className="bg-purple-900/20 px-6 py-4 border-b border-purple-500/30">
-            <h2 className="text-2xl font-bold">📊 Clasificación</h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-900/50">
-                <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-400">Pos</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-400">Usuario</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-400">Puntos</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-400">Exactos</th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-400">Aciertos</th>
-                </tr>
-              </thead>
-              <tbody>
-                {leaderboard.map((member, index) => (
-                  <tr key={member.user_id} className={`border-t border-purple-500/20 ${member.user_id === user.id ? 'bg-purple-900/20' : 'hover:bg-gray-900/30'}`}>
-                    <td className="px-6 py-4">
-                      <span className="text-xl font-bold">
-                        {index === 0 && '🥇'}
-                        {index === 1 && '🥈'}
-                        {index === 2 && '🥉'}
-                        {index > 2 && <span className="text-gray-500">{index + 1}</span>}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="font-semibold">{member.profiles?.display_name || member.profiles?.email?.split('@')[0] || 'Usuario'}</div>
-                      {member.user_id === user.id && <div className="text-xs text-purple-400">Vos</div>}
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="text-2xl font-bold text-purple-400">{member.points}</span>
-                    </td>
-                    <td className="px-6 py-4 text-center text-green-400 font-semibold">{member.exactHits}</td>
-                    <td className="px-6 py-4 text-center text-yellow-400 font-semibold">{member.correctOutcomes}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        {/* INVITAR AMIGOS - COMPACTO */}
+        {!league.is_public && (
+          <ShareLeagueCompact
+            leagueName={league.name}
+            inviteCode={league.invite_code}
+            leagueId={league.id}
+          />
+        )}
 
       </div>
     </div>
