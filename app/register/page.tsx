@@ -1,17 +1,39 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase-browser'
 
 export default function RegisterPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
+  const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [checkingUsername, setCheckingUsername] = useState(false)
+
+  const checkUsernameAvailable = async (username: string) => {
+    if (!username || username.length < 3) return
+
+    setCheckingUsername(true)
+    const supabase = createClient()
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .ilike('display_name', username)
+      .single()
+
+    setCheckingUsername(false)
+
+    if (data) {
+      setError(`El nombre de usuario "${username}" ya está en uso`)
+      return false
+    }
+
+    return true
+  }
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,34 +42,42 @@ export default function RegisterPage() {
 
     try {
       const supabase = createClient()
-      
-      // Registrar usuario
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            display_name: displayName
-          }
-        }
-      })
 
-      if (authError) throw authError
+      // Verificar si el email ya existe
+      const { data: existingUser } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', email)
+        .single()
 
-      // Actualizar perfil
-      if (authData.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({ display_name: displayName })
-          .eq('id', authData.user.id)
-
-        if (profileError) console.error('Error updating profile:', profileError)
+      if (existingUser) {
+        throw new Error('Este email ya está registrado. Intentá iniciar sesión.')
       }
 
-      router.push('/matches')
-      router.refresh()
+      // Verificar username si lo ingresó
+      if (displayName && displayName.trim()) {
+        const isAvailable = await checkUsernameAvailable(displayName.trim())
+        if (!isAvailable) {
+          setLoading(false)
+          return
+        }
+      }
+
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=/matches`,
+          data: {
+            display_name: displayName.trim() || email.split('@')[0],
+          },
+        },
+      })
+
+      if (error) throw error
+
+      router.push('/auth/check-email')
     } catch (err: any) {
-      setError(err.message || 'Error al registrarse')
+      setError(err.message || 'Error al crear cuenta')
     } finally {
       setLoading(false)
     }
@@ -57,26 +87,40 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         
-        <div className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            Crear cuenta
-          </h1>
-          <p className="text-gray-400">
-            Unite a Ripio Mundial 2026 y competí por 1.75M wARS
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-block mb-6">
+            <h1 className="text-3xl font-bold">
+              <span className="text-purple-400">Ripio</span> Mundial 2026
+            </h1>
+          </Link>
+          <h2 className="text-2xl font-bold mb-2">Crear cuenta</h2>
+          <p className="text-gray-400 text-sm">
+            Gratis • Solo lleva 30 segundos
           </p>
         </div>
 
-        <form onSubmit={handleRegister} className="space-y-6">
+        <form onSubmit={handleRegister} className="space-y-4">
+          
           <div>
-            <label className="block text-sm font-medium mb-2">Nombre de usuario</label>
+            <label className="block text-sm font-medium mb-2">
+              Nombre de usuario
+            </label>
             <input
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              required
-              placeholder="Tu nombre"
-              className="w-full bg-gray-900 border border-purple-500/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
+              onBlur={(e) => e.target.value.trim() && checkUsernameAvailable(e.target.value.trim())}
+              placeholder="Ej: Lionel"
+              minLength={3}
+              maxLength={20}
+              className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Aparecerá en el ranking público • Mínimo 3 caracteres
+            </p>
+            {checkingUsername && (
+              <p className="text-xs text-blue-400 mt-1">⏳ Verificando disponibilidad...</p>
+            )}
           </div>
 
           <div>
@@ -87,75 +131,37 @@ export default function RegisterPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="tu@email.com"
-              className="w-full bg-gray-900 border border-purple-500/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
+              className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Contraseña</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="Mínimo 6 caracteres"
-              minLength={6}
-              className="w-full bg-gray-900 border border-purple-500/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
-            />
-            <p className="text-xs text-gray-500 mt-2">Debe tener al menos 6 caracteres</p>
           </div>
 
           {error && (
-            <div className="bg-red-900/20 border border-red-500/50 rounded-xl p-4 text-red-400 text-sm">
-              {error}
+            <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-3 text-red-400 text-sm">
+              ❌ {error}
             </div>
           )}
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 text-white font-semibold px-6 py-4 rounded-xl transition-colors text-lg"
+            disabled={loading || checkingUsername}
+            className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
           >
-            {loading ? 'Creando cuenta...' : 'Crear cuenta gratis'}
+            {loading ? <>⏳ Creando cuenta...</> : <>🚀 Crear cuenta</>}
           </button>
+
+          <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-3 text-center">
+            <p className="text-xs text-blue-300">
+              💡 Te enviamos un link de acceso por email. Sin contraseñas.
+            </p>
+          </div>
+
         </form>
 
-        <div className="mt-8 text-center">
-          <p className="text-gray-400">
-            ¿Ya tenés cuenta?{' '}
-            <Link href="/login" className="text-purple-400 hover:text-purple-300 font-semibold">
-              Ingresá acá
-            </Link>
-          </p>
-        </div>
-
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-gray-500 hover:text-gray-400">
-            ← Volver al inicio
+        <div className="mt-6 text-center text-sm">
+          <span className="text-gray-400">¿Ya tenés cuenta? </span>
+          <Link href="/login" className="text-purple-400 hover:text-purple-300 font-semibold">
+            Iniciar sesión
           </Link>
-        </div>
-
-        {/* Beneficios */}
-        <div className="mt-12 border-t border-gray-800 pt-8">
-          <h3 className="text-sm font-semibold text-gray-400 mb-4">Al registrarte obtenés:</h3>
-          <ul className="space-y-2 text-sm text-gray-400">
-            <li className="flex items-center gap-2">
-              <span className="text-green-400">✓</span>
-              <span>Acceso a la Liga General con premios</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="text-green-400">✓</span>
-              <span>Crear y unirse a ligas privadas</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="text-green-400">✓</span>
-              <span>Pronosticar los 104 partidos del Mundial</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="text-green-400">✓</span>
-              <span>Ranking y estadísticas en tiempo real</span>
-            </li>
-          </ul>
         </div>
 
       </div>
