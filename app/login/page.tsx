@@ -32,10 +32,14 @@ function LoginForm() {
         throw new Error('Este email no está registrado. ¿Querés crear una cuenta?')
       }
 
+      const redirectUrl = typeof window !== 'undefined' 
+        ? `${window.location.origin}/auth/callback`
+        : 'https://ripio-mundial-2026.vercel.app/auth/callback'
+
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: redirectUrl,
         },
       })
 

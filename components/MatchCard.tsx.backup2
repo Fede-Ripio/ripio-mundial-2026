@@ -16,8 +16,8 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
   // Mostrar equipos reales si están resueltos, sino placeholder con referencia
   const displayHomeTeam = match.is_resolved ? match.home_team : getPlaceholderText(match.home_team_ref, match.home_team)
   const displayAwayTeam = match.is_resolved ? match.away_team : getPlaceholderText(match.away_team_ref, match.away_team)
-  const homeTeamCode = match.home_team_code
-  const awayTeamCode = match.away_team_code
+  const homeTeamCode = match.is_resolved ? match.home_team_code : null
+  const awayTeamCode = match.is_resolved ? match.away_team_code : null
 
   function getPlaceholderText(ref: any, fallback: string) {
     if (!ref) return fallback

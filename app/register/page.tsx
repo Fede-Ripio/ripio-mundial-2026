@@ -43,7 +43,6 @@ export default function RegisterPage() {
     try {
       const supabase = createClient()
 
-      // Verificar si el email ya existe
       const { data: existingUser } = await supabase
         .from('profiles')
         .select('id')
@@ -54,7 +53,6 @@ export default function RegisterPage() {
         throw new Error('Este email ya está registrado. Intentá iniciar sesión.')
       }
 
-      // Verificar username si lo ingresó
       if (displayName && displayName.trim()) {
         const isAvailable = await checkUsernameAvailable(displayName.trim())
         if (!isAvailable) {
@@ -63,10 +61,14 @@ export default function RegisterPage() {
         }
       }
 
+      const redirectUrl = typeof window !== 'undefined' 
+        ? `${window.location.origin}/auth/callback?next=/matches`
+        : 'https://ripio-mundial-2026.vercel.app/auth/callback?next=/matches'
+
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/matches`,
+          emailRedirectTo: redirectUrl,
           data: {
             display_name: displayName.trim() || email.split('@')[0],
           },
