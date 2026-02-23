@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase-browser'
+import EmailInput from '@/components/EmailInput'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -123,17 +124,13 @@ export default function RegisterPage() {
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="tu@email.com"
-              className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500"
-            />
-          </div>
+          <EmailInput
+            value={email}
+            onChange={setEmail}
+            required
+            placeholder="tu@email.com"
+            label="Email"
+          />
 
           {error && (
             <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-3 text-red-400 text-sm">
