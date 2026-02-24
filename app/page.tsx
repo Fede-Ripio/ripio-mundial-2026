@@ -1,146 +1,120 @@
-import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import Link from 'next/link'
+import Hero from '@/components/Hero'
 
 export default async function Home() {
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+    <div className="min-h-screen bg-black text-white">
       
-      {/* HERO */}
-      <section 
-        className="relative min-h-[90vh] flex items-center px-4 sm:px-6 py-20 overflow-hidden"
-        style={{
-          background: 'radial-gradient(ellipse 1000px 800px at 10% 120%, rgba(138, 43, 226, 0.4), transparent 70%), #000000'
-        }}
-      >
-        <div className="max-w-7xl mx-auto w-full">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.1] mb-6 sm:mb-8">
-              Pronosticá el{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-purple-500 to-blue-500">
-                Mundial 2026
-              </span>
-            </h1>
-            <p className="text-base sm:text-xl md:text-2xl text-gray-300 mb-8 sm:mb-12 leading-relaxed max-w-2xl">
-              Competí con miles de usuarios, ganá premios en wARS y viví el Mundial como nunca antes.
+      <Hero isLoggedIn={!!user} />
+
+      <section className="py-20 bg-gradient-to-b from-black to-gray-900/50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+              ¿Cómo funciona?
+            </h2>
+            <p className="text-xl text-gray-400">
+              Simple, rápido y transparente
             </p>
-            {!user ? (
-              <Link 
-                href="/register"
-                className="inline-block bg-white text-black font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg hover:bg-gray-100 transition-colors"
-              >
-                Mis pronósticos →
-              </Link>
-            ) : (
-              <Link 
-                href="/matches"
-                className="inline-block bg-white text-black font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg hover:bg-gray-100 transition-colors"
-              >
-                Mis pronósticos →
-              </Link>
-            )}
           </div>
-        </div>
-      </section>
 
-      {/* PREMIOS */}
-      <section className="py-20 sm:py-32 px-4 sm:px-6 bg-black">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-purple-400 text-xs sm:text-sm font-bold tracking-wider mb-3 sm:mb-4">PREMIOS</p>
-          <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-12 sm:mb-20">
-            1.75M wARS en premios
-          </h2>
-
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-            <div className="border border-purple-500/30 rounded-2xl p-8 sm:p-10 hover:border-purple-500/60 transition-colors">
-              <div className="text-5xl sm:text-7xl mb-4 sm:mb-6">🥇</div>
-              <div className="text-3xl sm:text-4xl font-bold text-purple-400 mb-2 sm:mb-3">1MM wARS</div>
-              <p className="text-gray-400 text-base sm:text-lg">Primer puesto</p>
-            </div>
-
-            <div className="border border-purple-500/30 rounded-2xl p-8 sm:p-10 hover:border-purple-500/60 transition-colors">
-              <div className="text-5xl sm:text-7xl mb-4 sm:mb-6">🥈</div>
-              <div className="text-3xl sm:text-4xl font-bold text-purple-400 mb-2 sm:mb-3">500K wARS</div>
-              <p className="text-gray-400 text-base sm:text-lg">Segundo puesto</p>
-            </div>
-
-            <div className="border border-purple-500/30 rounded-2xl p-8 sm:p-10 hover:border-purple-500/60 transition-colors sm:col-span-2 md:col-span-1">
-              <div className="text-5xl sm:text-7xl mb-4 sm:mb-6">🥉</div>
-              <div className="text-3xl sm:text-4xl font-bold text-purple-400 mb-2 sm:mb-3">250K wARS</div>
-              <p className="text-gray-400 text-base sm:text-lg">Tercer puesto</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CÓMO FUNCIONA */}
-      <section className="py-20 sm:py-32 px-4 sm:px-6 bg-gradient-to-b from-black to-gray-950">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-purple-400 text-xs sm:text-sm font-bold tracking-wider mb-3 sm:mb-4">CÓMO FUNCIONA</p>
-          <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-12 sm:mb-20">
-            Simple, rápido<br className="hidden sm:block" /> y transparente
-          </h2>
-
-          <div className="grid sm:grid-cols-2 gap-6 sm:gap-8">
-            <div className="border border-purple-500/30 rounded-2xl p-8 sm:p-10">
-              <div className="text-4xl sm:text-5xl font-bold text-purple-400/40 mb-4 sm:mb-6">01</div>
-              <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Registrate gratis</h3>
-              <p className="text-gray-400 text-base sm:text-lg leading-relaxed">
-                Creá tu cuenta en segundos y unite a la liga general.
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-gray-800/30 border border-gray-700 rounded-2xl p-8 hover:border-purple-500/50 transition-all">
+              <div className="text-5xl mb-4">1️⃣</div>
+              <h3 className="text-xl font-bold mb-3">Registrate gratis</h3>
+              <p className="text-gray-400">
+                Creá tu cuenta en segundos y unite a la liga general
               </p>
             </div>
 
-            <div className="border border-purple-500/30 rounded-2xl p-8 sm:p-10">
-              <div className="text-4xl sm:text-5xl font-bold text-purple-400/40 mb-4 sm:mb-6">02</div>
-              <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Pronosticá</h3>
-              <p className="text-gray-400 text-base sm:text-lg leading-relaxed">
-                Elegí el resultado de cada partido antes de que empiece.
+            <div className="bg-gray-800/30 border border-gray-700 rounded-2xl p-8 hover:border-purple-500/50 transition-all">
+              <div className="text-5xl mb-4">2️⃣</div>
+              <h3 className="text-xl font-bold mb-3">Pronosticá</h3>
+              <p className="text-gray-400">
+                Elegí el resultado de cada partido antes de que empiece
               </p>
             </div>
 
-            <div className="border border-purple-500/30 rounded-2xl p-8 sm:p-10">
-              <div className="text-4xl sm:text-5xl font-bold text-purple-400/40 mb-4 sm:mb-6">03</div>
-              <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Sumá puntos</h3>
-              <p className="text-gray-400 text-base sm:text-lg leading-relaxed">
-                +3 por resultado exacto, +1 por acertar ganador o empate.
+            <div className="bg-gray-800/30 border border-gray-700 rounded-2xl p-8 hover:border-purple-500/50 transition-all">
+              <div className="text-5xl mb-4">3️⃣</div>
+              <h3 className="text-xl font-bold mb-3">Sumá puntos</h3>
+              <p className="text-gray-400">
+                +3 por resultado exacto, +1 por acertar ganador o empate
               </p>
             </div>
 
-            <div className="border border-purple-500/30 rounded-2xl p-8 sm:p-10">
-              <div className="text-4xl sm:text-5xl font-bold text-purple-400/40 mb-4 sm:mb-6">04</div>
-              <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Competí y ganá</h3>
-              <p className="text-gray-400 text-base sm:text-lg leading-relaxed">
-                Los mejores ganan wARS al final del torneo.
+            <div className="bg-gray-800/30 border border-gray-700 rounded-2xl p-8 hover:border-purple-500/50 transition-all">
+              <div className="text-5xl mb-4">4️⃣</div>
+              <h3 className="text-xl font-bold mb-3">Ganá premios</h3>
+              <p className="text-gray-400">
+                Los mejores del ranking ganan wARS al final del Mundial
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA FINAL */}
-      <section className="py-20 sm:py-32 px-4 sm:px-6 bg-gradient-to-t from-purple-950/20 to-black">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-6 sm:mb-8 leading-tight">
-            El Mundial empieza<br />en junio 2026
+      <section className="py-20 bg-gradient-to-b from-gray-900/50 to-black">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <div className="inline-block bg-purple-900/30 border border-purple-500/50 rounded-full px-6 py-2 mb-6">
+              <span className="text-sm font-bold text-purple-300">PREMIOS</span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+              1.75M wARS en premios
+            </h2>
+            <p className="text-xl text-gray-400">
+              Liga General Ripio Mundial
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div className="bg-gradient-to-br from-yellow-900/20 to-yellow-700/10 border-2 border-yellow-500/50 rounded-2xl p-8 text-center">
+              <div className="text-7xl mb-4">🥇</div>
+              <div className="text-4xl font-bold text-yellow-400 mb-2">1MM wARS</div>
+              <div className="text-gray-400">Primer puesto</div>
+            </div>
+
+            <div className="bg-gradient-to-br from-gray-700/20 to-gray-600/10 border-2 border-gray-400/50 rounded-2xl p-8 text-center">
+              <div className="text-7xl mb-4">🥈</div>
+              <div className="text-4xl font-bold text-gray-300 mb-2">500K wARS</div>
+              <div className="text-gray-400">Segundo puesto</div>
+            </div>
+
+            <div className="bg-gradient-to-br from-orange-900/20 to-orange-700/10 border-2 border-orange-500/50 rounded-2xl p-8 text-center">
+              <div className="text-7xl mb-4">🥉</div>
+              <div className="text-4xl font-bold text-orange-400 mb-2">250K wARS</div>
+              <div className="text-gray-400">Tercer puesto</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-gradient-to-t from-purple-900/20 to-black">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-4xl sm:text-5xl font-bold mb-6">
+            El Mundial empieza en junio 2026
           </h2>
-          <p className="text-base sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-2xl mx-auto px-4">
-            Registrate ahora y empezá a armar tus pronósticos.
+          <p className="text-xl text-gray-400 mb-10">
+            Registrate ahora y empezá a armar tus pronósticos
           </p>
           {!user ? (
-            <Link 
+            <Link
               href="/register"
-              className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 sm:px-10 py-4 sm:py-5 rounded-full text-base sm:text-lg transition-colors"
+              className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold px-12 py-5 rounded-xl text-lg transition-all transform hover:scale-105 shadow-2xl"
             >
-              Crear cuenta gratis
+              🚀 Crear cuenta gratis
             </Link>
           ) : (
-            <Link 
+            <Link
               href="/matches"
-              className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 sm:px-10 py-4 sm:py-5 rounded-full text-base sm:text-lg transition-colors"
+              className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold px-12 py-5 rounded-xl text-lg transition-all transform hover:scale-105 shadow-2xl"
             >
-              Ver mis pronósticos
+              ⚽ Ver mis pronósticos
             </Link>
           )}
         </div>
