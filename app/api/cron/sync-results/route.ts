@@ -39,24 +39,29 @@ async function syncResults() {
   let updatedCount = 0
 
   const now = new Date()
-  const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
-  const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+  
+  // 🔧 VENTANA AMPLIADA: 30 días atrás, 180 días adelante (6 meses)
+  // Durante el Mundial, cambiar a 1 día antes/después
+  const windowStart = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+  const windowEnd = new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000)
+
+  logs.push(`🔍 Ventana de búsqueda: ${windowStart.toISOString().split('T')[0]} a ${windowEnd.toISOString().split('T')[0]}`)
 
   const { data: matches, error: matchesError } = await supabase
     .from('matches')
-    .select('id, match_number, home_team, away_team, kickoff_at, status')
-    .gte('kickoff_at', yesterday.toISOString())
-    .lte('kickoff_at', tomorrow.toISOString())
+    .select('id, match_number, home_team, away_team, kickoff_at, status, home_team_code, away_team_code')
+    .gte('kickoff_at', windowStart.toISOString())
+    .lte('kickoff_at', windowEnd.toISOString())
     .in('status', ['scheduled', 'live'])
     .order('match_number', { ascending: true })
 
   if (matchesError) {
-    logs.push(`Error DB: ${matchesError.message}`)
+    logs.push(`❌ Error DB: ${matchesError.message}`)
     return NextResponse.json({ error: matchesError.message, logs }, { status: 500 })
   }
 
   if (!matches || matches.length === 0) {
-    logs.push(`No hay partidos en ventana activa`)
+    logs.push(`ℹ️ No hay partidos en ventana activa`)
     return NextResponse.json({ 
       message: 'No hay partidos activos',
       synced: 0,
@@ -64,24 +69,18 @@ async function syncResults() {
     })
   }
 
-  logs.push(`${matches.length} partidos en ventana activa`)
+  logs.push(`📊 ${matches.length} partidos en ventana activa`)
 
   const LEAGUE_ID = '4429'
   const SEASON = '2026'
 
-  logs.push(`Consultando TheSportsDB Mundial ${SEASON}`)
+  logs.push(`🔄 Consultando TheSportsDB Mundial ${SEASON}...`)
 
-  let apiUrl = `https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=${LEAGUE_ID}&s=${SEASON}`
-  let apiResponse = await fetch(apiUrl)
-
-  if (!apiResponse.ok || apiResponse.status === 404) {
-    logs.push(`Temporada 2026 no disponible, usando 2022 para testing`)
-    apiUrl = `https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=${LEAGUE_ID}&s=2022`
-    apiResponse = await fetch(apiUrl)
-  }
+  const apiUrl = `https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=${LEAGUE_ID}&s=${SEASON}`
+  const apiResponse = await fetch(apiUrl)
 
   if (!apiResponse.ok) {
-    logs.push(`TheSportsDB error ${apiResponse.status}`)
+    logs.push(`❌ TheSportsDB error ${apiResponse.status}`)
     throw new Error(`TheSportsDB error: ${apiResponse.status}`)
   }
 
@@ -89,7 +88,7 @@ async function syncResults() {
   const events = apiData.events || []
 
   if (events.length === 0) {
-    logs.push(`TheSportsDB sin eventos`)
+    logs.push(`ℹ️ TheSportsDB sin eventos para ${SEASON}`)
     return NextResponse.json({ 
       message: 'API sin datos',
       synced: 0,
@@ -97,7 +96,7 @@ async function syncResults() {
     })
   }
 
-  logs.push(`${events.length} partidos recibidos`)
+  logs.push(`✅ ${events.length} partidos recibidos de TheSportsDB`)
 
   const mapStatus = (strStatus: string | null): string => {
     if (!strStatus) return 'scheduled'
@@ -108,7 +107,11 @@ async function syncResults() {
   }
 
   const normalize = (name: string): string => {
-    return name.toLowerCase().replace(/\s+/g, ' ').trim()
+    return name
+      .toLowerCase()
+      .replace(/\s+/g, ' ')
+      .replace(/rep\.|republic/gi, '')
+      .trim()
   }
 
   for (const match of matches) {
@@ -119,11 +122,24 @@ async function syncResults() {
       if (!e.strHomeTeam || !e.strAwayTeam) return false
       const apiHome = normalize(e.strHomeTeam)
       const apiAway = normalize(e.strAwayTeam)
-      return (apiHome.includes(normHome) || normHome.includes(apiHome)) &&
-             (apiAway.includes(normAway) || normAway.includes(apiAway))
+      
+      const homeMatch = 
+        apiHome.includes(normHome) || 
+        normHome.includes(apiHome) ||
+        apiHome.split(' ')[0] === normHome.split(' ')[0]
+      
+      const awayMatch = 
+        apiAway.includes(normAway) || 
+        normAway.includes(apiAway) ||
+        apiAway.split(' ')[0] === normAway.split(' ')[0]
+      
+      return homeMatch && awayMatch
     })
 
-    if (!apiMatch) continue
+    if (!apiMatch) {
+      logs.push(`⚠️ No match: ${match.home_team} vs ${match.away_team}`)
+      continue
+    }
 
     const homeScore = apiMatch.intHomeScore ? parseInt(apiMatch.intHomeScore) : null
     const awayScore = apiMatch.intAwayScore ? parseInt(apiMatch.intAwayScore) : null
@@ -142,17 +158,20 @@ async function syncResults() {
 
       if (!updateError) {
         updatedCount++
-        logs.push(`Actualizado #${match.match_number}: ${homeScore}-${awayScore}`)
+        logs.push(`✅ #${match.match_number}: ${match.home_team} ${homeScore}-${awayScore} ${match.away_team}`)
       }
+    } else {
+      logs.push(`ℹ️ #${match.match_number} sin scores aún (${apiMatch.strStatus})`)
     }
   }
 
   if (updatedCount > 0) {
-    logs.push(`Recalculando clasificacion`)
+    logs.push(`♻️ Recalculando clasificación...`)
     await supabase.rpc('resolve_qualified_teams')
+    logs.push(`✅ Clasificación recalculada`)
   }
 
-  logs.push(`RESUMEN: ${updatedCount} actualizados`)
+  logs.push(`\n📈 RESUMEN: ${updatedCount} actualizados de ${matches.length} verificados`)
 
   return NextResponse.json({
     success: true,
