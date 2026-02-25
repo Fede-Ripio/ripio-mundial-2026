@@ -66,61 +66,68 @@ async function syncResults() {
 
   logs.push(`${matches.length} partidos en ventana activa`)
 
-  const apiKey = process.env.API_FOOTBALL_KEY
-  if (!apiKey) {
-    logs.push('API_FOOTBALL_KEY no configurada')
-    return NextResponse.json({ error: 'API_FOOTBALL_KEY no configurada', logs }, { status: 500 })
+  const LEAGUE_ID = '4429'
+  const SEASON = '2026'
+
+  logs.push(`Consultando TheSportsDB Mundial ${SEASON}`)
+
+  let apiUrl = `https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=${LEAGUE_ID}&s=${SEASON}`
+  let apiResponse = await fetch(apiUrl)
+
+  if (!apiResponse.ok || apiResponse.status === 404) {
+    logs.push(`Temporada 2026 no disponible, usando 2022 para testing`)
+    apiUrl = `https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=${LEAGUE_ID}&s=2022`
+    apiResponse = await fetch(apiUrl)
   }
 
-  const LEAGUE_ID = 1
-  const SEASON = 2022
-
-  const apiUrl = `https://v3.football.api-sports.io/fixtures?league=${LEAGUE_ID}&season=${SEASON}`
-  
-  logs.push(`Consultando API-Football Mundial ${SEASON}`)
-
-  const apiResponse = await fetch(apiUrl, {
-    headers: {
-      'x-apisports-key': apiKey,
-    },
-  })
-
   if (!apiResponse.ok) {
-    logs.push(`API-Football error ${apiResponse.status}`)
-    throw new Error(`API-Football error: ${apiResponse.status}`)
+    logs.push(`TheSportsDB error ${apiResponse.status}`)
+    throw new Error(`TheSportsDB error: ${apiResponse.status}`)
   }
 
   const apiData = await apiResponse.json()
-  const fixtures = apiData.response || []
+  const events = apiData.events || []
 
-  if (fixtures.length === 0) {
-    logs.push('API sin datos')
-    return NextResponse.json({ message: 'API sin datos', synced: 0, logs })
+  if (events.length === 0) {
+    logs.push(`TheSportsDB sin eventos`)
+    return NextResponse.json({ 
+      message: 'API sin datos',
+      synced: 0,
+      logs 
+    })
   }
 
-  logs.push(`${fixtures.length} partidos recibidos de la API`)
+  logs.push(`${events.length} partidos recibidos`)
+
+  const mapStatus = (strStatus: string | null): string => {
+    if (!strStatus) return 'scheduled'
+    const s = strStatus.toUpperCase()
+    if (s === 'FT' || s === 'AET' || s === 'PEN') return 'finished'
+    if (['1H', 'HT', '2H', 'ET', 'P', 'LIVE'].includes(s)) return 'live'
+    return 'scheduled'
+  }
+
+  const normalize = (name: string): string => {
+    return name.toLowerCase().replace(/\s+/g, ' ').trim()
+  }
 
   for (const match of matches) {
-    const apiMatch = fixtures.find((f: any) => {
-      const homeMatch = f.teams.home.name.toLowerCase().includes(match.home_team.toLowerCase()) ||
-                        match.home_team.toLowerCase().includes(f.teams.home.name.toLowerCase())
-      const awayMatch = f.teams.away.name.toLowerCase().includes(match.away_team.toLowerCase()) ||
-                        match.away_team.toLowerCase().includes(f.teams.away.name.toLowerCase())
-      return homeMatch && awayMatch
+    const normHome = normalize(match.home_team)
+    const normAway = normalize(match.away_team)
+
+    const apiMatch = events.find((e: any) => {
+      if (!e.strHomeTeam || !e.strAwayTeam) return false
+      const apiHome = normalize(e.strHomeTeam)
+      const apiAway = normalize(e.strAwayTeam)
+      return (apiHome.includes(normHome) || normHome.includes(apiHome)) &&
+             (apiAway.includes(normAway) || normAway.includes(apiAway))
     })
 
     if (!apiMatch) continue
 
-    const homeScore = apiMatch.goals.home
-    const awayScore = apiMatch.goals.away
-    const apiStatus = apiMatch.fixture.status.short
-
-    let newStatus = 'scheduled'
-    if (apiStatus === 'FT' || apiStatus === 'AET' || apiStatus === 'PEN') {
-      newStatus = 'finished'
-    } else if (['1H', '2H', 'HT', 'ET', 'P'].includes(apiStatus)) {
-      newStatus = 'live'
-    }
+    const homeScore = apiMatch.intHomeScore ? parseInt(apiMatch.intHomeScore) : null
+    const awayScore = apiMatch.intAwayScore ? parseInt(apiMatch.intAwayScore) : null
+    const newStatus = mapStatus(apiMatch.strStatus)
 
     if (homeScore !== null && awayScore !== null) {
       const { error: updateError } = await supabase
@@ -145,12 +152,13 @@ async function syncResults() {
     await supabase.rpc('resolve_qualified_teams')
   }
 
-  logs.push(`RESUMEN: ${updatedCount} partidos actualizados`)
+  logs.push(`RESUMEN: ${updatedCount} actualizados`)
 
   return NextResponse.json({
     success: true,
     checked: matches.length,
     updated: updatedCount,
+    api: 'TheSportsDB',
     season: SEASON,
     timestamp: new Date().toISOString(),
     logs
