@@ -16,8 +16,8 @@ export default function SyncButton() {
     setShowLogs(true)
 
     try {
-      const response = await fetch('/api/sync-results', {
-        method: 'POST',
+      const response = await fetch('/api/cron/sync-results', {
+        method: 'GET',
       })
 
       const data = await response.json()

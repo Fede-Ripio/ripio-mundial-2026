@@ -47,6 +47,11 @@ export default function AdminMatchForm({ match }: { match: any }) {
         throw error
       }
 
+      // Si el partido quedó finalizado, recalcular clasificación automáticamente
+      if (status === 'finished') {
+        await supabase.rpc('resolve_qualified_teams')
+      }
+
       console.log('Guardado exitoso:', data)
       setMessage('✅ Guardado exitosamente')
       
