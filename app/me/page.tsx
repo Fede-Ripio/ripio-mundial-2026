@@ -28,9 +28,13 @@ export default async function MePage() {
     .from('matches')
     .select('*', { count: 'exact', head: true })
 
+  const { count: finishedMatches } = await supabase
+    .from('matches')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'finished')
+
   // Scoring con lib centralizado
   const { points, exactHits, correctOutcomes } = calculateUserScore(predictions || [])
-  const completionRate = totalMatches ? Math.round((predictions?.length || 0) / totalMatches * 100) : 0
 
   // Calcular posición en la liga general
   let generalPosition: number | null = null
@@ -75,18 +79,22 @@ export default async function MePage() {
           <div className="border border-purple-500/30 rounded-2xl p-5 text-center">
             <div className="text-4xl font-bold text-purple-400 mb-1">{points}</div>
             <div className="text-xs text-gray-400">Puntos</div>
+            {finishedMatches ? <div className="text-xs text-gray-600 mt-0.5">de {finishedMatches} jugados</div> : null}
           </div>
           <div className="border border-purple-500/30 rounded-2xl p-5 text-center">
             <div className="text-4xl font-bold text-green-400 mb-1">{exactHits}</div>
             <div className="text-xs text-gray-400">Exactos</div>
+            {finishedMatches ? <div className="text-xs text-gray-600 mt-0.5">de {finishedMatches} jugados</div> : null}
           </div>
           <div className="border border-purple-500/30 rounded-2xl p-5 text-center">
             <div className="text-4xl font-bold text-yellow-400 mb-1">{correctOutcomes}</div>
             <div className="text-xs text-gray-400">Aciertos</div>
+            {finishedMatches ? <div className="text-xs text-gray-600 mt-0.5">de {finishedMatches} jugados</div> : null}
           </div>
           <div className="border border-purple-500/30 rounded-2xl p-5 text-center">
             <div className="text-4xl font-bold text-blue-400 mb-1">{predictions?.length || 0}</div>
             <div className="text-xs text-gray-400">Pronósticos</div>
+            {totalMatches ? <div className="text-xs text-gray-600 mt-0.5">de {totalMatches} partidos</div> : null}
           </div>
           <div className="border border-purple-500/30 rounded-2xl p-5 text-center col-span-2 md:col-span-1">
             {generalPosition ? (
