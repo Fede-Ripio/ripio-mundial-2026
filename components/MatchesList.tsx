@@ -34,28 +34,32 @@ interface MatchesListProps {
   nextMatch?: Match | null
 }
 
-type TabKey = 'group' | 'ro32' | 'ro16' | 'quarterfinal' | 'semifinal' | 'final'
+type TabKey = 'upcoming' | 'group' | 'ro32' | 'ro16' | 'quarterfinal' | 'semifinal' | 'final'
 
 const TABS: { key: TabKey; label: string }[] = [
-  { key: 'group',        label: 'Grupos'   },
-  { key: 'ro32',         label: 'R32'      },
-  { key: 'ro16',         label: 'Octavos'  },
-  { key: 'quarterfinal', label: 'Cuartos'  },
-  { key: 'semifinal',    label: 'Semis'    },
-  { key: 'final',        label: 'Final'    },
+  { key: 'upcoming',     label: 'Próximos'  },
+  { key: 'group',        label: 'Grupos'    },
+  { key: 'ro32',         label: 'R32'       },
+  { key: 'ro16',         label: 'Octavos'   },
+  { key: 'quarterfinal', label: 'Cuartos'   },
+  { key: 'semifinal',    label: 'Semis'     },
+  { key: 'final',        label: 'Final'     },
 ]
 
-function defaultTab(nextMatch?: Match | null): TabKey {
-  if (!nextMatch) return 'group'
-  const stage = nextMatch.stage as TabKey
-  if (stage === ('third_place' as any)) return 'final'
-  return TABS.find(t => t.key === stage)?.key ?? 'group'
-}
-
 export default function MatchesList({ matches, predictions, isLoggedIn, nextMatch }: MatchesListProps) {
-  const [activeTab, setActiveTab] = useState<TabKey>(defaultTab(nextMatch))
+  const [activeTab, setActiveTab] = useState<TabKey>('upcoming')
 
   const predictionsMap = new Map(predictions.map(p => [p.match_id, p]))
+
+  // Upcoming: non-finished matches sorted by kickoff (soonest first)
+  const upcomingMatches = matches
+    .filter(m => m.status !== 'finished')
+    .sort((a, b) => {
+      if (!a.kickoff_at && !b.kickoff_at) return 0
+      if (!a.kickoff_at) return 1
+      if (!b.kickoff_at) return -1
+      return new Date(a.kickoff_at).getTime() - new Date(b.kickoff_at).getTime()
+    })
 
   const groupMatches    = matches.filter(m => m.stage === 'group')
   const ro32Matches     = matches.filter(m => m.stage === 'ro32')
@@ -66,6 +70,7 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
   const finalMatch      = matches.filter(m => m.stage === 'final')
 
   const matchesByTab: Record<TabKey, Match[]> = {
+    upcoming:     upcomingMatches,
     group:        groupMatches,
     ro32:         ro32Matches,
     ro16:         ro16Matches,
@@ -74,6 +79,7 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
     final:        [...thirdPlaceMatch, ...finalMatch],
   }
 
+  // Badge: pending predictions (not closed, not finished, no prediction yet)
   const pendingByTab = (tab: TabKey) => {
     if (!isLoggedIn) return 0
     return matchesByTab[tab].filter(m => {
@@ -116,22 +122,28 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
         </div>
       </div>
 
-      {/* PRÓXIMO PARTIDO — below tabs, always visible */}
-      {nextMatch && (
-        <section>
-          <h2 className="text-base font-semibold text-gray-500 mb-3 uppercase tracking-wide">Próximo partido</h2>
-          <div className="flex flex-col items-center">
-            <MatchCard
-              match={nextMatch}
-              prediction={predictionsMap.get(nextMatch.id)}
-              isLoggedIn={isLoggedIn}
-            />
-          </div>
-        </section>
-      )}
-
       {/* TAB CONTENT */}
       <div className="space-y-8">
+
+        {/* PRÓXIMOS */}
+        {activeTab === 'upcoming' && (
+          <section>
+            {upcomingMatches.length === 0 ? (
+              <p className="text-center text-gray-600 py-8">No hay partidos próximos</p>
+            ) : (
+              <div className="flex flex-col items-center space-y-3">
+                {upcomingMatches.map(match => (
+                  <MatchCard
+                    key={match.id}
+                    match={match}
+                    prediction={predictionsMap.get(match.id)}
+                    isLoggedIn={isLoggedIn}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* GRUPOS */}
         {activeTab === 'group' && (
