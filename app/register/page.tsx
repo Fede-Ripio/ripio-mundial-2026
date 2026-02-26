@@ -41,6 +41,13 @@ export default function RegisterPage() {
     setLoading(true)
     setError('')
 
+    // Validar display name obligatorio
+    if (!displayName.trim() || displayName.trim().length < 3) {
+      setError('El nombre de usuario es obligatorio y debe tener al menos 3 caracteres')
+      setLoading(false)
+      return
+    }
+
     try {
       const supabase = createClient()
 
@@ -54,12 +61,10 @@ export default function RegisterPage() {
         throw new Error('Este email ya está registrado. Intentá iniciar sesión.')
       }
 
-      if (displayName && displayName.trim()) {
-        const isAvailable = await checkUsernameAvailable(displayName.trim())
-        if (!isAvailable) {
-          setLoading(false)
-          return
-        }
+      const isAvailable = await checkUsernameAvailable(displayName.trim())
+      if (!isAvailable) {
+        setLoading(false)
+        return
       }
 
       const redirectUrl = typeof window !== 'undefined' 
@@ -71,7 +76,7 @@ export default function RegisterPage() {
         options: {
           emailRedirectTo: redirectUrl,
           data: {
-            display_name: displayName.trim() || email.split('@')[0],
+            display_name: displayName.trim(),
           },
         },
       })
@@ -114,6 +119,7 @@ export default function RegisterPage() {
               onChange={(e) => setDisplayName(e.target.value)}
               onBlur={(e) => e.target.value.trim() && checkUsernameAvailable(e.target.value.trim())}
               placeholder="Ej: Lionel"
+              required
               minLength={3}
               maxLength={20}
               className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-purple-500"
