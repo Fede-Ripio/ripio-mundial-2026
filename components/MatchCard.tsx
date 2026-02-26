@@ -2,6 +2,14 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { calculatePredictionScore } from '@/lib/scoring'
+
+interface MatchPrediction {
+  user_id: string
+  home_goals: number
+  away_goals: number
+  profiles: { display_name: string | null } | null
+}
 
 export default function MatchCard({ match, prediction, isLoggedIn }: any) {
   const router = useRouter()
@@ -11,6 +19,10 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
   const hasMounted = useRef(false)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
+  // Panel "Ver pronósticos"
+  const [showPredictions, setShowPredictions] = useState(false)
+  const [allPredictions, setAllPredictions] = useState<MatchPrediction[]>([])
+  const [loadingPredictions, setLoadingPredictions] = useState(false)
 
   const isClosed = match.kickoff_at && new Date(match.kickoff_at) < new Date()
   const isFinished = match.status === 'finished'
@@ -75,6 +87,28 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
       setTimeout(() => setMessage(''), 3000)
     } finally {
       setSaving(false)
+    }
+  }
+
+  const togglePredictions = async () => {
+    if (showPredictions) {
+      setShowPredictions(false)
+      return
+    }
+    if (allPredictions.length > 0) {
+      setShowPredictions(true)
+      return
+    }
+    setLoadingPredictions(true)
+    try {
+      const res = await fetch(`/api/predictions?match_id=${match.id}`)
+      if (res.ok) {
+        const data = await res.json()
+        setAllPredictions(data.predictions || [])
+      }
+    } finally {
+      setLoadingPredictions(false)
+      setShowPredictions(true)
     }
   }
 
@@ -388,6 +422,77 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
       {match.notes && (
         <div className="mt-2 text-xs text-gray-500 italic bg-gray-800/30 rounded px-2 py-1">
           ℹ️ {match.notes}
+        </div>
+      )}
+
+      {/* PANEL VER PRONÓSTICOS — visible después del kickoff */}
+      {isClosed && (
+        <div className="mt-3 border-t border-gray-700 pt-3">
+          <button
+            onClick={togglePredictions}
+            className="flex items-center gap-2 text-xs text-gray-400 hover:text-purple-400 transition-colors font-medium"
+          >
+            {loadingPredictions ? (
+              <span>⏳ Cargando...</span>
+            ) : (
+              <>
+                <span>👥</span>
+                <span>{showPredictions ? 'Ocultar pronósticos' : 'Ver pronósticos'}</span>
+                {!showPredictions && allPredictions.length === 0 && <span className="text-gray-600">(click para ver)</span>}
+                {allPredictions.length > 0 && <span className="text-gray-600">({allPredictions.length})</span>}
+                <span className="text-gray-600">{showPredictions ? '▲' : '▼'}</span>
+              </>
+            )}
+          </button>
+
+          {showPredictions && (
+            <div className="mt-3 space-y-1 max-h-60 overflow-y-auto">
+              {allPredictions.length === 0 ? (
+                <p className="text-xs text-gray-500 text-center py-2">Sin pronósticos registrados</p>
+              ) : (
+                allPredictions.map((p, i) => {
+                  const name = p.profiles?.display_name || 'Anónimo'
+                  const isMe = prediction && p.home_goals === prediction.home_goals && p.away_goals === prediction.away_goals
+                  const score = isFinished && match.home_score !== null
+                    ? calculatePredictionScore({
+                        home_goals: p.home_goals,
+                        away_goals: p.away_goals,
+                        home_score: match.home_score,
+                        away_score: match.away_score,
+                      })
+                    : null
+
+                  return (
+                    <div
+                      key={i}
+                      className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs ${
+                        isMe ? 'bg-purple-900/30 border border-purple-500/30' : 'bg-gray-800/40'
+                      }`}
+                    >
+                      <span className="text-gray-300 truncate max-w-[120px]">
+                        {isMe ? <strong>{name} (vos)</strong> : name}
+                      </span>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className="font-mono font-bold text-white">
+                          {p.home_goals} - {p.away_goals}
+                        </span>
+                        {score && (
+                          <span className={`font-bold ${
+                            score.type === 'exact' ? 'text-green-400' :
+                            score.type === 'outcome' ? 'text-yellow-400' :
+                            'text-gray-500'
+                          }`}>
+                            {score.type === 'exact' ? '🎉 +3' :
+                             score.type === 'outcome' ? '✅ +1' : '❌ 0'}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

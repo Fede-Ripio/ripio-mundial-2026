@@ -2,7 +2,8 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import ShareLeagueCompact from '@/components/ShareLeagueCompact'
-import { calculateUserScore, compareLeaderboard } from '@/lib/scoring'
+import LeaguePredictionsPanel from '@/components/LeaguePredictionsPanel'
+import { calculateUserScore, compareLeaderboard, calculatePredictionScore } from '@/lib/scoring'
 
 export const dynamic = 'force-dynamic'
 
@@ -28,6 +29,29 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
     const score = calculateUserScore(userPredictions)
     return { ...member, ...score }
   }).sort(compareLeaderboard)
+
+  // Agrupar pronósticos por partido finalizado para el panel de detalles
+  const matchMap = new Map<string, { match: any; preds: any[] }>()
+  for (const pred of (predictions || [])) {
+    const match = pred.matches
+    if (!match || match.status !== 'finished' || match.home_score === null) continue
+    if (!matchMap.has(match.id)) matchMap.set(match.id, { match, preds: [] })
+    const member = members?.find(m => m.user_id === pred.user_id)
+    matchMap.get(match.id)!.preds.push({
+      user_id: pred.user_id,
+      displayName: member?.profiles?.display_name || 'Anónimo',
+      home_goals: pred.home_goals,
+      away_goals: pred.away_goals,
+      score: calculatePredictionScore({
+        home_goals: pred.home_goals,
+        away_goals: pred.away_goals,
+        home_score: match.home_score,
+        away_score: match.away_score,
+      }),
+    })
+  }
+  const finishedMatchEntries = Array.from(matchMap.values())
+    .sort((a, b) => a.match.match_number - b.match.match_number)
 
   return (
     <div className="min-h-screen bg-black text-white py-8 sm:py-12 px-4 sm:px-6">
@@ -120,6 +144,12 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
             </div>
           </div>
         </div>
+
+        {/* PRONÓSTICOS POR PARTIDO */}
+        <LeaguePredictionsPanel
+          matchEntries={finishedMatchEntries}
+          currentUserId={user.id}
+        />
 
         {/* INVITAR AMIGOS - COMPACTO */}
         {!league.is_public && (

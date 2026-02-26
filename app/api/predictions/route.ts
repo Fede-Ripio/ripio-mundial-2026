@@ -69,6 +69,48 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     const supabase = await createServerSupabaseClient()
+    const { searchParams } = new URL(request.url)
+    const matchId = searchParams.get('match_id')
+
+    // --- Pronósticos de TODOS para un partido (público después del kickoff) ---
+    if (matchId) {
+      const { data: match } = await supabase
+        .from('matches')
+        .select('kickoff_at, status, home_score, away_score')
+        .eq('id', matchId)
+        .single()
+
+      if (!match) {
+        return NextResponse.json({ error: 'Partido no encontrado' }, { status: 404 })
+      }
+
+      const kickoff = match.kickoff_at ? new Date(match.kickoff_at) : null
+      const hasStarted =
+        (kickoff && new Date() >= kickoff) ||
+        match.status === 'live' ||
+        match.status === 'finished'
+
+      if (!hasStarted) {
+        return NextResponse.json({ error: 'El partido aún no comenzó' }, { status: 403 })
+      }
+
+      const { data: predictions } = await supabase
+        .from('predictions')
+        .select('user_id, home_goals, away_goals, profiles(display_name)')
+        .eq('match_id', matchId)
+        .order('home_goals', { ascending: false })
+
+      return NextResponse.json({
+        predictions: predictions || [],
+        match: {
+          home_score: match.home_score,
+          away_score: match.away_score,
+          status: match.status,
+        },
+      })
+    }
+
+    // --- Pronósticos del usuario actual ---
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
