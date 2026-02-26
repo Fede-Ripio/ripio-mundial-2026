@@ -185,7 +185,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
 
   const getFlagUrl = (code: string | null | undefined) => {
     if (!code) return null
-    return `https://flagcdn.com/48x36/${code.toLowerCase()}.png`
+    return `https://flagcdn.com/160x120/${code.toLowerCase()}.png`
   }
 
   const stageLabels: Record<string, string> = {
