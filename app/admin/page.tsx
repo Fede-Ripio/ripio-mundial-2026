@@ -78,7 +78,7 @@ export default async function AdminPage() {
                   Actualiza automáticamente los resultados desde la API oficial
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  ⚠️ Mundial 2026 aún no existe. Usando Mundial 2022 para testing.
+                  Sincroniza resultados desde TheSportsDB (Mundial 2026).
                 </p>
               </div>
               <SyncButton />
