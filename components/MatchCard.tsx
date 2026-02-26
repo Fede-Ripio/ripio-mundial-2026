@@ -36,7 +36,7 @@ const ScoreControl = ({
   }
 
   return (
-    <div className={`flex flex-col items-center gap-1.5 ${isDisabled ? 'opacity-40 pointer-events-none' : ''}`}>
+    <div className={`flex flex-col items-center gap-2 ${isDisabled ? 'opacity-40 pointer-events-none' : ''}`}>
       <input
         type="number"
         min="0"
@@ -55,12 +55,12 @@ const ScoreControl = ({
           focus:border-purple-400 focus:text-white
           disabled:cursor-not-allowed`}
       />
-      <div className="flex gap-1">
+      <div className="flex gap-1.5">
         <button
           type="button"
           onClick={decrement}
           disabled={isDisabled || numVal === null || numVal <= 0}
-          className="w-6 h-6 rounded-md bg-gray-800 border border-gray-700 text-gray-400 text-sm font-bold hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none"
+          className="w-9 h-9 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 text-lg font-bold hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none"
           aria-label="Menos"
         >
           −
@@ -69,7 +69,7 @@ const ScoreControl = ({
           type="button"
           onClick={increment}
           disabled={isDisabled || (numVal !== null && numVal >= 20)}
-          className="w-6 h-6 rounded-md bg-gray-800 border border-gray-700 text-gray-400 text-sm font-bold hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none"
+          className="w-9 h-9 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 text-lg font-bold hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none"
           aria-label="Más"
         >
           +
@@ -92,7 +92,10 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
 
   const isClosed = match.kickoff_at && new Date(match.kickoff_at) < new Date()
   const isFinished = match.status === 'finished'
-  const teamsNotDefined = !!(match.home_team_ref || match.away_team_ref) && !match.is_resolved
+  // Partidos de grupos: siempre habilitados (equipos son fijos desde el sorteo)
+  // Partidos de eliminación directa: bloqueados hasta que is_resolved = true
+  const isKnockout = match.stage !== 'group'
+  const teamsNotDefined = isKnockout && !match.is_resolved
 
   const displayHomeTeam = match.is_resolved
     ? match.home_team
