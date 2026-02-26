@@ -11,55 +11,109 @@ interface MatchPrediction {
   profiles: { display_name: string | null } | null
 }
 
+// ScoreControl is defined outside MatchCard to avoid remount on every render
+const ScoreControl = ({
+  value,
+  onChange,
+  disabled,
+  teamsNotDefined,
+}: {
+  value: string
+  onChange: (v: string) => void
+  disabled: boolean
+  teamsNotDefined: boolean
+}) => {
+  const isDisabled = disabled || teamsNotDefined
+  const numVal = value === '' ? null : parseInt(value)
+
+  const decrement = () => {
+    if (numVal !== null && numVal > 0) onChange((numVal - 1).toString())
+  }
+
+  const increment = () => {
+    if (numVal === null) { onChange('0'); return }
+    if (numVal < 20) onChange((numVal + 1).toString())
+  }
+
+  return (
+    <div className={`flex items-center gap-1.5 ${isDisabled ? 'opacity-40 pointer-events-none' : ''}`}>
+      <button
+        type="button"
+        onClick={decrement}
+        disabled={isDisabled || numVal === null || numVal <= 0}
+        className="w-9 h-9 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 font-bold text-base hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none"
+        aria-label="Menos"
+      >
+        −
+      </button>
+      <input
+        type="number"
+        min="0"
+        max="20"
+        value={value}
+        onChange={(e) => {
+          const v = e.target.value
+          if (v === '' || (parseInt(v) >= 0 && parseInt(v) <= 20)) onChange(v)
+        }}
+        disabled={isDisabled}
+        placeholder="?"
+        className={`w-12 h-12 text-center font-bold text-xl rounded-lg border-2 bg-gray-900 outline-none transition-colors
+          [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
+          ${value !== '' ? 'border-purple-500 text-white' : 'border-gray-600 text-gray-500'}
+          focus:border-purple-400 focus:text-white
+          disabled:cursor-not-allowed`}
+      />
+      <button
+        type="button"
+        onClick={increment}
+        disabled={isDisabled || (numVal !== null && numVal >= 20)}
+        className="w-9 h-9 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 font-bold text-base hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none"
+        aria-label="Más"
+      >
+        +
+      </button>
+    </div>
+  )
+}
+
 export default function MatchCard({ match, prediction, isLoggedIn }: any) {
   const router = useRouter()
-  const [homeGoals, setHomeGoals] = useState(prediction?.home_goals?.toString() || '')
-  const [awayGoals, setAwayGoals] = useState(prediction?.away_goals?.toString() || '')
-  // Evita que el auto-save se dispare al montar el componente con valores iniciales
+  const [homeGoals, setHomeGoals] = useState(prediction?.home_goals?.toString() ?? '')
+  const [awayGoals, setAwayGoals] = useState(prediction?.away_goals?.toString() ?? '')
   const hasMounted = useRef(false)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
-  // Panel "Ver pronósticos"
   const [showPredictions, setShowPredictions] = useState(false)
   const [allPredictions, setAllPredictions] = useState<MatchPrediction[]>([])
   const [loadingPredictions, setLoadingPredictions] = useState(false)
 
   const isClosed = match.kickoff_at && new Date(match.kickoff_at) < new Date()
   const isFinished = match.status === 'finished'
-  
-  // Mostrar equipos reales si están resueltos, sino placeholder con referencia
-  const displayHomeTeam = match.is_resolved ? match.home_team : getPlaceholderText(match.home_team_ref, match.home_team)
-  const displayAwayTeam = match.is_resolved ? match.away_team : getPlaceholderText(match.away_team_ref, match.away_team)
-  const homeTeamCode = match.home_team_code
-  const awayTeamCode = match.away_team_code
+  const teamsNotDefined = !!(match.home_team_ref || match.away_team_ref) && !match.is_resolved
+
+  const displayHomeTeam = match.is_resolved
+    ? match.home_team
+    : getPlaceholderText(match.home_team_ref, match.home_team)
+  const displayAwayTeam = match.is_resolved
+    ? match.away_team
+    : getPlaceholderText(match.away_team_ref, match.away_team)
 
   function getPlaceholderText(ref: any, fallback: string) {
     if (!ref) return fallback
-    
     try {
       const parsed = typeof ref === 'string' ? JSON.parse(ref) : ref
-      
       if (parsed.type === 'group_position') {
         const pos = parsed.position === 1 ? '1º' : '2º'
         return `${pos} Grupo ${parsed.group}`
       }
-      
-      if (parsed.type === 'match_winner') {
-        return `Ganador #${parsed.match_number}`
-      }
-      
+      if (parsed.type === 'match_winner') return `Ganador #${parsed.match_number}`
       return fallback
-    } catch {
-      return fallback
-    }
+    } catch { return fallback }
   }
 
   useEffect(() => {
-    if (!hasMounted.current) {
-      hasMounted.current = true
-      return
-    }
-    if (!isLoggedIn || isClosed || !homeGoals || !awayGoals) return
+    if (!hasMounted.current) { hasMounted.current = true; return }
+    if (!isLoggedIn || isClosed || homeGoals === '' || awayGoals === '') return
     const timer = setTimeout(() => { handleSave() }, 500)
     return () => clearTimeout(timer)
   }, [homeGoals, awayGoals, isLoggedIn, isClosed])
@@ -75,15 +129,15 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
         body: JSON.stringify({
           match_id: match.id,
           home_goals: parseInt(homeGoals),
-          away_goals: parseInt(awayGoals)
-        })
+          away_goals: parseInt(awayGoals),
+        }),
       })
       if (!res.ok) throw new Error('Error')
-      setMessage('✅ Guardado')
+      setMessage('Guardado')
       setTimeout(() => setMessage(''), 2000)
       router.refresh()
-    } catch (err) {
-      setMessage('❌ Error')
+    } catch {
+      setMessage('Error al guardar')
       setTimeout(() => setMessage(''), 3000)
     } finally {
       setSaving(false)
@@ -91,14 +145,8 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
   }
 
   const togglePredictions = async () => {
-    if (showPredictions) {
-      setShowPredictions(false)
-      return
-    }
-    if (allPredictions.length > 0) {
-      setShowPredictions(true)
-      return
-    }
+    if (showPredictions) { setShowPredictions(false); return }
+    if (allPredictions.length > 0) { setShowPredictions(true); return }
     setLoadingPredictions(true)
     try {
       const res = await fetch(`/api/predictions?match_id=${match.id}`)
@@ -112,348 +160,222 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
     }
   }
 
-  const calculatePoints = () => {
-    if (!prediction || match.home_score === null || match.away_score === null) return null
+  const pointsResult =
+    isFinished && isLoggedIn && prediction && match.home_score !== null
+      ? calculatePredictionScore({
+          home_goals: prediction.home_goals,
+          away_goals: prediction.away_goals,
+          home_score: match.home_score,
+          away_score: match.away_score,
+        })
+      : null
 
-    const predHome = prediction.home_goals
-    const predAway = prediction.away_goals
-    const realHome = match.home_score
-    const realAway = match.away_score
-
-    if (predHome === realHome && predAway === realAway) {
-      return { points: 3, type: 'exact' }
-    }
-
-    const predOutcome = predHome > predAway ? 'home' : predHome < predAway ? 'away' : 'draw'
-    const realOutcome = realHome > realAway ? 'home' : realHome < realAway ? 'away' : 'draw'
-
-    if (predOutcome === realOutcome) {
-      return { points: 1, type: 'outcome' }
-    }
-
-    return { points: 0, type: 'miss' }
-  }
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return 'Fecha TBD'
+  const formatKickoff = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString('es-AR', { 
-      day: 'numeric', 
+    return date.toLocaleDateString('es-AR', {
+      day: 'numeric',
       month: 'short',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     })
   }
 
-  const getFlag = (code: string | null) => {
-    if (!code) return '🏴'
+  const getFlag = (code: string | null | undefined) => {
+    if (!code) return null
     return `https://flagcdn.com/24x18/${code.toLowerCase()}.png`
   }
 
-  const shortenVenue = (venue: string) => {
-    if (!venue || venue === 'Estadio TBD') return 'Estadio TBD'
-    return venue.replace('Estadio', 'Est.').substring(0, 30)
+  const stageLabel: Record<string, string> = {
+    ro32: 'R32',
+    ro16: 'Octavos',
+    quarterfinal: 'Cuartos',
+    semifinal: 'Semifinal',
+    final: 'Final',
+    third_place: '3er Puesto',
   }
 
-  const truncateTeamName = (name: string, maxLength: number = 25) => {
-    if (name.length <= maxLength) return name
-    return name.substring(0, maxLength) + '...'
-  }
-
-  const GoalButtons = ({ value, onChange, disabled, teamName }: { 
-    value: string, 
-    onChange: (val: string) => void, 
-    disabled: boolean,
-    teamName: string
-  }) => {
-    const hasValue = value !== '' && value !== '?'
-    
-    // No permitir pronosticar si los equipos no están definidos
-    const teamsNotDefined = !!(match.home_team_ref || match.away_team_ref) && !match.is_resolved
-    
-    const isDisabled = disabled || teamsNotDefined
-    
-    return (
-      <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-        
-        <div className={`flex items-center justify-center w-16 h-16 sm:w-12 sm:h-12 bg-gray-800 rounded-lg transition-all ${
-          hasValue ? 'border-2 border-purple-500' : 'border-2 border-gray-600'
-        }`}>
-          <span className="text-white font-bold text-2xl sm:text-xl">
-            {value || '?'}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {[0, 1, 2, 3].map(num => (
-            <button
-              key={num}
-              type="button"
-              onClick={() => onChange(num.toString())}
-              disabled={isDisabled}
-              className={`w-12 h-12 sm:w-9 sm:h-9 rounded-lg font-semibold text-base sm:text-sm transition-all ${
-                value === num.toString()
-                  ? 'bg-purple-600 text-white scale-105'
-                  : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700 border border-gray-700'
-              } disabled:opacity-30 disabled:cursor-not-allowed`}
-            >
-              {num}
-            </button>
-          ))}
-
-          <select
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            disabled={isDisabled}
-            className="w-12 h-12 sm:w-9 sm:h-9 bg-gray-800/50 border border-gray-700 rounded-lg text-center font-bold text-base sm:text-sm disabled:opacity-30 disabled:cursor-not-allowed text-gray-300"
-            aria-label={`Más goles para ${teamName}`}
-          >
-            <option value="">+</option>
-            {Array.from({ length: 47 }, (_, i) => i + 4).map(num => (
-              <option key={num} value={num}>{num}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-    )
-  }
-
-  const pointsResult = isFinished && isLoggedIn ? calculatePoints() : null
-
-  // Indicador si los equipos no están definidos
-  const teamsNotDefined = !!(match.home_team_ref || match.away_team_ref) && !match.is_resolved
+  const headerStage = match.stage !== 'group' ? stageLabel[match.stage] : null
 
   return (
-    <div className="border border-purple-500/30 rounded-xl p-3 sm:p-4 hover:border-purple-500/60 transition-colors bg-gray-900/30 w-full sm:max-w-3xl">
-      
-      <div className="flex items-center justify-between gap-2 mb-3 pb-2 border-b border-gray-700">
-        <div className="flex items-center gap-2 text-xs text-gray-400">
-          <span className="font-semibold">#{match.match_number}</span>
-          {match.group_code && <span>Grupo {match.group_code}</span>}
-          {match.stage !== 'group' && (
-            <span className="text-purple-400 font-semibold">
-              {match.stage === 'ro32' ? '🔥 R32' : 
-               match.stage === 'ro16' ? '⚡ Octavos' :
-               match.stage === 'quarterfinal' ? '💥 Cuartos' :
-               match.stage === 'semifinal' ? '🌟 Semifinal' :
-               match.stage === 'final' ? '👑 FINAL' :
-               match.stage === 'third_place' ? '🥉 3º Puesto' : match.stage}
-            </span>
+    <div className="border border-gray-800 rounded-2xl overflow-hidden bg-gray-900/40 w-full sm:max-w-xl hover:border-gray-700 transition-colors">
+
+      {/* HEADER: match number, stage, date */}
+      <div className="flex items-center justify-between px-4 py-2.5 bg-gray-900/70 border-b border-gray-800 text-xs text-gray-500">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-gray-400">#{match.match_number}</span>
+          {headerStage && (
+            <span className="text-purple-400 font-semibold">{headerStage}</span>
+          )}
+          {match.group_code && !headerStage && (
+            <span>Grupo {match.group_code}</span>
           )}
         </div>
-        <div className="text-xs text-gray-500 truncate max-w-[200px]">
-          {shortenVenue(match.venue || 'Estadio TBD')}
+        <div className="text-right">
+          {match.kickoff_at
+            ? <span>{formatKickoff(match.kickoff_at)}</span>
+            : <span>Fecha TBD</span>}
         </div>
       </div>
 
-      {teamsNotDefined && !isFinished && (
-        <div className="bg-yellow-900/20 border border-yellow-500/50 rounded-lg p-3 mb-3 text-center">
-          <p className="text-yellow-400 text-sm font-medium">
-            ⏳ Equipos por definirse
-          </p>
-          <p className="text-xs text-gray-400 mt-1">
-            Los pronósticos se habilitarán cuando se conozcan los clasificados
-          </p>
-        </div>
-      )}
+      {/* BODY */}
+      <div className="px-4 py-4">
 
-      {isFinished && match.home_score !== null && isLoggedIn && (
-        <div className="space-y-3">
-          <div className="flex items-start gap-3">
-            <div className="flex items-center gap-2 w-32 sm:w-40 flex-shrink-0 pt-2">
-              {homeTeamCode ? (
-                <img src={getFlag(homeTeamCode)} alt={displayHomeTeam} className="w-6 h-4 object-cover rounded" />
-              ) : <span>🏴</span>}
-              <span className="font-bold text-sm truncate">{truncateTeamName(displayHomeTeam, 12)}</span>
-            </div>
+        {/* Teams not defined yet */}
+        {teamsNotDefined && !isFinished && (
+          <p className="text-yellow-500/70 text-xs text-center mb-3 font-medium">
+            Equipos por definirse — pronósticos se habilitarán al clasificar
+          </p>
+        )}
 
-            <div className="flex-1">
-              <div className="flex items-center gap-2 text-sm mb-1">
-                <span className="text-gray-500">Tu:</span>
-                <span className="font-bold text-lg">{prediction?.home_goals ?? '-'}</span>
-                <span className="text-gray-600">→</span>
-                <span className="text-gray-500">Real:</span>
-                <span className={`font-bold text-2xl ${
-                  prediction?.home_goals === match.home_score ? 'text-green-400' : 'text-red-400'
-                }`}>
-                  {match.home_score}
-                </span>
-                <span className="ml-1">
-                  {prediction?.home_goals === match.home_score ? '✅' : '❌'}
-                </span>
+        {/* FINISHED: show result + user prediction */}
+        {isFinished && match.home_score !== null && (
+          <div className="space-y-3">
+            {/* Result row */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                {getFlag(match.home_team_code)
+                  ? <img src={getFlag(match.home_team_code)!} alt={displayHomeTeam} className="w-6 h-4 rounded flex-shrink-0 object-cover" />
+                  : <span>🏴</span>}
+                <span className="font-semibold text-sm truncate">{displayHomeTeam}</span>
+              </div>
+              <div className="flex items-center gap-3 flex-shrink-0 px-2">
+                <span className="text-3xl font-bold">{match.home_score}</span>
+                <span className="text-gray-700 text-lg">—</span>
+                <span className="text-3xl font-bold">{match.away_score}</span>
+              </div>
+              <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
+                <span className="font-semibold text-sm truncate text-right">{displayAwayTeam}</span>
+                {getFlag(match.away_team_code)
+                  ? <img src={getFlag(match.away_team_code)!} alt={displayAwayTeam} className="w-6 h-4 rounded flex-shrink-0 object-cover" />
+                  : <span>🏴</span>}
               </div>
             </div>
+
+            {/* User prediction comparison */}
+            {isLoggedIn && (
+              prediction ? (
+                <div className="flex items-center justify-between text-sm pt-1 border-t border-gray-800">
+                  <div className="flex items-center gap-1.5 text-gray-500">
+                    <span>Tu pronóstico:</span>
+                    <span className={`font-mono font-bold ${
+                      prediction.home_goals === match.home_score ? 'text-green-400' : 'text-gray-400'
+                    }`}>{prediction.home_goals}</span>
+                    <span className="text-gray-700">—</span>
+                    <span className={`font-mono font-bold ${
+                      prediction.away_goals === match.away_score ? 'text-green-400' : 'text-gray-400'
+                    }`}>{prediction.away_goals}</span>
+                  </div>
+                  {pointsResult && (
+                    <div className={`font-bold text-sm ${
+                      pointsResult.type === 'exact' ? 'text-green-400' :
+                      pointsResult.type === 'outcome' ? 'text-yellow-400' : 'text-gray-600'
+                    }`}>
+                      {pointsResult.type === 'exact' && '+3 pts · exacto'}
+                      {pointsResult.type === 'outcome' && '+1 pt · ganador'}
+                      {pointsResult.type === 'miss' && '0 pts'}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-xs text-gray-600 text-center pt-1 border-t border-gray-800">
+                  Sin pronóstico registrado
+                </p>
+              )
+            )}
           </div>
+        )}
 
-          <div className="flex items-start gap-3">
-            <div className="flex items-center gap-2 w-32 sm:w-40 flex-shrink-0 pt-2">
-              {awayTeamCode ? (
-                <img src={getFlag(awayTeamCode)} alt={displayAwayTeam} className="w-6 h-4 object-cover rounded" />
-              ) : <span>🏴</span>}
-              <span className="font-bold text-sm truncate">{truncateTeamName(displayAwayTeam, 12)}</span>
-            </div>
-
-            <div className="flex-1">
-              <div className="flex items-center gap-2 text-sm mb-1">
-                <span className="text-gray-500">Tu:</span>
-                <span className="font-bold text-lg">{prediction?.away_goals ?? '-'}</span>
-                <span className="text-gray-600">→</span>
-                <span className="text-gray-500">Real:</span>
-                <span className={`font-bold text-2xl ${
-                  prediction?.away_goals === match.away_score ? 'text-green-400' : 'text-red-400'
-                }`}>
-                  {match.away_score}
-                </span>
-                <span className="ml-1">
-                  {prediction?.away_goals === match.away_score ? '✅' : '❌'}
-                </span>
+        {/* NOT FINISHED: prediction controls */}
+        {!isFinished && (
+          <div className="space-y-2.5">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                {getFlag(match.home_team_code)
+                  ? <img src={getFlag(match.home_team_code)!} alt={displayHomeTeam} className="w-6 h-4 rounded flex-shrink-0 object-cover" />
+                  : <span>🏴</span>}
+                <span className="font-semibold text-sm truncate">{displayHomeTeam}</span>
               </div>
+              <ScoreControl
+                value={homeGoals}
+                onChange={setHomeGoals}
+                disabled={!isLoggedIn || !!isClosed}
+                teamsNotDefined={teamsNotDefined}
+              />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                {getFlag(match.away_team_code)
+                  ? <img src={getFlag(match.away_team_code)!} alt={displayAwayTeam} className="w-6 h-4 rounded flex-shrink-0 object-cover" />
+                  : <span>🏴</span>}
+                <span className="font-semibold text-sm truncate">{displayAwayTeam}</span>
+              </div>
+              <ScoreControl
+                value={awayGoals}
+                onChange={setAwayGoals}
+                disabled={!isLoggedIn || !!isClosed}
+                teamsNotDefined={teamsNotDefined}
+              />
             </div>
           </div>
+        )}
+      </div>
 
-          {pointsResult && (
-            <div className={`mt-3 rounded-lg p-3 text-center font-bold text-sm ${
-              pointsResult.type === 'exact' 
-                ? 'bg-green-900/30 border border-green-500/50 text-green-400'
-                : pointsResult.type === 'outcome'
-                ? 'bg-blue-900/30 border border-blue-500/50 text-blue-400'
-                : 'bg-gray-800/50 border border-gray-600 text-gray-400'
-            }`}>
-              {pointsResult.type === 'exact' && <>🎉 +{pointsResult.points} puntos (¡Resultado exacto!)</>}
-              {pointsResult.type === 'outcome' && <>✅ +{pointsResult.points} punto (Acertaste el ganador)</>}
-              {pointsResult.type === 'miss' && <>❌ {pointsResult.points} puntos</>}
-            </div>
+      {/* FOOTER */}
+      <div className="flex items-center justify-between px-4 py-2.5 border-t border-gray-800 text-xs">
+        <div>
+          {isClosed && (
+            <button
+              onClick={togglePredictions}
+              className="text-gray-500 hover:text-gray-300 transition-colors"
+            >
+              {loadingPredictions
+                ? 'Cargando...'
+                : showPredictions
+                ? 'Ocultar pronósticos'
+                : `Ver pronósticos${allPredictions.length > 0 ? ` (${allPredictions.length})` : ''}`}
+            </button>
           )}
-
-          {!prediction && (
-            <div className="bg-yellow-900/20 border border-yellow-500/50 rounded-lg p-3 text-center text-yellow-400 text-sm">
-              ⚠️ No pronosticaste este partido
-            </div>
-          )}
         </div>
-      )}
-
-      {isFinished && match.home_score !== null && !isLoggedIn && (
-        <div className="flex items-center justify-center gap-6 py-4">
-          <div className="text-center">
-            <div className="flex items-center gap-2 mb-2 justify-center">
-              {homeTeamCode ? (
-                <img src={getFlag(homeTeamCode)} alt={displayHomeTeam} className="w-6 h-4" />
-              ) : <span>🏴</span>}
-              <span className="font-bold">{truncateTeamName(displayHomeTeam, 15)}</span>
-            </div>
-            <div className="text-4xl font-bold text-green-400">{match.home_score}</div>
-          </div>
-
-          <div className="text-2xl text-gray-500">-</div>
-
-          <div className="text-center">
-            <div className="flex items-center gap-2 mb-2 justify-center">
-              {awayTeamCode ? (
-                <img src={getFlag(awayTeamCode)} alt={displayAwayTeam} className="w-6 h-4" />
-              ) : <span>🏴</span>}
-              <span className="font-bold">{truncateTeamName(displayAwayTeam, 15)}</span>
-            </div>
-            <div className="text-4xl font-bold text-green-400">{match.away_score}</div>
-          </div>
-        </div>
-      )}
-
-      {!isFinished && (
-        <div className="space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <div className="flex items-center gap-2 sm:w-44 flex-shrink-0">
-              {homeTeamCode ? (
-                <img src={getFlag(homeTeamCode)} alt={displayHomeTeam} className="w-6 h-4 object-cover rounded" />
-              ) : <span>🏴</span>}
-              <span className="font-bold text-sm sm:text-base truncate">{truncateTeamName(displayHomeTeam, 20)}</span>
-            </div>
-
-            <GoalButtons value={homeGoals} onChange={setHomeGoals} disabled={!isLoggedIn || isClosed} teamName={displayHomeTeam} />
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <div className="flex items-center gap-2 sm:w-44 flex-shrink-0">
-              {awayTeamCode ? (
-                <img src={getFlag(awayTeamCode)} alt={displayAwayTeam} className="w-6 h-4 object-cover rounded" />
-              ) : <span>🏴</span>}
-              <span className="font-bold text-sm sm:text-base truncate">{truncateTeamName(displayAwayTeam, 20)}</span>
-            </div>
-
-            <GoalButtons value={awayGoals} onChange={setAwayGoals} disabled={!isLoggedIn || isClosed} teamName={displayAwayTeam} />
-          </div>
-        </div>
-      )}
-
-      <div className="flex items-center justify-between gap-2 mt-3 pt-3 border-t border-gray-700">
-        <div className="text-xs text-gray-400 flex items-center gap-2">
-          <span>⏰</span>
-          <span>{match.kickoff_at ? formatDate(match.kickoff_at) : 'Fecha TBD'}</span>
-        </div>
-
         <div className="flex items-center gap-2">
-          {!isFinished && message && (
-            <span className={`text-xs font-medium ${
-              message === 'Guardando...' ? 'text-gray-400' :
-              message === '✅ Guardado' ? 'text-green-400' :
-              'text-red-400'
+          {message && (
+            <span className={`font-medium ${
+              message === 'Guardando...' ? 'text-gray-500' :
+              message === 'Guardado' ? 'text-green-400' : 'text-red-400'
             }`}>
               {message}
             </span>
           )}
-
-          {!isFinished && !isLoggedIn && !message && (
+          {!isClosed && !isLoggedIn && !message && (
             <button
               onClick={() => router.push('/login')}
-              className="text-xs text-purple-400 hover:text-purple-300 font-semibold"
+              className="text-purple-400 hover:text-purple-300 font-semibold"
             >
-              Login →
+              Ingresar
             </button>
           )}
-
-          {!isFinished && isClosed && isLoggedIn && !message && (
-            <span className="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded">
-              🔒 Cerrado
-            </span>
+          {isClosed && isLoggedIn && !isFinished && !message && (
+            <span className="text-gray-600">🔒 Cerrado</span>
           )}
         </div>
       </div>
 
+      {/* NOTES */}
       {match.notes && (
-        <div className="mt-2 text-xs text-gray-500 italic bg-gray-800/30 rounded px-2 py-1">
-          ℹ️ {match.notes}
-        </div>
+        <div className="px-4 pb-3 text-xs text-gray-600 italic">{match.notes}</div>
       )}
 
-      {/* PANEL VER PRONÓSTICOS — visible después del kickoff */}
-      {isClosed && (
-        <div className="mt-3 border-t border-gray-700 pt-3">
-          <button
-            onClick={togglePredictions}
-            className="flex items-center gap-2 text-xs text-gray-400 hover:text-purple-400 transition-colors font-medium"
-          >
-            {loadingPredictions ? (
-              <span>⏳ Cargando...</span>
-            ) : (
-              <>
-                <span>👥</span>
-                <span>{showPredictions ? 'Ocultar pronósticos' : 'Ver pronósticos'}</span>
-                {!showPredictions && allPredictions.length === 0 && <span className="text-gray-600">(click para ver)</span>}
-                {allPredictions.length > 0 && <span className="text-gray-600">({allPredictions.length})</span>}
-                <span className="text-gray-600">{showPredictions ? '▲' : '▼'}</span>
-              </>
-            )}
-          </button>
-
-          {showPredictions && (
-            <div className="mt-3 space-y-1 max-h-60 overflow-y-auto">
-              {allPredictions.length === 0 ? (
-                <p className="text-xs text-gray-500 text-center py-2">Sin pronósticos registrados</p>
-              ) : (
-                allPredictions.map((p, i) => {
-                  const name = p.profiles?.display_name || 'Anónimo'
-                  const isMe = prediction && p.home_goals === prediction.home_goals && p.away_goals === prediction.away_goals
-                  const score = isFinished && match.home_score !== null
+      {/* PREDICTIONS PANEL */}
+      {isClosed && showPredictions && (
+        <div className="border-t border-gray-800 px-4 py-3">
+          {allPredictions.length === 0 ? (
+            <p className="text-xs text-gray-600 text-center py-2">Sin pronósticos registrados</p>
+          ) : (
+            <div className="space-y-1 max-h-52 overflow-y-auto">
+              {allPredictions.map((p, i) => {
+                const name = p.profiles?.display_name || 'Anónimo'
+                const score =
+                  isFinished && match.home_score !== null
                     ? calculatePredictionScore({
                         home_goals: p.home_goals,
                         away_goals: p.away_goals,
@@ -461,36 +383,39 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
                         away_score: match.away_score,
                       })
                     : null
+                const isMe =
+                  prediction &&
+                  p.home_goals === prediction.home_goals &&
+                  p.away_goals === prediction.away_goals
 
-                  return (
-                    <div
-                      key={i}
-                      className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs ${
-                        isMe ? 'bg-purple-900/30 border border-purple-500/30' : 'bg-gray-800/40'
-                      }`}
-                    >
-                      <span className="text-gray-300 truncate max-w-[120px]">
-                        {isMe ? <strong>{name} (vos)</strong> : name}
+                return (
+                  <div
+                    key={i}
+                    className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs ${
+                      isMe
+                        ? 'bg-purple-900/30 border border-purple-500/30'
+                        : 'bg-gray-800/40'
+                    }`}
+                  >
+                    <span className={`truncate max-w-[140px] ${isMe ? 'text-purple-300 font-semibold' : 'text-gray-400'}`}>
+                      {name}{isMe ? ' (vos)' : ''}
+                    </span>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="font-mono font-bold text-white">
+                        {p.home_goals} - {p.away_goals}
                       </span>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className="font-mono font-bold text-white">
-                          {p.home_goals} - {p.away_goals}
+                      {score && (
+                        <span className={`font-bold w-8 text-right ${
+                          score.type === 'exact' ? 'text-green-400' :
+                          score.type === 'outcome' ? 'text-yellow-400' : 'text-gray-600'
+                        }`}>
+                          {score.type === 'exact' ? '+3' : score.type === 'outcome' ? '+1' : '0'}
                         </span>
-                        {score && (
-                          <span className={`font-bold ${
-                            score.type === 'exact' ? 'text-green-400' :
-                            score.type === 'outcome' ? 'text-yellow-400' :
-                            'text-gray-500'
-                          }`}>
-                            {score.type === 'exact' ? '🎉 +3' :
-                             score.type === 'outcome' ? '✅ +1' : '❌ 0'}
-                          </span>
-                        )}
-                      </div>
+                      )}
                     </div>
-                  )
-                })
-              )}
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>
