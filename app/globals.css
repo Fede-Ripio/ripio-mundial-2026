@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'FTCalhern';
+  src: url('/fonts/FTCalhern-Medium.woff2') format('woff2'),
+       url('/fonts/FTCalhern-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -22,7 +31,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'FTCalhern', Arial, Helvetica, sans-serif;
 }
 
 /* Forzar fondo oscuro en iframes de Precog */
