@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import ShareLeagueCompact from '@/components/ShareLeagueCompact'
+import { calculateUserScore, compareLeaderboard } from '@/lib/scoring'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,29 +25,9 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
 
   const leaderboard = (members || []).map(member => {
     const userPredictions = predictions?.filter(p => p.user_id === member.user_id) || []
-    let points = 0
-    let exactHits = 0
-    let correctOutcomes = 0
-
-    userPredictions.forEach(pred => {
-      const match = pred.matches
-      if (match?.status === 'finished' && match.home_score !== null && match.away_score !== null) {
-        if (pred.home_goals === match.home_score && pred.away_goals === match.away_score) {
-          points += 3
-          exactHits += 1
-        } else {
-          const predOutcome = pred.home_goals > pred.away_goals ? 'home' : pred.home_goals < pred.away_goals ? 'away' : 'draw'
-          const matchOutcome = match.home_score > match.away_score ? 'home' : match.home_score < match.away_score ? 'away' : 'draw'
-          if (predOutcome === matchOutcome) {
-            points += 1
-            correctOutcomes += 1
-          }
-        }
-      }
-    })
-
-    return { ...member, points, exactHits, correctOutcomes }
-  }).sort((a, b) => b.points - a.points || b.exactHits - a.exactHits || b.correctOutcomes - a.correctOutcomes)
+    const score = calculateUserScore(userPredictions)
+    return { ...member, ...score }
+  }).sort(compareLeaderboard)
 
   return (
     <div className="min-h-screen bg-black text-white py-8 sm:py-12 px-4 sm:px-6">

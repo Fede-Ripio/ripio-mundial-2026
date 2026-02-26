@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import Link from 'next/link'
+import { calculateUserScore, compareLeaderboard } from '@/lib/scoring'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,46 +25,17 @@ export default async function LeaderboardPage() {
 
   const leaderboard = (profiles || []).map(profile => {
     const userPredictions = predictions?.filter(p => p.user_id === profile.id) || []
-    
-    let points = 0
-    let exactHits = 0
-    let correctOutcomes = 0
-
-    userPredictions.forEach(pred => {
-      const match = pred.matches
-      if (match?.status === 'finished' && match.home_score !== null && match.away_score !== null) {
-        if (pred.home_goals === match.home_score && pred.away_goals === match.away_score) {
-          points += 3
-          exactHits += 1
-        }
-        else {
-          const predOutcome = pred.home_goals > pred.away_goals ? 'home' : pred.home_goals < pred.away_goals ? 'away' : 'draw'
-          const matchOutcome = match.home_score > match.away_score ? 'home' : match.home_score < match.away_score ? 'away' : 'draw'
-          
-          if (predOutcome === matchOutcome) {
-            points += 1
-            correctOutcomes += 1
-          }
-        }
-      }
-    })
+    const score = calculateUserScore(userPredictions)
 
     return {
       ...profile,
-      points,
-      exactHits,
-      correctOutcomes,
+      ...score,
       totalPredictions: userPredictions.length,
       inGeneralLeague: leagueMembers?.some(m => m.user_id === profile.id) || false
     }
   })
   .filter(u => u.inGeneralLeague)
-  .sort((a, b) => {
-    if (b.points !== a.points) return b.points - a.points
-    if (b.exactHits !== a.exactHits) return b.exactHits - a.exactHits
-    if (b.correctOutcomes !== a.correctOutcomes) return b.correctOutcomes - a.correctOutcomes
-    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-  })
+  .sort(compareLeaderboard)
 
   const top3 = leaderboard.slice(0, 3)
   const rest = leaderboard.slice(3)

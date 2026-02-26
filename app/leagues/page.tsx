@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import CreateLeagueForm from '@/components/CreateLeagueForm'
 import JoinLeagueForm from '@/components/JoinLeagueForm'
+import { calculateUserScore, compareLeaderboard } from '@/lib/scoring'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,8 +18,9 @@ export default async function LeaguesPage() {
     .select('*, leagues(*)')
     .eq('user_id', user.id)
 
-  const generalLeague = myLeagues?.find(m => m.leagues.name === 'Liga Ripio' || m.leagues.name === 'Ripio Mundial')
-  const privateLeagues = myLeagues?.filter(m => m.leagues.name !== 'Liga Ripio' && m.leagues.name !== 'Ripio Mundial') || []
+  const GENERAL_LEAGUE_ID = '00000000-0000-0000-0000-000000000001'
+  const generalLeague = myLeagues?.find(m => m.league_id === GENERAL_LEAGUE_ID)
+  const privateLeagues = myLeagues?.filter(m => m.league_id !== GENERAL_LEAGUE_ID) || []
 
   // CALCULAR POSICIÓN EN LIGA GENERAL
   let generalPosition = null
@@ -34,36 +36,11 @@ export default async function LeaguesPage() {
 
     const leaderboard = (profiles || []).map(profile => {
       const userPredictions = predictions?.filter(p => p.user_id === profile.id) || []
-      let points = 0
-      let exactHits = 0
-      let correctOutcomes = 0
-
-      userPredictions.forEach(pred => {
-        const match = pred.matches
-        if (match?.status === 'finished' && match.home_score !== null && match.away_score !== null) {
-          if (pred.home_goals === match.home_score && pred.away_goals === match.away_score) {
-            points += 3
-            exactHits += 1
-          } else {
-            const predOutcome = pred.home_goals > pred.away_goals ? 'home' : pred.home_goals < pred.away_goals ? 'away' : 'draw'
-            const matchOutcome = match.home_score > match.away_score ? 'home' : match.home_score < match.away_score ? 'away' : 'draw'
-            if (predOutcome === matchOutcome) {
-              points += 1
-              correctOutcomes += 1
-            }
-          }
-        }
-      })
-
-      return { ...profile, points, exactHits, correctOutcomes }
+      const score = calculateUserScore(userPredictions)
+      return { ...profile, ...score }
     })
     .filter(u => members?.some(m => m.user_id === u.id))
-    .sort((a, b) => {
-      if (b.points !== a.points) return b.points - a.points
-      if (b.exactHits !== a.exactHits) return b.exactHits - a.exactHits
-      if (b.correctOutcomes !== a.correctOutcomes) return b.correctOutcomes - a.correctOutcomes
-      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-    })
+    .sort(compareLeaderboard)
 
     generalTotalUsers = leaderboard.length
     const userIndex = leaderboard.findIndex(u => u.id === user.id)
@@ -92,35 +69,10 @@ export default async function LeaguesPage() {
 
       const leaderboard = (profiles || []).map(profile => {
         const userPredictions = predictions?.filter(p => p.user_id === profile.id) || []
-        let points = 0
-        let exactHits = 0
-        let correctOutcomes = 0
-
-        userPredictions.forEach(pred => {
-          const match = pred.matches
-          if (match?.status === 'finished' && match.home_score !== null && match.away_score !== null) {
-            if (pred.home_goals === match.home_score && pred.away_goals === match.away_score) {
-              points += 3
-              exactHits += 1
-            } else {
-              const predOutcome = pred.home_goals > pred.away_goals ? 'home' : pred.home_goals < pred.away_goals ? 'away' : 'draw'
-              const matchOutcome = match.home_score > match.away_score ? 'home' : match.home_score < match.away_score ? 'away' : 'draw'
-              if (predOutcome === matchOutcome) {
-                points += 1
-                correctOutcomes += 1
-              }
-            }
-          }
-        })
-
-        return { ...profile, points, exactHits, correctOutcomes }
+        const score = calculateUserScore(userPredictions)
+        return { ...profile, ...score }
       })
-      .sort((a, b) => {
-        if (b.points !== a.points) return b.points - a.points
-        if (b.exactHits !== a.exactHits) return b.exactHits - a.exactHits
-        if (b.correctOutcomes !== a.correctOutcomes) return b.correctOutcomes - a.correctOutcomes
-        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      })
+      .sort(compareLeaderboard)
 
       const totalMembers = leaderboard.length
       const userIndex = leaderboard.findIndex(u => u.id === user.id)

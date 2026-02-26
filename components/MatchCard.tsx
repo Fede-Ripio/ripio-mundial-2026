@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function MatchCard({ match, prediction, isLoggedIn }: any) {
   const router = useRouter()
   const [homeGoals, setHomeGoals] = useState(prediction?.home_goals?.toString() || '')
   const [awayGoals, setAwayGoals] = useState(prediction?.away_goals?.toString() || '')
+  // Evita que el auto-save se dispare al montar el componente con valores iniciales
+  const hasMounted = useRef(false)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
 
@@ -41,6 +43,10 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
   }
 
   useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true
+      return
+    }
     if (!isLoggedIn || isClosed || !homeGoals || !awayGoals) return
     const timer = setTimeout(() => { handleSave() }, 500)
     return () => clearTimeout(timer)
