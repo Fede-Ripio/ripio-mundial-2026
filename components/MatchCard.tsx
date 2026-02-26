@@ -135,8 +135,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
     const hasValue = value !== '' && value !== '?'
     
     // No permitir pronosticar si los equipos no están definidos
-    const teamsNotDefined = displayHomeTeam.includes('Grupo') || displayHomeTeam.includes('Ganador') || 
-                            displayHomeTeam === 'TBD' || displayAwayTeam === 'TBD'
+    const teamsNotDefined = !!(match.home_team_ref || match.away_team_ref) && !match.is_resolved
     
     const isDisabled = disabled || teamsNotDefined
     
@@ -188,8 +187,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
   const pointsResult = isFinished && isLoggedIn ? calculatePoints() : null
 
   // Indicador si los equipos no están definidos
-  const teamsNotDefined = displayHomeTeam.includes('Grupo') || displayHomeTeam.includes('Ganador') || 
-                          displayHomeTeam === 'TBD'
+  const teamsNotDefined = !!(match.home_team_ref || match.away_team_ref) && !match.is_resolved
 
   return (
     <div className="border border-purple-500/30 rounded-xl p-3 sm:p-4 hover:border-purple-500/60 transition-colors bg-gray-900/30 w-full sm:max-w-3xl">
