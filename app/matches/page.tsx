@@ -30,6 +30,12 @@ export default async function MatchesPage() {
     .sort((a, b) => new Date(a.kickoff_at).getTime() - new Date(b.kickoff_at).getTime())
     [0]
 
+  const predictedIds = new Set(predictions.map(p => p.match_id))
+  const pendingCount = all.filter(m => {
+    const closed = m.kickoff_at && new Date(m.kickoff_at) < new Date()
+    return !closed && m.status !== 'finished' && !predictedIds.has(m.id)
+  }).length
+
   return (
     <div className="min-h-screen bg-black text-white py-4 sm:py-8 px-3 sm:px-6">
       <div className="max-w-7xl mx-auto">
@@ -44,6 +50,15 @@ export default async function MatchesPage() {
               </Link>
             )}
           </div>
+          {user ? (
+            <p className="text-gray-400 mt-2">
+              {predictions.length} pronósticos realizados · {pendingCount} por completar
+            </p>
+          ) : (
+            <p className="text-gray-400 mt-2">
+              Mundial 2026 · {all.length} partidos
+            </p>
+          )}
         </div>
 
         {all.length === 0 ? (

@@ -92,7 +92,13 @@ export default async function LeaguesPage() {
 
         <div className="mb-12">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
-          <h1 className="text-3xl sm:text-4xl font-bold">Mis Ligas</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2">Mis Ligas</h1>
+          <p className="text-gray-400">
+            {generalLeague ? 'Liga Ripio' : ''}
+            {generalLeague && privateLeagues.length > 0 ? ` · ${privateLeagues.length} liga${privateLeagues.length > 1 ? 's' : ''} privada${privateLeagues.length > 1 ? 's' : ''}` : ''}
+            {!generalLeague && privateLeagues.length > 0 ? `${privateLeagues.length} liga${privateLeagues.length > 1 ? 's' : ''} privada${privateLeagues.length > 1 ? 's' : ''}` : ''}
+            {!generalLeague && privateLeagues.length === 0 ? 'Sin ligas todavía' : ''}
+          </p>
         </div>
 
         {/* CREAR LIGA PRIVADA */}
