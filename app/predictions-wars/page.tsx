@@ -24,12 +24,11 @@ export default async function PredictionsWarsPage() {
   return (
     <div className="min-h-screen bg-black text-white">
 
-      {/* Hero — compacto */}
+      {/* Header */}
       <div className="border-b border-gray-800 py-8 px-4">
         <div className="max-w-2xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-1 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Predicciones con wARS
-          </h1>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-1">Predecí con wARS</h1>
           <p className="text-gray-500 text-sm">
             Mercados de predicción en Base Network · Powered by Precog
           </p>

@@ -45,11 +45,10 @@ export default async function LeaderboardPage() {
       <div className="max-w-7xl mx-auto">
         
         <div className="mb-12">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
-            🏆 Clasificación General
-          </h1>
-          <p className="text-gray-400 text-lg">
-            Liga: Ripio Mundial • {leaderboard.length} participantes
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3">Ranking General</h1>
+          <p className="text-gray-400">
+            Liga Ripio · {leaderboard.length} participantes
           </p>
         </div>
 
@@ -202,13 +201,20 @@ export default async function LeaderboardPage() {
         </div>
 
         {/* Info */}
-        <div className="border border-purple-500/30 rounded-xl p-6 mt-8">
-          <strong className="text-purple-400">ℹ️ Cómo se calculan los puntos:</strong>
-          <ul className="mt-4 space-y-2 text-gray-400 ml-6 list-disc">
-            <li>Resultado exacto: <strong className="text-green-400">+3 puntos</strong></li>
-            <li>Acertar ganador o empate: <strong className="text-yellow-400">+1 punto</strong></li>
-            <li>Desempate: más exactos → más aciertos → primero en registrarse</li>
-          </ul>
+        <div className="border border-gray-800 rounded-xl p-6 mt-8 space-y-3">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Sistema de puntos</p>
+          <div className="flex items-center gap-4">
+            <span className="text-xl font-bold text-green-400 w-8 text-center flex-shrink-0">3</span>
+            <span className="text-sm text-gray-300">Resultado exacto (marcador correcto)</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-xl font-bold text-yellow-400 w-8 text-center flex-shrink-0">1</span>
+            <span className="text-sm text-gray-300">Acertaste el ganador o el empate</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-xl font-bold text-gray-600 w-8 text-center flex-shrink-0">—</span>
+            <span className="text-sm text-gray-500">Desempate: más exactos · más aciertos · registro más antiguo</span>
+          </div>
         </div>
 
       </div>

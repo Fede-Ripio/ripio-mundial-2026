@@ -37,10 +37,10 @@ export default function NavbarClient({ user }: { user: any }) {
 
   const links = [
     { href: '/matches', label: 'Partidos' },
-    { href: '/leaderboard', label: 'Clasificación' },
+    { href: '/leaderboard', label: 'Ranking' },
     { href: '/leagues', label: 'Ligas' },
     { href: '/rules', label: 'Reglas' },
-    { href: '/predictions-wars', label: 'Predicciones wARS' },
+    { href: '/predictions-wars', label: 'Predecí wARS' },
   ]
 
   return (
