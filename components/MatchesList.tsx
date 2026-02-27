@@ -93,7 +93,7 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
 
       {/* TABS — sticky at top */}
       <div className="sticky top-0 z-10 bg-black/90 backdrop-blur-sm py-3 -mx-3 px-3 sm:-mx-6 sm:px-6 border-b border-gray-800">
-        <div className="max-w-2xl mx-auto flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide max-w-3xl mx-auto">
           {TABS.map(tab => {
             const count = matchesByTab[tab.key].length
             if (count === 0) return null
@@ -153,12 +153,14 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
               if (groupGames.length === 0) return null
               return (
                 <section key={group}>
-                  <h3 className="text-sm font-semibold text-gray-500 mb-3 uppercase tracking-wide flex items-center gap-2">
-                    <span className="w-7 h-7 bg-purple-600/20 border border-purple-500/40 rounded-lg flex items-center justify-center text-purple-400 text-xs font-bold">
-                      {group}
-                    </span>
-                    Grupo {group}
-                  </h3>
+                  <div className="max-w-xl mx-auto mb-3">
+                    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2">
+                      <span className="w-7 h-7 bg-purple-600/20 border border-purple-500/40 rounded-lg flex items-center justify-center text-purple-400 text-xs font-bold">
+                        {group}
+                      </span>
+                      Grupo {group}
+                    </h3>
+                  </div>
                   <div className="flex flex-col items-center space-y-3">
                     {groupGames.map(match => (
                       <MatchCard
