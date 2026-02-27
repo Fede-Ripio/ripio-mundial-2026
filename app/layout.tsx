@@ -22,7 +22,7 @@ export const metadata: Metadata = {
       {
         url: "/images/og-image.png",
         width: 1200,
-        height: 630,
+        height: 601,
         alt: "Ripio Mundial 2026 — Pronosticá y ganá premios en wARS",
       },
     ],
