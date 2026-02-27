@@ -5,7 +5,7 @@ const WARS_LOGO = 'https://cdn.prod.website-files.com/640b8191d2fdcfb39b135a5b/6
 
 export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
-    <section className="relative h-screen min-h-[700px] w-full overflow-hidden">
+    <section className="relative h-screen min-h-[700px] w-full overflow-hidden bg-gradient-to-b from-purple-950 via-purple-900 to-black">
 
       <div className="absolute inset-0">
         <Image
@@ -13,7 +13,8 @@ export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
           alt="Ripio Mundial 2026"
           fill
           priority
-          quality={90}
+          quality={75}
+          sizes="100vw"
           className="object-cover hidden md:block"
         />
         <Image
@@ -21,7 +22,8 @@ export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
           alt="Ripio Mundial 2026"
           fill
           priority
-          quality={90}
+          quality={75}
+          sizes="100vw"
           className="object-cover hidden sm:block md:hidden"
         />
         <Image
@@ -29,12 +31,13 @@ export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
           alt="Ripio Mundial 2026"
           fill
           priority
-          quality={90}
+          quality={75}
+          sizes="100vw"
           className="object-cover block sm:hidden"
         />
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/40" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/50" />
 
       <div className="relative z-10 h-full flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-6 w-full text-center">
