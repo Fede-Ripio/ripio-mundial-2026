@@ -31,19 +31,20 @@ export default async function MatchesPage() {
     [0]
 
   return (
-    <div className="min-h-screen bg-black text-white py-4 sm:py-6 px-3 sm:px-6">
+    <div className="min-h-screen bg-black text-white py-4 sm:py-8 px-3 sm:px-6">
       <div className="max-w-7xl mx-auto">
 
-        <h1 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-4">Partidos</h1>
-
-        {!user && (
-          <div className="mb-4 flex items-center justify-between gap-3 text-sm">
-            <span className="text-gray-500">Mundial 2026 · Pronósticos</span>
-            <Link href="/register" className="text-purple-400 hover:text-purple-300 font-semibold">
-              Registrate para jugar →
-            </Link>
+        <div className="mb-6 max-w-xl mx-auto">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
+          <div className="flex items-end justify-between gap-3">
+            <h1 className="text-3xl sm:text-4xl font-bold">Partidos</h1>
+            {!user && (
+              <Link href="/register" className="text-purple-400 hover:text-purple-300 font-semibold text-sm mb-1">
+                Registrate para jugar →
+              </Link>
+            )}
           </div>
-        )}
+        </div>
 
         {all.length === 0 ? (
           <div className="border border-purple-500/30 rounded-xl p-8 sm:p-12 text-center">
