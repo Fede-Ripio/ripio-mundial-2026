@@ -36,7 +36,7 @@ const ScoreControl = ({
   }
 
   return (
-    <div className={`flex flex-col items-center gap-2 ${isDisabled ? 'opacity-40 pointer-events-none' : ''}`}>
+    <div className={`flex flex-col items-center gap-1.5 ${isDisabled ? 'opacity-40 pointer-events-none' : ''}`}>
       <input
         type="number"
         min="0"
@@ -49,18 +49,18 @@ const ScoreControl = ({
         disabled={isDisabled}
         placeholder="?"
         inputMode="numeric"
-        className={`w-14 h-14 text-center font-bold text-2xl rounded-xl border-2 bg-gray-900 outline-none transition-colors
+        className={`w-10 h-10 sm:w-14 sm:h-14 text-center font-bold text-lg sm:text-2xl rounded-xl border-2 bg-gray-900 outline-none transition-colors
           [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
           ${value !== '' ? 'border-purple-500 text-white' : 'border-gray-700 text-gray-500'}
           focus:border-purple-400 focus:text-white
           disabled:cursor-not-allowed`}
       />
-      <div className="flex gap-1.5">
+      <div className="flex gap-1">
         <button
           type="button"
           onClick={decrement}
           disabled={isDisabled || numVal === null || numVal <= 0}
-          className="w-9 h-9 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 text-lg font-bold hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none"
+          className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 text-sm sm:text-lg font-bold hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none"
           aria-label="Menos"
         >
           −
@@ -69,7 +69,7 @@ const ScoreControl = ({
           type="button"
           onClick={increment}
           disabled={isDisabled || (numVal !== null && numVal >= 20)}
-          className="w-9 h-9 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 text-lg font-bold hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none"
+          className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 text-sm sm:text-lg font-bold hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none"
           aria-label="Más"
         >
           +
@@ -206,15 +206,15 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
   const TeamCol = ({ name, code, align }: { name: string; code?: string | null; align: 'left' | 'right' }) => {
     const flagUrl = getFlagUrl(code)
     return (
-      <div className={`flex flex-col items-center gap-1.5 w-20 flex-shrink-0 ${align === 'right' ? 'text-right' : 'text-left'}`}>
+      <div className={`flex flex-col items-center gap-1.5 w-14 sm:w-20 flex-shrink-0 ${align === 'right' ? 'text-right' : 'text-left'}`}>
         {flagUrl ? (
           <img
             src={flagUrl}
             alt={name}
-            className="w-16 h-12 object-cover rounded-lg shadow-md"
+            className="w-12 h-9 sm:w-16 sm:h-12 object-cover rounded-md sm:rounded-lg shadow-md"
           />
         ) : (
-          <div className="w-16 h-12 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-2xl">
+          <div className="w-12 h-9 sm:w-16 sm:h-12 rounded-md sm:rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-xl sm:text-2xl">
             🏴
           </div>
         )}

@@ -34,6 +34,8 @@ export default async function MatchesPage() {
     <div className="min-h-screen bg-black text-white py-4 sm:py-6 px-3 sm:px-6">
       <div className="max-w-7xl mx-auto">
 
+        <h1 className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-4">Partidos</h1>
+
         {!user && (
           <div className="mb-4 flex items-center justify-between gap-3 text-sm">
             <span className="text-gray-500">Mundial 2026 · Pronósticos</span>
