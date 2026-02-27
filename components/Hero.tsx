@@ -5,7 +5,7 @@ const WARS_LOGO = 'https://cdn.prod.website-files.com/640b8191d2fdcfb39b135a5b/6
 
 export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
-    <section className="relative h-screen min-h-[700px] w-full overflow-hidden bg-gradient-to-b from-purple-950 via-purple-900 to-black">
+    <section className="relative h-[calc(100vh-4rem)] min-h-[700px] w-full overflow-hidden bg-gradient-to-b from-purple-950 via-purple-900 to-black">
 
       <div className="absolute inset-0">
         <Image
@@ -39,7 +39,7 @@ export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/50" />
 
-      <div className="relative z-10 h-full flex items-center justify-center pt-16">
+      <div className="relative z-10 h-full flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-6 w-full text-center">
 
           <div className="inline-flex items-center gap-2 bg-purple-600/90 backdrop-blur-sm border border-purple-400/30 rounded-full px-5 py-2.5 mb-8">
