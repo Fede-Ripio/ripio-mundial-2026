@@ -35,8 +35,7 @@ function getEmailProvider(email: string): EmailProvider | null {
       logo: 'https://outlook.live.com/favicon.ico',
     }
   }
-  if (['yahoo.com', 'yahoo.com.ar', 'yahoo.es', 'yahoo.com.mx',
-       'ymail.com'].includes(domain)) {
+  if (['yahoo.com', 'yahoo.com.ar', 'yahoo.es', 'yahoo.com.mx', 'ymail.com'].includes(domain)) {
     return {
       name: 'Yahoo Mail',
       url: 'https://mail.yahoo.com',
@@ -73,71 +72,55 @@ function CheckEmailContent() {
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
-      <div className="max-w-md w-full">
-        <div className="bg-gray-900/50 border border-purple-500/30 rounded-2xl p-8 text-center">
+      <div className="max-w-sm w-full text-center">
 
-          <div className="text-6xl mb-6">📬</div>
+        <div className="text-5xl mb-6">📬</div>
 
-          <h1 className="text-3xl font-bold mb-4">¡Revisá tu email!</h1>
+        <h1 className="text-2xl font-bold mb-2">Revisá tu email</h1>
 
-          <p className="text-gray-300 mb-2 leading-relaxed text-lg">
-            Te enviamos un <strong className="text-purple-400">link de acceso</strong> a tu casilla.
-          </p>
+        <p className="text-gray-400 text-sm mb-1">
+          Te enviamos un link de acceso a
+        </p>
+        {email && (
+          <p className="text-white font-semibold mb-6">{email}</p>
+        )}
 
-          {email && (
-            <p className="text-sm text-gray-500 mb-6">{email}</p>
-          )}
-
-          {/* Botón directo al proveedor */}
-          {provider ? (
-            <a
-              href={provider.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`w-full flex items-center justify-center gap-3 font-semibold px-6 py-4 rounded-xl transition-colors mb-4 ${provider.bgColor} ${provider.textColor}`}
-            >
-              <img
-                src={provider.logo}
-                alt={provider.name}
-                width={20}
-                height={20}
-                className="w-5 h-5"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-              />
-              Abrir {provider.name}
-            </a>
-          ) : (
-            <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4 mb-4">
-              <p className="text-sm text-purple-300 font-semibold mb-1">
-                📧 Hacé click en el link del email
-              </p>
-              <p className="text-xs text-gray-400">
-                Te va a llevar directo al sitio sin pedir contraseña
-              </p>
-            </div>
-          )}
-
-          <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4 mb-6">
-            <p className="text-sm text-blue-300">
-              <strong>💡 ¿No lo ves?</strong> Revisá la carpeta de <strong className="text-white">spam o promociones</strong>
+        {provider ? (
+          <a
+            href={provider.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`w-full flex items-center justify-center gap-3 font-semibold px-6 py-4 rounded-xl transition-colors mb-3 ${provider.bgColor} ${provider.textColor}`}
+          >
+            <img
+              src={provider.logo}
+              alt=""
+              width={20}
+              height={20}
+              className="w-5 h-5"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+            />
+            Abrir {provider.name}
+          </a>
+        ) : (
+          <div className="bg-gray-900 border border-gray-700 rounded-xl p-5 mb-3 text-left">
+            <p className="text-sm text-gray-300">
+              Buscá el email de <strong className="text-white">Ripio Mundial</strong> en tu casilla y hacé click en el link de acceso.
             </p>
           </div>
+        )}
 
-          <div className="space-y-2 text-sm text-gray-400 border-t border-gray-700 pt-4">
-            <p>⏱️ El link expira en <strong className="text-white">1 hora</strong></p>
-            <p>🔒 Funciona una sola vez por seguridad</p>
-          </div>
+        <p className="text-xs text-gray-600 mb-8">
+          ¿No lo ves? Revisá la carpeta de spam o promociones
+        </p>
 
-          <div className="mt-8 pt-6 border-t border-gray-700">
-            <Link
-              href="/login"
-              className="text-purple-400 hover:text-purple-300 font-semibold text-sm"
-            >
-              ← Enviar otro link
-            </Link>
-          </div>
+        <Link
+          href="/login"
+          className="text-purple-400 hover:text-purple-300 text-sm font-medium"
+        >
+          ← Reenviar link
+        </Link>
 
-        </div>
       </div>
     </div>
   )
