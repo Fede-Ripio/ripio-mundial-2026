@@ -23,53 +23,54 @@ const markets = [
 export default async function PredictionsWarsPage() {
   return (
     <div className="min-h-screen bg-black text-white">
-      
-      {/* Hero */}
-      <div className="border-b border-gray-800 py-16">
-        <div className="max-w-4xl mx-auto px-4">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+
+      {/* Hero — compacto */}
+      <div className="border-b border-gray-800 py-8 px-4">
+        <div className="max-w-2xl mx-auto">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-1 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             Predicciones con wARS
           </h1>
-          <p className="text-gray-400 text-sm">
-            Mercados de predicción • Cierre febrero 2026
+          <p className="text-gray-500 text-sm">
+            Mercados de predicción en Base Network · Powered by Precog
           </p>
         </div>
       </div>
 
       {/* Mercados */}
-      <div className="py-20">
-        <div className="max-w-4xl mx-auto px-4 space-y-20">
-          
+      <div className="py-8 px-4">
+        <div className="max-w-2xl mx-auto space-y-10">
+
           {markets.map((market) => (
-            <div key={market.id} className="space-y-6">
-              
-              {/* Título a la izquierda */}
-              <div className="flex items-center gap-3">
-                <span className="text-5xl">{market.emoji}</span>
-                <h2 className="text-3xl font-bold">{market.title}</h2>
-              </div>
-              
-              {/* Iframe centrado, sin hover */}
-              <div className="flex justify-center">
+            <div key={market.id}>
+
+              {/* Título + link externo */}
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-bold flex items-center gap-2">
+                  <span>{market.emoji}</span>
+                  <span>{market.title}</span>
+                </h2>
                 <a
                   href={`https://precog.market/market?network=8453&id=${market.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block"
-                  style={{ maxWidth: '500px', width: '100%' }}
+                  className="text-purple-400 hover:text-purple-300 text-xs font-semibold flex-shrink-0"
                 >
-                  <iframe 
+                  Ver completo →
+                </a>
+              </div>
+
+              {/* Iframe en container con scroll horizontal en mobile */}
+              <div className="overflow-x-auto rounded-xl -mx-1 px-1">
+                <div style={{ minWidth: '400px' }}>
+                  <iframe
                     title={market.title}
                     src={`https://embed.precog.market/market?network=8453&id=${market.id}&type=compact&theme=dark&source=chain`}
                     className="w-full border-none rounded-xl"
-                    style={{ 
-                      height: '340px',
-                      background: 'transparent'
-                    }}
+                    style={{ height: '320px', background: 'transparent', display: 'block' }}
                     loading="lazy"
                     scrolling="no"
                   />
-                </a>
+                </div>
               </div>
 
             </div>
@@ -79,21 +80,15 @@ export default async function PredictionsWarsPage() {
       </div>
 
       {/* Footer */}
-      <div className="border-t border-gray-800 py-16">
-        <div className="max-w-4xl mx-auto px-4 text-center space-y-6">
-          
-          <p className="text-sm text-gray-500">
-            Powered by Precog Market • Base Network
-          </p>
-          
+      <div className="border-t border-gray-800 py-10 px-4">
+        <div className="max-w-2xl mx-auto text-center">
           <Link
             href="/matches"
-            className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-3 rounded-xl transition-colors"
+            className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
           >
             <span>⚽</span>
-            <span>Prode del Mundial</span>
+            <span>Volver al prode del Mundial</span>
           </Link>
-
         </div>
       </div>
 
