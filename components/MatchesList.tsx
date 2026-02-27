@@ -93,7 +93,7 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
 
       {/* TABS — sticky at top */}
       <div className="sticky top-0 z-10 bg-black/90 backdrop-blur-sm py-3 -mx-3 px-3 sm:-mx-6 sm:px-6 border-b border-gray-800">
-        <div className="max-w-xl mx-auto flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide">
+        <div className="max-w-2xl mx-auto flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide">
           {TABS.map(tab => {
             const count = matchesByTab[tab.key].length
             if (count === 0) return null

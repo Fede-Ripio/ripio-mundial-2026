@@ -34,6 +34,15 @@ body {
   font-family: 'FTCalhern', Arial, Helvetica, sans-serif;
 }
 
+/* Ocultar scrollbar horizontal en tabs */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Forzar fondo oscuro en iframes de Precog */
 iframe[title*="precog-market"] {
   background-color: #000000 !important;
