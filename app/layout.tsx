@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description: "Pronosticá los resultados del Mundial 2026 y ganá hasta 1MM wARS. Gratis, sin inversión. Competí con miles de usuarios.",
     images: [
       {
-        url: "/images/og-image.jpg",
+        url: "/images/og-image.png",
         width: 1200,
         height: 630,
         alt: "Ripio Mundial 2026 — Pronosticá y ganá premios en wARS",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ripio Mundial 2026 — Pronosticá y ganá 1MM wARS",
     description: "Pronosticá los resultados del Mundial 2026 y ganá hasta 1MM wARS. Gratis, sin inversión.",
-    images: ["/images/og-image.jpg"],
+    images: ["/images/og-image.png"],
   },
 };
 

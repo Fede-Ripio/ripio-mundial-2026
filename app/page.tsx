@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Ripio Mundial 2026 — Pronosticá y ganá 1MM wARS",
     description: "Pronosticá los resultados del Mundial 2026 y ganá hasta 1MM wARS. Gratis, sin inversión. Competí con miles de usuarios.",
-    images: [{ url: "/images/og-image.jpg", width: 1200, height: 630 }],
+    images: [{ url: "/images/og-image.png", width: 1200, height: 630 }],
   },
 }
 
