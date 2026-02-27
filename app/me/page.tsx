@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { calculateUserScore, compareLeaderboard } from '@/lib/scoring'
+import EditDisplayName from '@/components/EditDisplayName'
 
 export const dynamic = 'force-dynamic'
 
@@ -116,10 +117,7 @@ export default async function MePage() {
           <h2 className="text-2xl font-bold mb-6 text-purple-400">Información</h2>
           <div className="space-y-1">
 
-            <div className="flex justify-between py-3 border-b border-purple-500/20">
-              <span className="text-gray-500">Nombre:</span>
-              <span className="font-semibold">{displayName}</span>
-            </div>
+            <EditDisplayName currentName={displayName} />
 
             <div className="flex justify-between py-3 border-b border-purple-500/20">
               <span className="text-gray-500">Email:</span>
