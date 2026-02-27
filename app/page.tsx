@@ -87,6 +87,34 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ¿Qué es wARS? */}
+      <section className="py-16 bg-black border-t border-gray-900">
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="flex flex-col sm:flex-row items-start gap-6 bg-gray-900/40 border border-gray-800 rounded-2xl p-6 sm:p-8">
+            <img src={WARS_LOGO} alt="wARS" className="w-14 h-14 flex-shrink-0" />
+            <div className="space-y-3">
+              <h3 className="text-xl font-bold">¿Qué es wARS?</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                wARS es la stablecoin de Ripio con paridad 1:1 con el peso argentino. Podés usarla, transferirla
+                o generar rendimientos dentro del ecosistema Ripio, sin depender de bancos.
+              </p>
+              <p className="text-gray-500 text-xs leading-relaxed">
+                Para recibir el premio necesitás tener una cuenta activa en la app de Ripio Argentina.
+                Podés jugar desde cualquier país, pero el cobro se acredita en una cuenta argentina.
+              </p>
+              <a
+                href="https://www.ripio.com/es/criptomonedas/wars"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block text-xs text-purple-400 hover:text-purple-300 transition-colors"
+              >
+                Más info sobre wARS en ripio.com →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-20 bg-gradient-to-t from-purple-900/20 to-black">
         <div className="max-w-4xl mx-auto px-4 text-center">
