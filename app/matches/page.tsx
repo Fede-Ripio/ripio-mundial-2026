@@ -31,36 +31,17 @@ export default async function MatchesPage() {
     [0]
 
   return (
-    <div className="min-h-screen bg-black text-white py-8 sm:py-12 px-3 sm:px-6">
+    <div className="min-h-screen bg-black text-white py-4 sm:py-6 px-3 sm:px-6">
       <div className="max-w-7xl mx-auto">
-        
-        <div className="mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-            ⚽ Partidos del Mundial 2026
-          </h1>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-sm sm:text-base text-gray-400">
-            <span className="flex items-center gap-2">
-              <span>📊</span>
-              <span>{all.length} partidos</span>
-            </span>
-            {user && (
-              <span className="flex items-center gap-2">
-                <span>✅</span>
-                <span>{predictions.length} pronósticos</span>
-              </span>
-            )}
+
+        {!user && (
+          <div className="mb-4 flex items-center justify-between gap-3 text-sm">
+            <span className="text-gray-500">Mundial 2026 · Pronósticos</span>
+            <Link href="/register" className="text-purple-400 hover:text-purple-300 font-semibold">
+              Registrate para jugar →
+            </Link>
           </div>
-          {!user ? (
-            <div className="border border-purple-500/30 rounded-xl p-4 sm:p-6 mt-4 sm:mt-6">
-              <p className="text-sm sm:text-base text-gray-400">
-                <Link href="/register" className="text-purple-400 font-semibold hover:text-purple-300 underline">
-                  Registrate gratis
-                </Link>
-                {' '}para hacer tus pronósticos
-              </p>
-            </div>
-          ) : null}
-        </div>
+        )}
 
         {all.length === 0 ? (
           <div className="border border-purple-500/30 rounded-xl p-8 sm:p-12 text-center">
