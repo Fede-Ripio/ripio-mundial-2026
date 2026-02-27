@@ -39,7 +39,7 @@ export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/50" />
 
-      <div className="relative z-10 h-full flex items-center justify-center">
+      <div className="relative z-10 h-full flex items-center justify-center pt-16">
         <div className="max-w-4xl mx-auto px-6 w-full text-center">
 
           <div className="inline-flex items-center gap-2 bg-purple-600/90 backdrop-blur-sm border border-purple-400/30 rounded-full px-5 py-2.5 mb-8">
