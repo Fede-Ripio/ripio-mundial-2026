@@ -1,6 +1,17 @@
+import type { Metadata } from 'next'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import Link from 'next/link'
 import Hero from '@/components/Hero'
+
+export const metadata: Metadata = {
+  title: "Ripio Mundial 2026 — Pronosticá y ganá 1MM wARS",
+  description: "Pronosticá los resultados del Mundial 2026 y ganá hasta 1MM wARS. Gratis, sin inversión. Competí con miles de usuarios.",
+  openGraph: {
+    title: "Ripio Mundial 2026 — Pronosticá y ganá 1MM wARS",
+    description: "Pronosticá los resultados del Mundial 2026 y ganá hasta 1MM wARS. Gratis, sin inversión. Competí con miles de usuarios.",
+    images: [{ url: "/images/og-image.jpg", width: 1200, height: 630 }],
+  },
+}
 
 const WARS_LOGO = 'https://cdn.prod.website-files.com/640b8191d2fdcfb39b135a5b/69121e0c7b24a0930d8e4efa_world_logos_wars_logo.svg'
 
