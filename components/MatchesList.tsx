@@ -180,7 +180,7 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
         {/* R32 */}
         {activeTab === 'ro32' && (
           <section>
-            <h2 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide">Ronda de 32</h2>
+            <h2 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide max-w-xl mx-auto">Ronda de 32</h2>
             <div className="flex flex-col items-center space-y-3">
               {ro32Matches.map(match => (
                 <MatchCard key={match.id} match={match} prediction={predictionsMap.get(match.id)} isLoggedIn={isLoggedIn} />
@@ -192,7 +192,7 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
         {/* OCTAVOS */}
         {activeTab === 'ro16' && (
           <section>
-            <h2 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide">Octavos de Final</h2>
+            <h2 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide max-w-xl mx-auto">Octavos de Final</h2>
             <div className="flex flex-col items-center space-y-3">
               {ro16Matches.map(match => (
                 <MatchCard key={match.id} match={match} prediction={predictionsMap.get(match.id)} isLoggedIn={isLoggedIn} />
@@ -204,7 +204,7 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
         {/* CUARTOS */}
         {activeTab === 'quarterfinal' && (
           <section>
-            <h2 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide">Cuartos de Final</h2>
+            <h2 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide max-w-xl mx-auto">Cuartos de Final</h2>
             <div className="flex flex-col items-center space-y-3">
               {quarterMatches.map(match => (
                 <MatchCard key={match.id} match={match} prediction={predictionsMap.get(match.id)} isLoggedIn={isLoggedIn} />
@@ -216,7 +216,7 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
         {/* SEMIS */}
         {activeTab === 'semifinal' && (
           <section>
-            <h2 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide">Semifinales</h2>
+            <h2 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide max-w-xl mx-auto">Semifinales</h2>
             <div className="flex flex-col items-center space-y-3">
               {semiMatches.map(match => (
                 <MatchCard key={match.id} match={match} prediction={predictionsMap.get(match.id)} isLoggedIn={isLoggedIn} />
@@ -230,7 +230,7 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
           <div className="space-y-8">
             {thirdPlaceMatch.length > 0 && (
               <section>
-                <h2 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide">Tercer Puesto</h2>
+                <h2 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide max-w-xl mx-auto">Tercer Puesto</h2>
                 <div className="flex flex-col items-center space-y-3">
                   {thirdPlaceMatch.map(match => (
                     <MatchCard key={match.id} match={match} prediction={predictionsMap.get(match.id)} isLoggedIn={isLoggedIn} />
