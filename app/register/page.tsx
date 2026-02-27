@@ -83,7 +83,7 @@ export default function RegisterPage() {
 
       if (error) throw error
 
-      router.push('/auth/check-email')
+      router.push(`/auth/check-email?email=${encodeURIComponent(email)}`)
     } catch (err: any) {
       setError(err.message || 'Error al crear cuenta')
     } finally {

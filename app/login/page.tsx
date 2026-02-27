@@ -46,7 +46,7 @@ function LoginForm() {
 
       if (error) throw error
 
-      router.push('/auth/check-email')
+      router.push(`/auth/check-email?email=${encodeURIComponent(email)}`)
     } catch (err: any) {
       setError(err.message || 'Error al enviar el email')
     } finally {
