@@ -269,7 +269,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
               : <span>Fecha TBD</span>}
           </div>
           {countdown && !isFinished && (
-            <div className="text-orange-400 font-semibold mt-0.5">
+            <div className="text-purple-400 font-semibold mt-0.5">
               Cierra en {countdown}
             </div>
           )}

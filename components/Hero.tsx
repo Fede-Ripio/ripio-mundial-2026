@@ -76,7 +76,7 @@ export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
               </div>
               <div className="text-center">
                 <div className="text-4xl sm:text-5xl mb-2">🥉</div>
-                <div className="text-2xl sm:text-3xl font-bold text-orange-400">250K</div>
+                <div className="text-2xl sm:text-3xl font-bold text-purple-300">250K</div>
                 <div className="text-xs text-gray-500 mt-1">3er puesto</div>
               </div>
             </div>
