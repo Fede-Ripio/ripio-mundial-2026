@@ -236,7 +236,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
   const TeamCol = ({ name, code, align }: { name: string; code?: string | null; align: 'left' | 'right' }) => {
     const flagUrl = getFlagUrl(code)
     return (
-      <div className={`flex flex-col items-center gap-1.5 w-14 sm:w-20 flex-shrink-0 ${align === 'right' ? 'text-right' : 'text-left'}`}>
+      <div className={`flex flex-col items-center gap-1.5 w-20 sm:w-28 flex-shrink-0`}>
         {flagUrl ? (
           <img
             src={flagUrl}
@@ -248,7 +248,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
             🏴
           </div>
         )}
-        <span className="text-xs font-semibold text-center leading-tight line-clamp-2">{name}</span>
+        <span className="text-xs font-semibold text-center leading-tight line-clamp-3 w-full">{name}</span>
       </div>
     )
   }

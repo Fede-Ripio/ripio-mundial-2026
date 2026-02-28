@@ -119,11 +119,11 @@ export default function LeaderboardTable({ entries, currentUserId, totalCount }:
                     <td className="px-4 sm:px-6 py-4 font-semibold text-gray-400">
                       {entry.position}
                     </td>
-                    <td className="px-4 sm:px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="font-semibold">{entry.display_name || 'Anónimo'}</div>
+                    <td className="px-4 sm:px-6 py-4 max-w-[140px] sm:max-w-none">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="font-semibold truncate">{entry.display_name || 'Anónimo'}</div>
                         {isCurrentUser && (
-                          <span className="bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full font-semibold">
+                          <span className="bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full font-semibold flex-shrink-0">
                             VOS
                           </span>
                         )}
