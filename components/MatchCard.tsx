@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { calculatePredictionScore } from '@/lib/scoring'
+import type { Match, Prediction } from '@/types/match'
 
 interface MatchPrediction {
   user_id: string
@@ -79,7 +80,11 @@ const ScoreControl = ({
   )
 }
 
-export default function MatchCard({ match, prediction, isLoggedIn }: any) {
+export default function MatchCard({ match, prediction, isLoggedIn }: {
+  match: Match
+  prediction?: Prediction
+  isLoggedIn: boolean
+}) {
   const router = useRouter()
   const [homeGoals, setHomeGoals] = useState(prediction?.home_goals?.toString() ?? '')
   const [awayGoals, setAwayGoals] = useState(prediction?.away_goals?.toString() ?? '')
@@ -89,6 +94,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
   const [showPredictions, setShowPredictions] = useState(false)
   const [allPredictions, setAllPredictions] = useState<MatchPrediction[]>([])
   const [loadingPredictions, setLoadingPredictions] = useState(false)
+  const [countdown, setCountdown] = useState<string | null>(null)
 
   const isClosed = match.kickoff_at && new Date(match.kickoff_at) < new Date()
   const isFinished = match.status === 'finished'
@@ -167,24 +173,48 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
   }
 
   const pointsResult =
-    isFinished && isLoggedIn && prediction && match.home_score !== null
+    isFinished && isLoggedIn && prediction && match.home_score != null
       ? calculatePredictionScore({
           home_goals: prediction.home_goals,
           away_goals: prediction.away_goals,
           home_score: match.home_score,
-          away_score: match.away_score,
+          away_score: match.away_score ?? 0,
         })
       : null
 
   const formatKickoff = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString('es-AR', {
+    return date.toLocaleString('es-AR', {
+      timeZone: 'America/Argentina/Buenos_Aires',
       day: 'numeric',
       month: 'short',
       hour: '2-digit',
       minute: '2-digit',
     })
   }
+
+  useEffect(() => {
+    if (!match.kickoff_at || isFinished) return
+
+    const update = () => {
+      const diff = new Date(match.kickoff_at!).getTime() - Date.now()
+      if (diff <= 0) { setCountdown(null); return }
+
+      const totalSeconds = Math.floor(diff / 1000)
+      const days    = Math.floor(totalSeconds / 86400)
+      const hours   = Math.floor((totalSeconds % 86400) / 3600)
+      const minutes = Math.floor((totalSeconds % 3600) / 60)
+      const seconds = totalSeconds % 60
+
+      if (days > 0)        setCountdown(`${days}d ${hours}h`)
+      else if (hours > 0)  setCountdown(`${hours}h ${minutes}m`)
+      else                 setCountdown(`${minutes}m ${seconds}s`)
+    }
+
+    update()
+    const interval = setInterval(update, 1000)
+    return () => clearInterval(interval)
+  }, [match.kickoff_at, isFinished])
 
   const getFlagUrl = (code: string | null | undefined) => {
     if (!code) return null
@@ -232,10 +262,17 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
           <span className="font-semibold text-gray-400">#{match.match_number}</span>
           {headerStage && <span className="text-purple-400 font-semibold">{headerStage}</span>}
         </div>
-        <div>
-          {match.kickoff_at
-            ? <span>{formatKickoff(match.kickoff_at)}</span>
-            : <span>Fecha TBD</span>}
+        <div className="text-right">
+          <div>
+            {match.kickoff_at
+              ? <span>{formatKickoff(match.kickoff_at)} ARG</span>
+              : <span>Fecha TBD</span>}
+          </div>
+          {countdown && !isFinished && (
+            <div className="text-orange-400 font-semibold mt-0.5">
+              Cierra en {countdown}
+            </div>
+          )}
         </div>
       </div>
 
@@ -379,18 +416,15 @@ export default function MatchCard({ match, prediction, isLoggedIn }: any) {
               {allPredictions.map((p, i) => {
                 const name = p.profiles?.display_name || 'Anónimo'
                 const score =
-                  isFinished && match.home_score !== null
+                  isFinished && match.home_score != null
                     ? calculatePredictionScore({
                         home_goals: p.home_goals,
                         away_goals: p.away_goals,
                         home_score: match.home_score,
-                        away_score: match.away_score,
+                        away_score: match.away_score ?? 0,
                       })
                     : null
-                const isMe =
-                  prediction &&
-                  p.home_goals === prediction.home_goals &&
-                  p.away_goals === prediction.away_goals
+                const isMe = prediction && p.user_id === prediction.user_id
 
                 return (
                   <div

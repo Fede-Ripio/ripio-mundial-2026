@@ -3,13 +3,14 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import ShareLeagueCompact from '@/components/ShareLeagueCompact'
 import LeaguePredictionsPanel from '@/components/LeaguePredictionsPanel'
-import { calculateUserScore, compareLeaderboard, calculatePredictionScore } from '@/lib/scoring'
+import { calculatePredictionScore } from '@/lib/scoring'
+import type { LeaderboardRow } from '@/lib/scoring'
 
 export const dynamic = 'force-dynamic'
 
 export default async function LeagueDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  
+
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -21,14 +22,18 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
   const { data: membership } = await supabase.from('league_members').select('*').eq('league_id', id).eq('user_id', user.id).single()
   if (!membership && !league.is_public) redirect('/leagues')
 
-  const { data: members } = await supabase.from('league_members').select('*, profiles(*)').eq('league_id', id)
-  const { data: predictions } = await supabase.from('predictions').select('*, matches(*)').in('user_id', members?.map(m => m.user_id) || [])
+  // RPC calcula el ranking directamente en la DB
+  const { data: leaderboardRows } = await supabase.rpc('get_leaderboard', { p_league_id: id })
+  const leaderboard = (leaderboardRows ?? []) as LeaderboardRow[]
 
-  const leaderboard = (members || []).map(member => {
-    const userPredictions = predictions?.filter(p => p.user_id === member.user_id) || []
-    const score = calculateUserScore(userPredictions)
-    return { ...member, ...score }
-  }).sort(compareLeaderboard)
+  // Mapa de display names para el panel de pronósticos
+  const displayNameMap = new Map(leaderboard.map(r => [r.user_id, r.display_name]))
+  const memberIds = leaderboard.map(r => r.user_id)
+
+  // Predicciones de todos los miembros para el panel por partido
+  const { data: predictions } = memberIds.length > 0
+    ? await supabase.from('predictions').select('*, matches(*)').in('user_id', memberIds)
+    : { data: [] }
 
   // Agrupar pronósticos por partido finalizado para el panel de detalles
   const matchMap = new Map<string, { match: any; preds: any[] }>()
@@ -36,10 +41,9 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
     const match = pred.matches
     if (!match || match.status !== 'finished' || match.home_score === null) continue
     if (!matchMap.has(match.id)) matchMap.set(match.id, { match, preds: [] })
-    const member = members?.find(m => m.user_id === pred.user_id)
     matchMap.get(match.id)!.preds.push({
       user_id: pred.user_id,
-      displayName: member?.profiles?.display_name || 'Anónimo',
+      displayName: displayNameMap.get(pred.user_id) || 'Anónimo',
       home_goals: pred.home_goals,
       away_goals: pred.away_goals,
       score: calculatePredictionScore({
@@ -74,7 +78,7 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
                 🔒 Privada
               </span>
             )}
-            <span className="text-gray-400">{members?.length || 0} miembros</span>
+            <span className="text-gray-400">{leaderboard.length} miembros</span>
             {membership?.role === 'owner' && (
               <span className="bg-yellow-600/20 text-yellow-400 px-3 py-1 rounded-full">
                 👑 Admin
@@ -92,7 +96,7 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
                 <span>Clasificación</span>
               </h2>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-900/50">
@@ -105,11 +109,11 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
                   </tr>
                 </thead>
                 <tbody>
-                  {leaderboard.map((member, index) => (
-                    <tr 
-                      key={member.user_id} 
+                  {leaderboard.map((row, index) => (
+                    <tr
+                      key={row.user_id}
                       className={`border-t border-purple-500/20 ${
-                        member.user_id === user.id ? 'bg-purple-900/20' : 'hover:bg-gray-900/30'
+                        row.user_id === user.id ? 'bg-purple-900/20' : 'hover:bg-gray-900/30'
                       }`}
                     >
                       <td className="px-4 sm:px-6 py-4">
@@ -122,20 +126,20 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
                       </td>
                       <td className="px-4 sm:px-6 py-4">
                         <div className="font-semibold text-sm sm:text-base">
-                          {member.profiles?.display_name || member.profiles?.email?.split('@')[0] || 'Usuario'}
+                          {row.display_name || 'Anónimo'}
                         </div>
-                        {member.user_id === user.id && (
+                        {row.user_id === user.id && (
                           <div className="text-xs text-purple-400">Vos</div>
                         )}
                       </td>
                       <td className="px-4 sm:px-6 py-4 text-center">
-                        <span className="text-xl sm:text-2xl font-bold text-purple-400">{member.points}</span>
+                        <span className="text-xl sm:text-2xl font-bold text-purple-400">{row.points}</span>
                       </td>
                       <td className="px-4 sm:px-6 py-4 text-center text-green-400 font-semibold hidden sm:table-cell">
-                        {member.exactHits}
+                        {row.exact_hits}
                       </td>
                       <td className="px-4 sm:px-6 py-4 text-center text-yellow-400 font-semibold hidden sm:table-cell">
-                        {member.correctOutcomes}
+                        {row.correct_outcomes}
                       </td>
                     </tr>
                   ))}

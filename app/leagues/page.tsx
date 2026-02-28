@@ -1,9 +1,10 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import CreateLeagueForm from '@/components/CreateLeagueForm'
 import JoinLeagueForm from '@/components/JoinLeagueForm'
-import { calculateUserScore, compareLeaderboard } from '@/lib/scoring'
+import { GENERAL_LEAGUE_ID } from '@/lib/constants'
+import type { LeaderboardRow } from '@/lib/scoring'
+import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,70 +19,31 @@ export default async function LeaguesPage() {
     .select('*, leagues(*)')
     .eq('user_id', user.id)
 
-  const GENERAL_LEAGUE_ID = '00000000-0000-0000-0000-000000000001'
   const generalLeague = myLeagues?.find(m => m.league_id === GENERAL_LEAGUE_ID)
   const privateLeagues = myLeagues?.filter(m => m.league_id !== GENERAL_LEAGUE_ID) || []
 
-  // CALCULAR POSICIÓN EN LIGA GENERAL
-  let generalPosition = null
+  // POSICIÓN EN LIGA GENERAL
+  let generalPosition: number | null = null
   let generalTotalUsers = 0
-  
+
   if (generalLeague) {
-    const { data: profiles } = await supabase.from('profiles').select('id, email, display_name, created_at')
-    const { data: predictions } = await supabase.from('predictions').select('*, matches(*)')
-    const { data: members } = await supabase
-      .from('league_members')
-      .select('user_id')
-      .eq('league_id', generalLeague.league_id)
-
-    const leaderboard = (profiles || []).map(profile => {
-      const userPredictions = predictions?.filter(p => p.user_id === profile.id) || []
-      const score = calculateUserScore(userPredictions)
-      return { ...profile, ...score }
-    })
-    .filter(u => members?.some(m => m.user_id === u.id))
-    .sort(compareLeaderboard)
-
-    generalTotalUsers = leaderboard.length
-    const userIndex = leaderboard.findIndex(u => u.id === user.id)
-    if (userIndex !== -1) {
-      generalPosition = userIndex + 1
-    }
+    const { data: rows } = await supabase.rpc('get_leaderboard', { p_league_id: GENERAL_LEAGUE_ID })
+    const typedRows = (rows ?? []) as LeaderboardRow[]
+    generalTotalUsers = typedRows.length
+    const idx = typedRows.findIndex(r => r.user_id === user.id)
+    if (idx !== -1) generalPosition = idx + 1
   }
 
-  // CALCULAR POSICIÓN EN LIGAS PRIVADAS
+  // POSICIÓN EN LIGAS PRIVADAS — una llamada RPC por liga, en paralelo
   const leaguesWithPosition = await Promise.all(
     privateLeagues.map(async (membership) => {
-      const { data: members } = await supabase
-        .from('league_members')
-        .select('user_id')
-        .eq('league_id', membership.league_id)
-
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id, email, display_name, created_at')
-        .in('id', members?.map(m => m.user_id) || [])
-
-      const { data: predictions } = await supabase
-        .from('predictions')
-        .select('*, matches(*)')
-        .in('user_id', members?.map(m => m.user_id) || [])
-
-      const leaderboard = (profiles || []).map(profile => {
-        const userPredictions = predictions?.filter(p => p.user_id === profile.id) || []
-        const score = calculateUserScore(userPredictions)
-        return { ...profile, ...score }
-      })
-      .sort(compareLeaderboard)
-
-      const totalMembers = leaderboard.length
-      const userIndex = leaderboard.findIndex(u => u.id === user.id)
-      const position = userIndex !== -1 ? userIndex + 1 : null
-
+      const { data: rows } = await supabase.rpc('get_leaderboard', { p_league_id: membership.league_id })
+      const typedRows = (rows ?? []) as LeaderboardRow[]
+      const idx = typedRows.findIndex(r => r.user_id === user.id)
       return {
         ...membership,
-        position,
-        totalMembers
+        position: idx !== -1 ? idx + 1 : null,
+        totalMembers: typedRows.length,
       }
     })
   )
@@ -144,7 +106,7 @@ export default async function LeaguesPage() {
                     </h3>
                   </div>
                   <div className="text-sm text-gray-400 mb-4">Liga Pública • Mundial 2026</div>
-                  
+
                   <div className="flex flex-wrap items-center gap-6 text-sm">
                     <div>
                       <div className="text-gray-500 mb-1">Premios Totales</div>
@@ -163,7 +125,7 @@ export default async function LeaguesPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex-shrink-0 w-full sm:w-auto">
                   <span className="block text-center bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-4 rounded-xl transition-colors">
                     Ver Ranking →
@@ -192,7 +154,7 @@ export default async function LeaguesPage() {
                       </span>
                     )}
                   </div>
-                  
+
                   <div className="flex items-center gap-3 mb-3 text-sm">
                     <div className="text-gray-500">
                       {membership.role === 'owner' ? 'Sos el administrador' : 'Miembro'}
@@ -206,7 +168,7 @@ export default async function LeaguesPage() {
                       </>
                     )}
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="text-xs text-purple-400 font-mono bg-purple-900/20 px-3 py-2 rounded">
                       {membership.leagues.invite_code}

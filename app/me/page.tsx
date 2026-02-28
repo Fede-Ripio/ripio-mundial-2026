@@ -1,12 +1,11 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { calculateUserScore, compareLeaderboard } from '@/lib/scoring'
 import EditDisplayName from '@/components/EditDisplayName'
+import { GENERAL_LEAGUE_ID } from '@/lib/constants'
+import type { LeaderboardRow } from '@/lib/scoring'
 
 export const dynamic = 'force-dynamic'
-
-const GENERAL_LEAGUE_ID = '00000000-0000-0000-0000-000000000001'
 
 export default async function MePage() {
   const supabase = await createServerSupabaseClient()
@@ -14,59 +13,29 @@ export default async function MePage() {
 
   if (!user) redirect('/login')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
+  const [
+    { data: profile },
+    { data: leaderboard },
+    { count: predictionsCount },
+    { count: totalMatches },
+    { count: finishedMatches },
+  ] = await Promise.all([
+    supabase.from('profiles').select('*').eq('id', user.id).single(),
+    supabase.rpc('get_leaderboard', { p_league_id: GENERAL_LEAGUE_ID }),
+    supabase.from('predictions').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+    supabase.from('matches').select('*', { count: 'exact', head: true }),
+    supabase.from('matches').select('*', { count: 'exact', head: true }).eq('status', 'finished'),
+  ])
 
-  const { data: predictions } = await supabase
-    .from('predictions')
-    .select('*, matches(*)')
-    .eq('user_id', user.id)
+  const typedLeaderboard = ((leaderboard ?? []) as LeaderboardRow[])
+  const myStats = typedLeaderboard.find(r => r.user_id === user.id)
+  const points = myStats?.points ?? 0
+  const exactHits = myStats?.exact_hits ?? 0
+  const correctOutcomes = myStats?.correct_outcomes ?? 0
 
-  const { count: totalMatches } = await supabase
-    .from('matches')
-    .select('*', { count: 'exact', head: true })
-
-  const { count: finishedMatches } = await supabase
-    .from('matches')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'finished')
-
-  // Scoring con lib centralizado
-  const { points, exactHits, correctOutcomes } = calculateUserScore(predictions || [])
-
-  // Calcular posición en la liga general
-  let generalPosition: number | null = null
-  let generalTotal = 0
-
-  const { data: allProfiles } = await supabase
-    .from('profiles')
-    .select('id, created_at')
-
-  const { data: allPredictions } = await supabase
-    .from('predictions')
-    .select('*, matches(*)')
-
-  const { data: leagueMembers } = await supabase
-    .from('league_members')
-    .select('user_id')
-    .eq('league_id', GENERAL_LEAGUE_ID)
-
-  const memberIds = new Set(leagueMembers?.map(m => m.user_id) || [])
-
-  const leaderboard = (allProfiles || [])
-    .filter(p => memberIds.has(p.id))
-    .map(p => {
-      const userPreds = allPredictions?.filter(pred => pred.user_id === p.id) || []
-      return { id: p.id, created_at: p.created_at, ...calculateUserScore(userPreds) }
-    })
-    .sort(compareLeaderboard)
-
-  generalTotal = leaderboard.length
-  const idx = leaderboard.findIndex(p => p.id === user.id)
-  if (idx !== -1) generalPosition = idx + 1
+  const generalTotal = typedLeaderboard.length
+  const idx = typedLeaderboard.findIndex(r => r.user_id === user.id)
+  const generalPosition = idx !== -1 ? idx + 1 : null
 
   const displayName = profile?.display_name || user.email?.split('@')[0] || 'Anónimo'
 
@@ -93,7 +62,7 @@ export default async function MePage() {
             {finishedMatches ? <div className="text-xs text-gray-600 mt-0.5">de {finishedMatches} jugados</div> : null}
           </div>
           <div className="border border-purple-500/30 rounded-2xl p-5 text-center">
-            <div className="text-4xl font-bold text-blue-400 mb-1">{predictions?.length || 0}</div>
+            <div className="text-4xl font-bold text-blue-400 mb-1">{predictionsCount ?? 0}</div>
             <div className="text-xs text-gray-400">Pronósticos</div>
             {totalMatches ? <div className="text-xs text-gray-600 mt-0.5">de {totalMatches} partidos</div> : null}
           </div>

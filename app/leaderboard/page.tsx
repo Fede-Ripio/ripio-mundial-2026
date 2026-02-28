@@ -1,49 +1,37 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
-import Link from 'next/link'
-import { calculateUserScore, compareLeaderboard } from '@/lib/scoring'
+import { GENERAL_LEAGUE_ID } from '@/lib/constants'
+import LeaderboardTable from '@/components/LeaderboardTable'
+import type { LeaderboardRow } from '@/lib/scoring'
 
 export const dynamic = 'force-dynamic'
 
 export default async function LeaderboardPage() {
   const supabase = await createServerSupabaseClient()
-  
-  // Obtener usuario actual
-  const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: profiles } = await supabase
-    .from('profiles')
-    .select('id, display_name, created_at')
+  const [
+    { data: { user } },
+    { data: rows },
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.rpc('get_leaderboard', { p_league_id: GENERAL_LEAGUE_ID }),
+  ])
 
-  const { data: predictions } = await supabase
-    .from('predictions')
-    .select('*, matches(*)')
-
-  const { data: leagueMembers } = await supabase
-    .from('league_members')
-    .select('user_id, league_id')
-    .eq('league_id', '00000000-0000-0000-0000-000000000001')
-
-  const leaderboard = (profiles || []).map(profile => {
-    const userPredictions = predictions?.filter(p => p.user_id === profile.id) || []
-    const score = calculateUserScore(userPredictions)
-
-    return {
-      ...profile,
-      ...score,
-      totalPredictions: userPredictions.length,
-      inGeneralLeague: leagueMembers?.some(m => m.user_id === profile.id) || false
-    }
-  })
-  .filter(u => u.inGeneralLeague)
-  .sort(compareLeaderboard)
+  const leaderboard = ((rows ?? []) as LeaderboardRow[]).map((row, index) => ({
+    id: row.user_id,
+    display_name: row.display_name,
+    points: row.points,
+    exactHits: row.exact_hits,
+    correctOutcomes: row.correct_outcomes,
+    position: index + 1,
+  }))
 
   const top3 = leaderboard.slice(0, 3)
-  const rest = leaderboard.slice(3)
+  const restWithPosition = leaderboard.slice(3)
 
   return (
     <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
-        
+
         <div className="mb-12">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
           <h1 className="text-3xl sm:text-4xl font-bold mb-3">Ranking General</h1>
@@ -54,7 +42,7 @@ export default async function LeaderboardPage() {
 
         {/* Premios Podio */}
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mb-16">
-          
+
           {/* 🥇 PRIMER PUESTO */}
           <div className={`rounded-2xl p-8 text-center transition-all ${
             user && top3[0]?.id === user.id
@@ -145,60 +133,11 @@ export default async function LeaderboardPage() {
         </div>
 
         {/* Tabla */}
-        <div className="border border-purple-500/30 rounded-2xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-purple-900/20">
-                <tr>
-                  <th className="px-4 sm:px-6 py-4 text-left text-sm font-semibold text-gray-400">Pos</th>
-                  <th className="px-4 sm:px-6 py-4 text-left text-sm font-semibold text-gray-400">Usuario</th>
-                  <th className="px-4 sm:px-6 py-4 text-center text-sm font-semibold text-gray-400">Puntos</th>
-                  <th className="px-4 sm:px-6 py-4 text-center text-sm font-semibold text-gray-400 hidden sm:table-cell">Exactos</th>
-                  <th className="px-4 sm:px-6 py-4 text-center text-sm font-semibold text-gray-400 hidden sm:table-cell">Aciertos</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rest.map((userEntry, index) => {
-                  const isCurrentUser = user && userEntry.id === user.id
-                  
-                  return (
-                    <tr 
-                      key={userEntry.id} 
-                      className={`border-t border-purple-500/20 transition-colors ${
-                        isCurrentUser 
-                          ? 'bg-gradient-to-r from-purple-600/30 to-purple-500/20 border-l-4 border-l-purple-500' 
-                          : 'hover:bg-gray-900/30'
-                      }`}
-                    >
-                      <td className="px-4 sm:px-6 py-4 font-semibold text-gray-400">
-                        {index + 4}
-                      </td>
-                      <td className="px-4 sm:px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <div className="font-semibold">{userEntry.display_name || 'Anónimo'}</div>
-                          {isCurrentUser && (
-                            <span className="bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full font-semibold">
-                              VOS
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-4 sm:px-6 py-4 text-center">
-                        <span className="text-xl font-bold text-purple-400">{userEntry.points}</span>
-                      </td>
-                      <td className="px-4 sm:px-6 py-4 text-center text-green-400 font-semibold hidden sm:table-cell">
-                        {userEntry.exactHits}
-                      </td>
-                      <td className="px-4 sm:px-6 py-4 text-center text-yellow-400 font-semibold hidden sm:table-cell">
-                        {userEntry.correctOutcomes}
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <LeaderboardTable
+          entries={restWithPosition}
+          currentUserId={user?.id ?? null}
+          totalCount={leaderboard.length}
+        />
 
         {/* Info */}
         <div className="border border-gray-800 rounded-xl p-6 mt-8 space-y-3">

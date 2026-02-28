@@ -1,3 +1,13 @@
+// Tipo de retorno de la función SQL get_leaderboard()
+export interface LeaderboardRow {
+  user_id: string
+  display_name: string | null
+  points: number
+  exact_hits: number
+  correct_outcomes: number
+  created_at: string
+}
+
 export interface ScoringInput {
   home_goals: number
   away_goals: number

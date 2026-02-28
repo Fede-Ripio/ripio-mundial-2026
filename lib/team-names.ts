@@ -71,6 +71,8 @@ export const TEAM_NAME_MAP: Record<string, string> = {
   'uzbekistán': 'uzbekistan',
   'china': 'china',
   'tailandia': 'thailand',
+  'jordania': 'jordan',
+  'jordan': 'jordan',
   
   // CAF
   'marruecos': 'morocco',
@@ -95,12 +97,16 @@ export const TEAM_NAME_MAP: Record<string, string> = {
 }
 
 export function normalizeTeamName(name: string): string {
-  const cleaned = name
-    .toLowerCase()
+  // Primero intentar con el nombre completo en minúsculas
+  const lower = name.toLowerCase().replace(/\s+/g, ' ').trim()
+  if (TEAM_NAME_MAP[lower]) return TEAM_NAME_MAP[lower]
+
+  // Luego intentar sin prefijos como "república", "rep."
+  const cleaned = lower
     .replace(/república/g, '')
     .replace(/rep\./g, '')
     .replace(/\s+/g, ' ')
     .trim()
-  
+
   return TEAM_NAME_MAP[cleaned] || cleaned
 }

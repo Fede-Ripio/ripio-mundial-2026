@@ -2,30 +2,7 @@
 
 import { useState } from 'react'
 import MatchCard from './MatchCard'
-
-interface Match {
-  id: string
-  stage: string
-  group_code?: string
-  match_number: number
-  home_team: string
-  away_team: string
-  home_team_code?: string
-  away_team_code?: string
-  kickoff_at?: string
-  venue: string
-  city: string
-  status: string
-  home_score?: number
-  away_score?: number
-  notes?: string
-}
-
-interface Prediction {
-  match_id: string
-  home_goals: number
-  away_goals: number
-}
+import type { Match, Prediction } from '@/types/match'
 
 interface MatchesListProps {
   matches: Match[]
