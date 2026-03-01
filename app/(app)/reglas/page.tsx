@@ -6,13 +6,15 @@ export const metadata = {
 
 export default function RulesPage() {
   return (
-    <div className="min-h-screen bg-black text-white py-10 px-4 sm:px-6">
-      <div className="max-w-2xl mx-auto space-y-10">
+    <div className="min-h-screen bg-black text-white py-10 sm:py-12 px-4 sm:px-6">
 
-        <div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
-          <h1 className="text-3xl sm:text-4xl font-bold">Reglas</h1>
-        </div>
+      {/* Header */}
+      <div className="mb-8">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
+        <h1 className="text-3xl sm:text-4xl font-bold">Reglas</h1>
+      </div>
+
+      <div className="max-w-2xl space-y-10">
 
         {/* Cómo jugar */}
         <section className="space-y-3">

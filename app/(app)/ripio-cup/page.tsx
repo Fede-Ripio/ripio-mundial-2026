@@ -33,19 +33,20 @@ export default async function RipioCupPage() {
   }))
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-black text-white py-10 sm:py-12 px-4 sm:px-6">
 
-        {/* Header */}
-        <div className="mb-12">
-          <div className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 rounded-full px-3 py-1 mb-4">
-            <span className="text-xs font-bold text-purple-400 uppercase tracking-widest">Competencia interna</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-bold mb-3">Ripio Cup 2026</h1>
-          <p className="text-gray-400">
-            Equipo Ripio · {leaderboard.length} {leaderboard.length === 1 ? 'participante' : 'participantes'}
-          </p>
+      {/* Header */}
+      <div className="mb-8">
+        <div className="inline-flex items-center gap-2 bg-purple-600/20 border border-purple-500/30 rounded-full px-3 py-1 mb-4">
+          <span className="text-xs font-bold text-purple-400 uppercase tracking-widest">Competencia interna</span>
         </div>
+        <h1 className="text-3xl sm:text-4xl font-bold mb-3">Ripio Cup 2026</h1>
+        <p className="text-gray-400">
+          Equipo Ripio · {leaderboard.length} {leaderboard.length === 1 ? 'participante' : 'participantes'}
+        </p>
+      </div>
+
+      <div className="max-w-4xl mx-auto">
 
         {leaderboard.length === 0 ? (
           <div className="text-center py-20 text-gray-600">

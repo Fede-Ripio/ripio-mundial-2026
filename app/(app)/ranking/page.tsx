@@ -30,10 +30,10 @@ export default async function LeaderboardPage() {
   const restWithPosition = leaderboard.slice(3)
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6">
+    <div className="min-h-screen bg-black text-white py-10 sm:py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
 
-        <div className="mb-12">
+        <div className="mb-8">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
           <h1 className="text-3xl sm:text-4xl font-bold mb-3">Ranking General</h1>
           <p className="text-gray-400">
