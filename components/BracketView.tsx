@@ -253,54 +253,56 @@ export default function BracketView({ matches }: { matches: Match[] }) {
 
   return (
     <div className="overflow-x-auto pb-6">
-      {/* Round labels row */}
-      <div className="flex items-end mb-0 pl-4">
-        {leftCols.map(col => (
-          <RoundLabel
-            key={`lbl-left-${col.round}`}
-            label={col.label}
-            width={CARD_W[col.round] + CONN_W}
-          />
-        ))}
-        <RoundLabel label="Final" width={centerW} />
-        {rightCols.map(col => (
-          <RoundLabel
-            key={`lbl-right-${col.round}`}
-            label={col.label}
-            width={CARD_W[col.round] + CONN_W}
-          />
-        ))}
-      </div>
+      <div className="w-fit mx-auto px-4">
+        {/* Round labels row */}
+        <div className="flex items-end mb-0">
+          {leftCols.map(col => (
+            <RoundLabel
+              key={`lbl-left-${col.round}`}
+              label={col.label}
+              width={CARD_W[col.round] + CONN_W}
+            />
+          ))}
+          <RoundLabel label="Final" width={centerW} />
+          {rightCols.map(col => (
+            <RoundLabel
+              key={`lbl-right-${col.round}`}
+              label={col.label}
+              width={CARD_W[col.round] + CONN_W}
+            />
+          ))}
+        </div>
 
-      {/* Bracket tree */}
-      <div className="flex items-start pl-4" style={{ minWidth: 'max-content' }}>
-        {/* Left half — connectors go right */}
-        {leftCols.map(col => (
-          <BracketColumn
-            key={`left-${col.round}`}
-            round={col.round}
-            matchNums={col.nums}
-            matchMap={matchMap}
-            direction="right"
-          />
-        ))}
+        {/* Bracket tree */}
+        <div className="flex items-start">
+          {/* Left half — connectors go right */}
+          {leftCols.map(col => (
+            <BracketColumn
+              key={`left-${col.round}`}
+              round={col.round}
+              matchNums={col.nums}
+              matchMap={matchMap}
+              direction="right"
+            />
+          ))}
 
-        {/* Center: Final + 3rd place */}
-        <CenterColumn
-          finalMatch={matchMap.get(104)}
-          thirdPlaceMatch={matchMap.get(103)}
-        />
-
-        {/* Right half — connectors go left */}
-        {rightCols.map(col => (
-          <BracketColumn
-            key={`right-${col.round}`}
-            round={col.round}
-            matchNums={col.nums}
-            matchMap={matchMap}
-            direction="left"
+          {/* Center: Final + 3rd place */}
+          <CenterColumn
+            finalMatch={matchMap.get(104)}
+            thirdPlaceMatch={matchMap.get(103)}
           />
-        ))}
+
+          {/* Right half — connectors go left */}
+          {rightCols.map(col => (
+            <BracketColumn
+              key={`right-${col.round}`}
+              round={col.round}
+              matchNums={col.nums}
+              matchMap={matchMap}
+              direction="left"
+            />
+          ))}
+        </div>
       </div>
     </div>
   )
