@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { GENERAL_LEAGUE_ID } from '@/lib/constants'
 import Link from 'next/link'
 import Hero from '@/components/Hero'
 
@@ -22,9 +23,37 @@ const steps = [
   { n: '4', title: 'Ganá premios', desc: 'Los mejores del ranking ganan wARS al final del Mundial' },
 ]
 
+const MEDAL: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' }
+const PTS_COLOR: Record<number, string> = {
+  1: 'text-yellow-400',
+  2: 'text-gray-300',
+  3: 'text-orange-400',
+}
+
+function initials(name: string | null | undefined): string {
+  if (!name) return '?'
+  return name.trim().split(/\s+/).map(w => w[0]?.toUpperCase() ?? '').filter(Boolean).slice(0, 2).join('')
+}
+
 export default async function Home() {
   const supabase = await createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
+
+  const [
+    { data: { user } },
+    { data: leaderboardRows },
+  ] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.rpc('get_leaderboard', { p_league_id: GENERAL_LEAGUE_ID }),
+  ])
+
+  const leaderboard = (leaderboardRows ?? []) as Array<{
+    user_id: string
+    display_name: string | null
+    points: number
+  }>
+
+  const top5 = leaderboard.slice(0, 5)
+  const totalCount = leaderboard.length
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -53,50 +82,73 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Premios */}
-      <section className="py-20 bg-gradient-to-b from-gray-900/50 to-black">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="text-center mb-12">
-            {/* wARS logo grande */}
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <img src={WARS_LOGO} alt="wARS" className="w-16 h-16" />
-              <div className="text-left">
-                <div className="text-3xl sm:text-4xl font-bold">1.75M wARS</div>
-                <div className="text-gray-400 text-sm">en premios · Liga General Ripio Mundial</div>
-              </div>
+      {/* Mini ranking — solo si hay participantes */}
+      {top5.length > 0 && (
+        <section className="py-16 bg-black border-t border-gray-900">
+          <div className="max-w-xl mx-auto px-4">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-2">La competencia ya arrancó</h2>
+              <p className="text-gray-500 text-sm">
+                {totalCount} {totalCount === 1 ? 'jugador compitiendo' : 'jugadores compitiendo'} por 1.75M wARS
+              </p>
+            </div>
+
+            <div className="bg-gray-900/50 border border-gray-800 rounded-2xl overflow-hidden mb-5">
+              {top5.map((row, i) => {
+                const pos = i + 1
+                const medal = MEDAL[pos]
+                const ptColor = PTS_COLOR[pos] ?? 'text-gray-400'
+                return (
+                  <div
+                    key={row.user_id}
+                    className={`flex items-center gap-3 px-5 py-3.5 ${i < top5.length - 1 ? 'border-b border-gray-800/60' : ''}`}
+                  >
+                    {/* Position */}
+                    <span className="w-7 text-center flex-shrink-0">
+                      {medal
+                        ? <span className="text-lg">{medal}</span>
+                        : <span className="text-sm font-bold text-gray-600">#{pos}</span>
+                      }
+                    </span>
+
+                    {/* Avatar initials */}
+                    <div className="w-8 h-8 rounded-full bg-purple-900/60 border border-purple-500/30 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-bold text-purple-300 leading-none select-none">
+                        {initials(row.display_name)}
+                      </span>
+                    </div>
+
+                    {/* Name */}
+                    <span className="flex-1 min-w-0 text-sm font-medium text-white truncate">
+                      {row.display_name || 'Anónimo'}
+                    </span>
+
+                    {/* Points */}
+                    <span className={`text-sm font-bold flex-shrink-0 tabular-nums ${ptColor}`}>
+                      {row.points} pts
+                    </span>
+                  </div>
+                )
+              })}
+
+              {totalCount > 5 && (
+                <div className="px-5 py-3 text-center text-xs text-gray-600 border-t border-gray-800/60">
+                  +{totalCount - 5} participantes más
+                </div>
+              )}
+            </div>
+
+            <div className="text-center">
+              <Link
+                href="/ranking"
+                className="text-sm text-purple-400 hover:text-purple-300 font-semibold transition-colors"
+              >
+                Ver ranking completo →
+              </Link>
             </div>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-            <div className="bg-gradient-to-br from-yellow-900/20 to-yellow-700/10 border-2 border-yellow-500/40 rounded-2xl p-6 text-center">
-              <div className="text-6xl mb-3">🥇</div>
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <img src={WARS_LOGO} alt="wARS" className="w-5 h-5" />
-                <span className="text-3xl font-bold text-yellow-400">1MM</span>
-              </div>
-              <div className="text-sm text-gray-400">Primer puesto</div>
-            </div>
-
-            <div className="bg-gradient-to-br from-gray-700/20 to-gray-600/10 border-2 border-gray-500/40 rounded-2xl p-6 text-center">
-              <div className="text-6xl mb-3">🥈</div>
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <img src={WARS_LOGO} alt="wARS" className="w-5 h-5" />
-                <span className="text-3xl font-bold text-gray-300">500K</span>
-              </div>
-              <div className="text-sm text-gray-400">Segundo puesto</div>
-            </div>
-
-            <div className="bg-gradient-to-br from-orange-900/20 to-orange-700/10 border-2 border-orange-500/40 rounded-2xl p-6 text-center">
-              <div className="text-6xl mb-3">🥉</div>
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <img src={WARS_LOGO} alt="wARS" className="w-5 h-5" />
-                <span className="text-3xl font-bold text-orange-400">250K</span>
-              </div>
-              <div className="text-sm text-gray-400">Tercer puesto</div>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ¿Qué es wARS? */}
       <section className="py-16 bg-black border-t border-gray-900">
@@ -126,7 +178,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA final */}
       <section className="py-20 bg-gradient-to-t from-purple-900/20 to-black">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">
