@@ -66,9 +66,9 @@ export default function GroupStandingsTable({ standings }: { standings: Standing
                         </td>
                         <td className="p-2">
                           <div className="flex items-center gap-2">
-                            {getFlagUrl(team.team_code, '24x18') ? (
+                            {getFlagUrl(team.team_code, 24) ? (
                               <img
-                                src={getFlagUrl(team.team_code, '24x18')!}
+                                src={getFlagUrl(team.team_code, 24)!}
                                 alt={team.team}
                                 className="w-5 h-4 object-cover rounded flex-shrink-0"
                               />

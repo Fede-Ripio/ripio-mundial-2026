@@ -230,7 +230,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
 
   // Team column: flag + name stacked
   const TeamCol = ({ name, code, align }: { name: string; code?: string | null; align: 'left' | 'right' }) => {
-    const flagUrl = getFlagUrl(code, '160x120')
+    const flagUrl = getFlagUrl(code, 160)
     return (
       <div className={`flex flex-col items-center gap-1.5 w-14 sm:w-28 flex-shrink-0`}>
         {flagUrl ? (
