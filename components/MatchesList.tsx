@@ -69,8 +69,8 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
     <div>
 
       {/* TABS */}
-      <div className="px-4 sm:px-6 mb-6 overflow-x-auto scrollbar-hide">
-        <div className="flex gap-1 bg-gray-900/60 border border-gray-800 rounded-xl p-1 w-fit mx-auto">
+      <div className="px-4 sm:px-6 mb-6 flex justify-center">
+        <div className="flex gap-1 bg-gray-900/60 border border-gray-800 rounded-xl p-1 flex-shrink-0 max-w-full overflow-x-auto scrollbar-hide">
           {TABS.map(tab => {
             const count = matchesByTab[tab.key].length
             if (count === 0) return null
