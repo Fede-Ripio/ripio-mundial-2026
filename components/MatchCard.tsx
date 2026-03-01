@@ -254,10 +254,10 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
   }
 
   return (
-    <div className="border border-gray-800 rounded-2xl overflow-hidden bg-gray-900/40 w-full sm:max-w-xl hover:border-gray-700 transition-colors">
+    <div className="border border-purple-500/30 rounded-2xl overflow-hidden bg-gray-900/40 w-full sm:max-w-xl hover:border-purple-500/50 transition-colors">
 
       {/* HEADER: match number, stage (if knockout), date */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-gray-900/70 border-b border-gray-800 text-xs text-gray-500">
+      <div className="flex items-center justify-between px-4 py-2.5 bg-gray-900/70 border-b border-purple-500/20 text-xs text-gray-500">
         <div className="flex items-center gap-2">
           <span className="font-semibold text-gray-400">#{match.match_number}</span>
           {headerStage && <span className="text-purple-400 font-semibold">{headerStage}</span>}
@@ -305,7 +305,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
             {/* User prediction */}
             {isLoggedIn && (
               prediction ? (
-                <div className="flex items-center justify-between text-sm pt-2 border-t border-gray-800">
+                <div className="flex items-center justify-between text-sm pt-2 border-t border-purple-500/20">
                   <div className="flex items-center gap-1.5 text-gray-500 text-xs">
                     <span>Tu pronóstico:</span>
                     <span className={`font-mono font-bold ${prediction.home_goals === match.home_score ? 'text-green-400' : 'text-gray-400'}`}>
@@ -328,7 +328,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
                   )}
                 </div>
               ) : (
-                <p className="text-xs text-gray-600 text-center pt-2 border-t border-gray-800">
+                <p className="text-xs text-gray-600 text-center pt-2 border-t border-purple-500/20">
                   Sin pronóstico registrado
                 </p>
               )
@@ -363,7 +363,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
       </div>
 
       {/* FOOTER */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-t border-gray-800 text-xs">
+      <div className="flex items-center justify-between px-4 py-2.5 border-t border-purple-500/20 text-xs">
         <div>
           {isClosed && (
             <button
@@ -408,7 +408,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
 
       {/* PREDICTIONS PANEL */}
       {isClosed && showPredictions && (
-        <div className="border-t border-gray-800 px-4 py-3">
+        <div className="border-t border-purple-500/20 px-4 py-3">
           {allPredictions.length === 0 ? (
             <p className="text-xs text-gray-600 text-center py-2">Sin pronósticos registrados</p>
           ) : (

@@ -47,9 +47,9 @@ export default async function LeaderboardPage() {
           <div className={`rounded-2xl p-8 text-center transition-all ${
             user && top3[0]?.id === user.id
               ? 'border-4 border-purple-500 bg-gradient-to-br from-purple-600/30 to-purple-500/20 shadow-xl shadow-purple-500/20'
-              : 'border border-purple-500/40 bg-purple-900/10'
+              : 'border-2 border-purple-500/50 bg-purple-900/10'
           }`}>
-            <div className="text-6xl mb-4">🥇</div>
+            <div className="text-7xl font-black text-yellow-400 mb-4">1°</div>
             <div className="text-3xl font-bold text-purple-400 mb-2">1MM wARS</div>
             <div className="text-sm text-gray-500 mb-4">Primer Puesto</div>
             {top3[0] && (
@@ -76,9 +76,9 @@ export default async function LeaderboardPage() {
           <div className={`rounded-2xl p-8 text-center transition-all ${
             user && top3[1]?.id === user.id
               ? 'border-4 border-purple-500 bg-gradient-to-br from-purple-600/30 to-purple-500/20 shadow-xl shadow-purple-500/20'
-              : 'border border-purple-500/30'
+              : 'border-2 border-purple-500/40'
           }`}>
-            <div className="text-6xl mb-4">🥈</div>
+            <div className="text-7xl font-black text-gray-300 mb-4">2°</div>
             <div className="text-3xl font-bold text-gray-400 mb-2">500K wARS</div>
             <div className="text-sm text-gray-500 mb-4">Segundo Puesto</div>
             {top3[1] && (
@@ -94,7 +94,7 @@ export default async function LeaderboardPage() {
                 <div className="text-3xl font-bold mt-2">{top3[1].points} pts</div>
                 {user && top3[1].id === user.id && (
                   <div className="mt-3 text-xs text-purple-300 font-semibold">
-                    🥈 ¡Muy cerca del primero!
+                    ¡Muy cerca del primero!
                   </div>
                 )}
               </div>
@@ -105,9 +105,9 @@ export default async function LeaderboardPage() {
           <div className={`rounded-2xl p-8 text-center sm:col-span-2 md:col-span-1 transition-all ${
             user && top3[2]?.id === user.id
               ? 'border-4 border-purple-500 bg-gradient-to-br from-purple-600/30 to-purple-500/20 shadow-xl shadow-purple-500/20'
-              : 'border border-purple-500/30'
+              : 'border-2 border-purple-500/40'
           }`}>
-            <div className="text-6xl mb-4">🥉</div>
+            <div className="text-7xl font-black text-orange-400 mb-4">3°</div>
             <div className="text-3xl font-bold text-orange-400 mb-2">250K wARS</div>
             <div className="text-sm text-gray-500 mb-4">Tercer Puesto</div>
             {top3[2] && (
@@ -123,7 +123,7 @@ export default async function LeaderboardPage() {
                 <div className="text-3xl font-bold mt-2">{top3[2].points} pts</div>
                 {user && top3[2].id === user.id && (
                   <div className="mt-3 text-xs text-purple-300 font-semibold">
-                    🥉 ¡En el podio!
+                    ¡En el podio!
                   </div>
                 )}
               </div>

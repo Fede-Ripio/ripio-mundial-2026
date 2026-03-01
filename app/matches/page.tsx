@@ -37,28 +37,30 @@ export default async function MatchesPage() {
   }).length
 
   return (
-    <div className="min-h-screen bg-black text-white py-4 sm:py-8 px-3 sm:px-6">
+    <div className="min-h-screen bg-black text-white py-8 sm:py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
 
-        <div className="max-w-2xl mx-auto mb-6">
+        <div className="mb-8 sm:mb-12">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
-          <div className="flex items-end justify-between gap-3">
-            <h1 className="text-3xl sm:text-4xl font-bold shrink-0">Partidos</h1>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold mb-3">Partidos</h1>
+              {user ? (
+                <p className="text-gray-400">
+                  {predictions.length} pronósticos realizados · {pendingCount} por completar
+                </p>
+              ) : (
+                <p className="text-gray-400">
+                  Mundial 2026 · {all.length} partidos
+                </p>
+              )}
+            </div>
             {!user && (
-              <Link href="/register" className="text-purple-400 hover:text-purple-300 font-semibold text-sm mb-1 text-right leading-tight">
+              <Link href="/register" className="text-purple-400 hover:text-purple-300 font-semibold text-sm mt-1 text-right leading-tight flex-shrink-0">
                 Registrate<br className="sm:hidden" /> para jugar →
               </Link>
             )}
           </div>
-          {user ? (
-            <p className="text-gray-400 mt-2">
-              {predictions.length} pronósticos realizados · {pendingCount} por completar
-            </p>
-          ) : (
-            <p className="text-gray-400 mt-2">
-              Mundial 2026 · {all.length} partidos
-            </p>
-          )}
         </div>
 
         {all.length === 0 ? (

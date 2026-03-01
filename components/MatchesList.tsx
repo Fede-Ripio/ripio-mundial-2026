@@ -69,7 +69,7 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
     <div className="space-y-6">
 
       {/* TABS — sticky at top */}
-      <div className="sticky top-0 z-10 bg-black/90 backdrop-blur-sm py-3 -mx-3 px-3 sm:-mx-6 sm:px-6 border-b border-gray-800">
+      <div className="sticky top-0 z-10 bg-black/90 backdrop-blur-sm py-3 -mx-3 px-3 sm:-mx-6 sm:px-6">
         <div className="relative max-w-3xl mx-auto">
           {/* Fade hint — indica que hay más tabs hacia la derecha en mobile */}
           <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-black/80 to-transparent z-10 sm:hidden" />

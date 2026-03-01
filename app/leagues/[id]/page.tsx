@@ -91,9 +91,8 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
         <div className="mb-8">
           <div className="bg-gray-900/50 border border-purple-500/30 rounded-2xl overflow-hidden">
             <div className="bg-purple-900/20 px-6 py-4 border-b border-purple-500/30">
-              <h2 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
-                <span>📊</span>
-                <span>Clasificación</span>
+              <h2 className="text-2xl sm:text-3xl font-bold">
+                Clasificación
               </h2>
             </div>
 
@@ -116,13 +115,11 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
                         row.user_id === user.id ? 'bg-purple-900/20' : 'hover:bg-gray-900/30'
                       }`}
                     >
-                      <td className="px-4 sm:px-6 py-4">
-                        <span className="text-lg sm:text-xl font-bold">
-                          {index === 0 && '🥇'}
-                          {index === 1 && '🥈'}
-                          {index === 2 && '🥉'}
-                          {index > 2 && <span className="text-gray-500">{index + 1}</span>}
-                        </span>
+                      <td className="px-4 sm:px-6 py-4 font-bold">
+                        {index === 0 && <span className="text-yellow-400">1°</span>}
+                        {index === 1 && <span className="text-gray-300">2°</span>}
+                        {index === 2 && <span className="text-orange-400">3°</span>}
+                        {index > 2 && <span className="text-gray-500">{index + 1}</span>}
                       </td>
                       <td className="px-4 sm:px-6 py-4">
                         <div className="font-semibold text-sm sm:text-base">

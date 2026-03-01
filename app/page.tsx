@@ -69,7 +69,7 @@ export default async function Home() {
 
           <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
             <div className="bg-gradient-to-br from-yellow-900/20 to-yellow-700/10 border-2 border-yellow-500/40 rounded-2xl p-6 text-center">
-              <div className="text-6xl mb-3">🥇</div>
+              <div className="text-7xl font-black text-yellow-400 mb-3">1°</div>
               <div className="flex items-center justify-center gap-2 mb-1">
                 <img src={WARS_LOGO} alt="wARS" className="w-5 h-5" />
                 <span className="text-3xl font-bold text-yellow-400">1MM</span>
@@ -78,7 +78,7 @@ export default async function Home() {
             </div>
 
             <div className="bg-gradient-to-br from-gray-700/20 to-gray-600/10 border-2 border-gray-500/40 rounded-2xl p-6 text-center">
-              <div className="text-6xl mb-3">🥈</div>
+              <div className="text-7xl font-black text-gray-300 mb-3">2°</div>
               <div className="flex items-center justify-center gap-2 mb-1">
                 <img src={WARS_LOGO} alt="wARS" className="w-5 h-5" />
                 <span className="text-3xl font-bold text-gray-300">500K</span>
@@ -87,7 +87,7 @@ export default async function Home() {
             </div>
 
             <div className="bg-gradient-to-br from-orange-900/20 to-orange-700/10 border-2 border-orange-500/40 rounded-2xl p-6 text-center">
-              <div className="text-6xl mb-3">🥉</div>
+              <div className="text-7xl font-black text-orange-400 mb-3">3°</div>
               <div className="flex items-center justify-center gap-2 mb-1">
                 <img src={WARS_LOGO} alt="wARS" className="w-5 h-5" />
                 <span className="text-3xl font-bold text-orange-400">250K</span>
