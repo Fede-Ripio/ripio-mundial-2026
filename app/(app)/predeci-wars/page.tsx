@@ -1,5 +1,3 @@
-import AppDownloadBanner from '@/components/AppDownloadBanner'
-
 export const dynamic = 'force-dynamic'
 
 const markets = [
@@ -22,7 +20,7 @@ const markets = [
 
 export default async function PredictionsWarsPage() {
   return (
-    <div className="min-h-screen bg-black text-white py-10 sm:py-12 px-4 sm:px-6 pb-24">
+    <div className="min-h-screen bg-black text-white py-10 sm:py-12 px-4 sm:px-6">
 
       {/* Header */}
       <div className="mb-8">
@@ -64,8 +62,6 @@ export default async function PredictionsWarsPage() {
 
       </div>
 
-      {/* Banner flotante de descarga */}
-      <AppDownloadBanner />
 
     </div>
   )

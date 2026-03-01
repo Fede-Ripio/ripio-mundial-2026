@@ -9,6 +9,7 @@ import {
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import RipioLogo from './RipioLogo'
+import AppDownloadBanner from './AppDownloadBanner'
 
 interface NavProfile {
   display_name: string | null
@@ -436,8 +437,12 @@ export default function AppShell({
         </header>
 
         {/* Page content */}
-        {children}
+        <div className="pb-24">
+          {children}
+        </div>
       </div>
+
+      <AppDownloadBanner />
 
     </div>
   )

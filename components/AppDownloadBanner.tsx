@@ -6,7 +6,8 @@ import RipioLogo from './RipioLogo'
 
 const IOS_URL = 'https://apps.apple.com/ar/app/ripio-app-crypto-wallet/id1221006761'
 const ANDROID_URL = 'https://play.google.com/store/apps/details?id=com.ripio.android'
-const STORAGE_KEY = 'ripio-app-banner-dismissed'
+const STORAGE_KEY = 'ripio-app-banner-ts'
+const REAPPEAR_HOURS = 24
 
 function getDownloadUrl(): string {
   if (typeof navigator === 'undefined') return IOS_URL
@@ -22,8 +23,9 @@ export default function AppDownloadBanner() {
 
   useEffect(() => {
     setMounted(true)
-    const dismissed = localStorage.getItem(STORAGE_KEY)
-    if (!dismissed) {
+    const ts = localStorage.getItem(STORAGE_KEY)
+    const hoursSince = ts ? (Date.now() - Number(ts)) / (1000 * 60 * 60) : Infinity
+    if (!ts || hoursSince >= REAPPEAR_HOURS) {
       const t = setTimeout(() => setVisible(true), 600)
       return () => clearTimeout(t)
     }
@@ -31,7 +33,7 @@ export default function AppDownloadBanner() {
 
   const dismiss = () => {
     setVisible(false)
-    localStorage.setItem(STORAGE_KEY, '1')
+    localStorage.setItem(STORAGE_KEY, String(Date.now()))
   }
 
   if (!mounted) return null
