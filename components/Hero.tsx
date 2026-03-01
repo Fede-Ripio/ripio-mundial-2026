@@ -5,7 +5,7 @@ const WARS_LOGO = 'https://cdn.prod.website-files.com/640b8191d2fdcfb39b135a5b/6
 
 export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
-    <section className="relative min-h-[calc(100vh-4rem)] w-full overflow-x-hidden bg-gradient-to-b from-purple-950 via-purple-900 to-black flex flex-col">
+    <section className="relative min-h-[calc(100dvh-4rem)] w-full overflow-x-hidden bg-gradient-to-b from-purple-950 via-purple-900 to-black flex flex-col">
 
       <div className="absolute inset-0">
         <Image
