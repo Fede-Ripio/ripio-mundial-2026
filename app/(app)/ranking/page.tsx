@@ -52,13 +52,15 @@ export default async function LeaderboardPage() {
         {/* Premios Podio */}
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mb-16">
 
-          {/* 🥇 PRIMER PUESTO */}
+          {/* PRIMER PUESTO */}
           <div className={`rounded-2xl p-8 text-center transition-all ${
             user && top3[0]?.id === user.id
               ? 'border-4 border-purple-500 bg-gradient-to-br from-purple-600/30 to-purple-500/20 shadow-xl shadow-purple-500/20'
               : 'border border-purple-500/40 bg-purple-900/10'
           }`}>
-            <div className="text-6xl mb-4">🥇</div>
+            <div className="w-12 h-12 rounded-full bg-yellow-400/20 border-2 border-yellow-400/60 flex items-center justify-center mx-auto mb-4">
+              <span className="text-xl font-black text-yellow-400">1</span>
+            </div>
             <div className="text-3xl font-bold text-purple-400 mb-2">1MM wARS</div>
             <div className="text-sm text-gray-500 mb-4">Primer Puesto</div>
             {top3[0] && (
@@ -74,20 +76,22 @@ export default async function LeaderboardPage() {
                 <div className="text-3xl font-bold text-purple-400 mt-2">{top3[0].points} pts</div>
                 {user && top3[0].id === user.id && (
                   <div className="mt-3 text-xs text-purple-300 font-semibold">
-                    🎉 ¡Estás primero!
+                    ¡Estás primero!
                   </div>
                 )}
               </div>
             )}
           </div>
 
-          {/* 🥈 SEGUNDO PUESTO */}
+          {/* SEGUNDO PUESTO */}
           <div className={`rounded-2xl p-8 text-center transition-all ${
             user && top3[1]?.id === user.id
               ? 'border-4 border-purple-500 bg-gradient-to-br from-purple-600/30 to-purple-500/20 shadow-xl shadow-purple-500/20'
               : 'border border-purple-500/30'
           }`}>
-            <div className="text-6xl mb-4">🥈</div>
+            <div className="w-12 h-12 rounded-full bg-gray-400/15 border-2 border-gray-400/40 flex items-center justify-center mx-auto mb-4">
+              <span className="text-xl font-black text-gray-400">2</span>
+            </div>
             <div className="text-3xl font-bold text-gray-400 mb-2">500K wARS</div>
             <div className="text-sm text-gray-500 mb-4">Segundo Puesto</div>
             {top3[1] && (
@@ -103,20 +107,22 @@ export default async function LeaderboardPage() {
                 <div className="text-3xl font-bold mt-2">{top3[1].points} pts</div>
                 {user && top3[1].id === user.id && (
                   <div className="mt-3 text-xs text-purple-300 font-semibold">
-                    🥈 ¡Muy cerca del primero!
+                    ¡Muy cerca del primero!
                   </div>
                 )}
               </div>
             )}
           </div>
 
-          {/* 🥉 TERCER PUESTO */}
+          {/* TERCER PUESTO */}
           <div className={`rounded-2xl p-8 text-center sm:col-span-2 md:col-span-1 transition-all ${
             user && top3[2]?.id === user.id
               ? 'border-4 border-purple-500 bg-gradient-to-br from-purple-600/30 to-purple-500/20 shadow-xl shadow-purple-500/20'
               : 'border border-purple-500/30'
           }`}>
-            <div className="text-6xl mb-4">🥉</div>
+            <div className="w-12 h-12 rounded-full bg-orange-400/15 border-2 border-orange-400/40 flex items-center justify-center mx-auto mb-4">
+              <span className="text-xl font-black text-orange-400">3</span>
+            </div>
             <div className="text-3xl font-bold text-orange-400 mb-2">250K wARS</div>
             <div className="text-sm text-gray-500 mb-4">Tercer Puesto</div>
             {top3[2] && (
@@ -132,7 +138,7 @@ export default async function LeaderboardPage() {
                 <div className="text-3xl font-bold mt-2">{top3[2].points} pts</div>
                 {user && top3[2].id === user.id && (
                   <div className="mt-3 text-xs text-purple-300 font-semibold">
-                    🥉 ¡En el podio!
+                    ¡En el podio!
                   </div>
                 )}
               </div>
