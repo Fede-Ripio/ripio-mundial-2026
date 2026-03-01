@@ -66,14 +66,11 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
   }
 
   return (
-    <div className="space-y-6">
+    <div>
 
-      {/* TABS — sticky at top */}
-      <div className="sticky top-0 z-10 bg-black/90 backdrop-blur-sm py-3 -mx-3 px-3 sm:-mx-6 sm:px-6 border-b border-gray-800">
-        <div className="relative max-w-3xl mx-auto">
-          {/* Fade hint — indica que hay más tabs hacia la derecha en mobile */}
-          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-black/80 to-transparent z-10 sm:hidden" />
-        <div className="flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide pr-6 sm:pr-0">
+      {/* TABS */}
+      <div className="px-4 sm:px-6 mb-6">
+        <div className="flex gap-1 bg-gray-900/60 border border-gray-800 rounded-xl p-1 overflow-x-auto scrollbar-hide">
           {TABS.map(tab => {
             const count = matchesByTab[tab.key].length
             if (count === 0) return null
@@ -84,22 +81,21 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex-shrink-0 flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                className={`flex-shrink-0 flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                   isActive
-                    ? 'bg-gray-800 text-white border-b-2 border-purple-500'
-                    : 'text-gray-500 hover:text-gray-300 hover:bg-gray-900'
+                    ? 'bg-purple-600 text-white shadow'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
                 }`}
               >
                 <span>{tab.label}</span>
                 {pending > 0 && (
-                  <span className="bg-purple-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                  <span className="bg-white/20 text-white text-[10px] rounded-full min-w-[18px] h-[18px] flex items-center justify-center font-bold px-1">
                     {pending}
                   </span>
                 )}
               </button>
             )
           })}
-        </div>
         </div>
       </div>
 

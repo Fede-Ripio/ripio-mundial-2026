@@ -37,45 +37,42 @@ export default async function MatchesPage() {
   }).length
 
   return (
-    <div className="min-h-screen bg-black text-white py-4 sm:py-8 px-3 sm:px-6">
-      <div className="max-w-7xl mx-auto">
-
-        <div className="max-w-2xl mx-auto mb-6">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
-          <div className="flex items-end justify-between gap-3">
-            <h1 className="text-3xl sm:text-4xl font-bold shrink-0">Pronósticos</h1>
-            {!user && (
-              <Link href="/registro" className="text-purple-400 hover:text-purple-300 font-semibold text-sm mb-1 text-right leading-tight">
-                Registrate<br className="sm:hidden" /> para jugar →
-              </Link>
-            )}
-          </div>
-          {user ? (
-            <p className="text-gray-400 mt-2">
-              {predictions.length} pronósticos realizados · {pendingCount} por completar
-            </p>
-          ) : (
-            <p className="text-gray-400 mt-2">
-              Mundial 2026 · {all.length} partidos
-            </p>
+    <div className="min-h-screen bg-black text-white py-6 sm:py-10">
+      <div className="px-4 sm:px-6 max-w-2xl mb-6">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
+        <div className="flex items-end justify-between gap-3">
+          <h1 className="text-3xl sm:text-4xl font-bold shrink-0">Pronósticos</h1>
+          {!user && (
+            <Link href="/registro" className="text-purple-400 hover:text-purple-300 font-semibold text-sm mb-1 text-right leading-tight">
+              Registrate<br className="sm:hidden" /> para jugar →
+            </Link>
           )}
         </div>
-
-        {all.length === 0 ? (
-          <div className="border border-purple-500/30 rounded-xl p-8 sm:p-12 text-center">
-            <p className="text-gray-400 text-lg sm:text-xl">
-              ⚠️ No hay partidos cargados
-            </p>
-          </div>
+        {user ? (
+          <p className="text-gray-400 mt-2">
+            {predictions.length} pronósticos realizados · {pendingCount} por completar
+          </p>
         ) : (
-          <MatchesList 
-            matches={all} 
-            predictions={predictions} 
-            isLoggedIn={!!user}
-            nextMatch={nextMatch}
-          />
+          <p className="text-gray-400 mt-2">
+            Mundial 2026 · {all.length} partidos
+          </p>
         )}
       </div>
+
+      {all.length === 0 ? (
+        <div className="px-4 sm:px-6 border border-purple-500/30 rounded-xl p-8 sm:p-12 text-center">
+          <p className="text-gray-400 text-lg sm:text-xl">
+            ⚠️ No hay partidos cargados
+          </p>
+        </div>
+      ) : (
+        <MatchesList
+          matches={all}
+          predictions={predictions}
+          isLoggedIn={!!user}
+          nextMatch={nextMatch}
+        />
+      )}
     </div>
   )
 }
