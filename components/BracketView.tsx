@@ -43,7 +43,7 @@ function TeamRow({
   isLoser: boolean
   compact?: boolean
 }) {
-  const flagUrl = getFlagUrl(code, compact ? 20 : 24)
+  const flagUrl = getFlagUrl(code, compact ? 20 : 40)
   return (
     <div className={`flex items-center gap-1.5 px-2 py-[5px] ${isLoser ? 'opacity-40' : ''}`}>
       {flagUrl
