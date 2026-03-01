@@ -61,7 +61,7 @@ const ScoreControl = ({
           type="button"
           onClick={decrement}
           disabled={isDisabled || numVal === null || numVal <= 0}
-          className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 text-sm sm:text-lg font-bold hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none"
+          className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 text-sm sm:text-lg font-bold hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none touch-manipulation"
           aria-label="Menos"
         >
           −
@@ -70,7 +70,7 @@ const ScoreControl = ({
           type="button"
           onClick={increment}
           disabled={isDisabled || (numVal !== null && numVal >= 20)}
-          className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 text-sm sm:text-lg font-bold hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none"
+          className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg bg-gray-800 border border-gray-700 text-gray-300 text-sm sm:text-lg font-bold hover:bg-gray-700 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center select-none touch-manipulation"
           aria-label="Más"
         >
           +
@@ -236,15 +236,15 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
   const TeamCol = ({ name, code, align }: { name: string; code?: string | null; align: 'left' | 'right' }) => {
     const flagUrl = getFlagUrl(code)
     return (
-      <div className={`flex flex-col items-center gap-1.5 w-20 sm:w-28 flex-shrink-0`}>
+      <div className={`flex flex-col items-center gap-1.5 max-[374px]:w-14 w-20 sm:w-28 flex-shrink-0`}>
         {flagUrl ? (
           <img
             src={flagUrl}
             alt={name}
-            className="w-12 h-9 sm:w-16 sm:h-12 object-cover rounded-md sm:rounded-lg shadow-md"
+            className="w-12 h-9 max-[374px]:w-10 max-[374px]:h-7 sm:w-16 sm:h-12 object-cover rounded-md sm:rounded-lg shadow-md"
           />
         ) : (
-          <div className="w-12 h-9 sm:w-16 sm:h-12 rounded-md sm:rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-xl sm:text-2xl">
+          <div className="w-12 h-9 max-[374px]:w-10 max-[374px]:h-7 sm:w-16 sm:h-12 rounded-md sm:rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-lg sm:text-2xl">
             🏴
           </div>
         )}
