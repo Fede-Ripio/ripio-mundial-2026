@@ -144,7 +144,7 @@ export default async function Home() {
             </Link>
           ) : (
             <Link
-              href="/matches"
+              href="/pronosticos"
               className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold px-12 py-5 rounded-xl text-lg transition-all transform hover:scale-105 shadow-2xl"
             >
               Ver mis pronósticos

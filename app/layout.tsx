@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 
 const BASE_URL = "https://ripio-mundial-2026.vercel.app";
 
@@ -44,10 +43,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className="bg-gray-950 text-gray-100">
-        <Navbar />
-        <main className="min-h-screen">
-          {children}
-        </main>
+        {children}
       </body>
     </html>
   );
