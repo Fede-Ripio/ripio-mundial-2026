@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   Menu, X, LogOut, ChevronLeft, ChevronRight,
-  ClipboardList, LayoutGrid, Trophy, Users, BookOpen, Zap, Star,
+  ClipboardList, LayoutGrid, Trophy, Users, BookOpen, Zap, Star, ExternalLink,
 } from 'lucide-react'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
@@ -64,6 +64,7 @@ const NAV_LINKS = [
 ]
 
 const RIPIO_CUP_LINK = { href: '/ripio-cup', label: 'Ripio Cup', Icon: Star }
+const RIPIO_SITE_LINK = { href: 'https://www.ripio.com', label: 'Conocé Ripio', Icon: ExternalLink }
 
 export default function AppShell({
   user,
@@ -189,6 +190,28 @@ export default function AppShell({
               </Link>
             )
           })}
+
+          {/* Separador + link externo Ripio */}
+          <div className={`my-2 transition-all duration-300 ${sidebarOpen ? 'mx-4' : 'mx-2'} h-px bg-gray-800`} />
+          <a
+            href={RIPIO_SITE_LINK.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={!sidebarOpen ? RIPIO_SITE_LINK.label : undefined}
+            className={`flex items-center h-11 transition-colors border-r-2 border-transparent ${
+              sidebarOpen ? 'px-4 gap-3' : 'justify-center px-2'
+            } text-gray-500 hover:text-gray-300 hover:bg-gray-900`}
+          >
+            <RIPIO_SITE_LINK.Icon className="w-5 h-5 flex-shrink-0 text-gray-600" />
+            <span
+              className={`text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                sidebarOpen ? 'opacity-100 max-w-[160px]' : 'opacity-0 max-w-0 overflow-hidden'
+              }`}
+            >
+              {RIPIO_SITE_LINK.label}
+            </span>
+          </a>
+
         </nav>
 
         {/* User section */}
@@ -361,6 +384,20 @@ export default function AppShell({
               </Link>
             )
           })}
+
+          {/* Separador + link externo Ripio */}
+          <div className="mx-5 my-2 h-px bg-gray-800" />
+          <a
+            href={RIPIO_SITE_LINK.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={closeMobile}
+            className="flex items-center gap-4 px-6 py-3.5 text-sm font-medium transition-colors text-gray-500 hover:text-gray-300 hover:bg-gray-900 border-l-2 border-transparent"
+          >
+            <RIPIO_SITE_LINK.Icon className="w-5 h-5 flex-shrink-0 text-gray-600" />
+            {RIPIO_SITE_LINK.label}
+          </a>
+
         </nav>
 
         {/* Bottom: logout */}
