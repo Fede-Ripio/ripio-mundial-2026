@@ -93,7 +93,7 @@ function LoginForm() {
               <div className="mb-2">❌ {error}</div>
               {error.includes('no está registrado') && (
                 <Link 
-                  href="/register"
+                  href="/registro"
                   className="inline-block mt-2 text-purple-400 hover:text-purple-300 font-semibold underline"
                 >
                   Crear cuenta →
@@ -120,7 +120,7 @@ function LoginForm() {
 
         <div className="mt-6 text-center text-sm">
           <span className="text-gray-400">¿No tenés cuenta? </span>
-          <Link href="/register" className="text-purple-400 hover:text-purple-300 font-semibold">
+          <Link href="/registro" className="text-purple-400 hover:text-purple-300 font-semibold">
             Registrate gratis
           </Link>
         </div>
