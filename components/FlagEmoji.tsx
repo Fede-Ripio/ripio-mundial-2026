@@ -1,34 +1,28 @@
-interface FlagEmojiProps {
+import { getFlagUrl, type FlagSize } from '@/lib/flags'
+
+interface FlagProps {
   countryCode?: string | null
-  size?: 'sm' | 'md' | 'lg'
+  size?: FlagSize
+  className?: string
 }
 
-export default function FlagEmoji({ countryCode, size = 'md' }: FlagEmojiProps) {
-  if (!countryCode) return <span className="text-gray-500">❓</span>
+/**
+ * Muestra la bandera de un país usando flagcdn.com.
+ * Acepta códigos ISO 3166-1 alpha-2 (ej: "AR") y subdivisiones (ej: "GB-ENG").
+ */
+export default function Flag({ countryCode, size = '40x30', className = '' }: FlagProps) {
+  const url = getFlagUrl(countryCode, size)
 
-  const sizeClasses = {
-    sm: 'text-xl',
-    md: 'text-2xl',
-    lg: 'text-4xl'
-  }
-
-  // Convertir código ISO a emoji de bandera
-  const getFlag = (code: string): string => {
-    // Casos especiales
-    if (code === 'GB-ENG') return '🏴󠁧󠁢󠁥󠁮󠁧󠁿' // Inglaterra
-    if (code === 'GB-SCT') return '🏴󠁧󠁢󠁳󠁣󠁴󠁿' // Escocia
-    if (code === 'GB-WLS') return '🏴󠁧󠁢󠁷󠁬󠁳󠁿' // Gales
-    
-    // Códigos ISO estándar → emoji
-    const codePoints = [...code.toUpperCase()]
-      .map(char => 127397 + char.charCodeAt(0))
-    
-    return String.fromCodePoint(...codePoints)
+  if (!url) {
+    return <div className={`inline-block rounded bg-gray-700 ${className}`} style={{ aspectRatio: '4/3' }} />
   }
 
   return (
-    <span className={sizeClasses[size]} role="img" aria-label={`Bandera de ${countryCode}`}>
-      {getFlag(countryCode)}
-    </span>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={url}
+      alt={countryCode ?? ''}
+      className={`inline-block object-cover rounded ${className}`}
+    />
   )
 }

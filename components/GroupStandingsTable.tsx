@@ -1,5 +1,7 @@
 'use client'
 
+import { getFlagUrl } from '@/lib/flags'
+
 interface Standing {
   group_code: string
   team: string
@@ -18,10 +20,6 @@ interface Standing {
 export default function GroupStandingsTable({ standings }: { standings: Standing[] }) {
   const groups = [...new Set(standings.map(s => s.group_code))].sort()
 
-  const getFlag = (code: string | null) => {
-    if (!code) return '🏴'
-    return `https://flagcdn.com/24x18/${code.toLowerCase()}.png`
-  }
 
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -68,10 +66,14 @@ export default function GroupStandingsTable({ standings }: { standings: Standing
                         </td>
                         <td className="p-2">
                           <div className="flex items-center gap-2">
-                            {team.team_code ? (
-                              <img src={getFlag(team.team_code)} alt="" className="w-5 h-4 object-cover rounded" />
+                            {getFlagUrl(team.team_code, '24x18') ? (
+                              <img
+                                src={getFlagUrl(team.team_code, '24x18')!}
+                                alt={team.team}
+                                className="w-5 h-4 object-cover rounded flex-shrink-0"
+                              />
                             ) : (
-                              <span>🏴</span>
+                              <div className="w-5 h-4 rounded bg-gray-700 flex-shrink-0" />
                             )}
                             <span className="font-medium truncate max-w-[120px]">{team.team}</span>
                           </div>
