@@ -383,7 +383,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
           )}
           {!isClosed && !isLoggedIn && !message && (
             <button
-              onClick={() => router.push('/login')}
+              onClick={() => router.push('/ingresa')}
               className="text-purple-400 hover:text-purple-300 font-semibold"
             >
               Ingresar

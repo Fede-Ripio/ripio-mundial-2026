@@ -115,7 +115,7 @@ function CheckEmailContent() {
         </p>
 
         <Link
-          href="/login"
+          href="/ingresa"
           className="text-purple-400 hover:text-purple-300 text-sm font-medium"
         >
           ← Reenviar link
