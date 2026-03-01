@@ -39,7 +39,7 @@ export default function CuadroClient({
   return (
     <div>
       {/* Tabs */}
-      <div className="px-4 sm:px-6 mb-6">
+      <div className="px-4 sm:px-6 mb-6 flex justify-center">
         <div className="flex gap-1 bg-gray-900/60 border border-gray-800 rounded-xl p-1 w-fit">
           {tabs.map(tab => (
             <button

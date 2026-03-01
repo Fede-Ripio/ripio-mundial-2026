@@ -71,7 +71,7 @@ export default function NavbarClient({
 
   const links = [
     { href: '/pronosticos', label: 'Pronósticos' },
-    { href: '/cuadro', label: 'Partidos' },
+    { href: '/cuadro', label: 'Cuadro' },
     { href: '/ranking', label: 'Ranking' },
     { href: '/ligas', label: 'Ligas' },
     { href: '/reglas', label: 'Reglas' },
