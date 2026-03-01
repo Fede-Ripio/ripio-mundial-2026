@@ -71,6 +71,7 @@ export default function NavbarClient({
 
   const links = [
     { href: '/matches', label: 'Partidos' },
+    { href: '/bracket', label: 'Bracket' },
     { href: '/leaderboard', label: 'Ranking' },
     { href: '/leagues', label: 'Ligas' },
     { href: '/rules', label: 'Reglas' },
