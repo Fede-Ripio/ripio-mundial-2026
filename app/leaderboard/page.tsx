@@ -43,7 +43,7 @@ export default async function LeaderboardPage() {
         {/* Premios Podio */}
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mb-16">
 
-          {/* 🥇 PRIMER PUESTO */}
+          {/* PRIMER PUESTO */}
           <div className={`rounded-2xl p-8 text-center transition-all ${
             user && top3[0]?.id === user.id
               ? 'border-4 border-purple-500 bg-gradient-to-br from-purple-600/30 to-purple-500/20 shadow-xl shadow-purple-500/20'
@@ -72,7 +72,7 @@ export default async function LeaderboardPage() {
             )}
           </div>
 
-          {/* 🥈 SEGUNDO PUESTO */}
+          {/* SEGUNDO PUESTO */}
           <div className={`rounded-2xl p-8 text-center transition-all ${
             user && top3[1]?.id === user.id
               ? 'border-4 border-purple-500 bg-gradient-to-br from-purple-600/30 to-purple-500/20 shadow-xl shadow-purple-500/20'
@@ -101,7 +101,7 @@ export default async function LeaderboardPage() {
             )}
           </div>
 
-          {/* 🥉 TERCER PUESTO */}
+          {/* TERCER PUESTO */}
           <div className={`rounded-2xl p-8 text-center sm:col-span-2 md:col-span-1 transition-all ${
             user && top3[2]?.id === user.id
               ? 'border-4 border-purple-500 bg-gradient-to-br from-purple-600/30 to-purple-500/20 shadow-xl shadow-purple-500/20'
