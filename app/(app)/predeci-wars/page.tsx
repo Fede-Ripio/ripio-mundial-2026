@@ -75,7 +75,7 @@ export default async function PredictionsWarsPage() {
       </div>
 
       {/* Footer */}
-      <div className="border-t border-gray-800 pt-10 mt-12">
+      <div className="pt-10 mt-12">
         <div className="max-w-2xl text-center">
           <Link
             href="/matches"
