@@ -6,7 +6,8 @@ import RipioLogo from './RipioLogo'
 
 const IOS_URL = 'https://apps.apple.com/ar/app/ripio-app-crypto-wallet/id1221006761'
 const ANDROID_URL = 'https://play.google.com/store/apps/details?id=com.ripio.android'
-const STORAGE_KEY = 'ripio-app-banner-ts'
+const LS_KEY = 'ripio-app-banner-ts'    // timestamp de último cierre (localStorage)
+const SS_KEY = 'ripio-app-banner-seen'  // cerrado en esta sesión (sessionStorage)
 const REAPPEAR_HOURS = 24
 
 function getDownloadUrl(): string {
@@ -23,17 +24,26 @@ export default function AppDownloadBanner() {
 
   useEffect(() => {
     setMounted(true)
-    const ts = localStorage.getItem(STORAGE_KEY)
+
+    const ts = localStorage.getItem(LS_KEY)
     const hoursSince = ts ? (Date.now() - Number(ts)) / (1000 * 60 * 60) : Infinity
-    if (!ts || hoursSince >= REAPPEAR_HOURS) {
-      const t = setTimeout(() => setVisible(true), 600)
-      return () => clearTimeout(t)
+
+    // Si pasaron 24h, reseteamos el flag de sesión para que vuelva a aparecer
+    if (hoursSince >= REAPPEAR_HOURS) {
+      sessionStorage.removeItem(SS_KEY)
     }
+
+    // Si ya lo cerraron en esta sesión, no mostrar
+    if (sessionStorage.getItem(SS_KEY)) return
+
+    const t = setTimeout(() => setVisible(true), 600)
+    return () => clearTimeout(t)
   }, [])
 
   const dismiss = () => {
     setVisible(false)
-    localStorage.setItem(STORAGE_KEY, String(Date.now()))
+    sessionStorage.setItem(SS_KEY, '1')             // no reaparece en esta sesión
+    localStorage.setItem(LS_KEY, String(Date.now())) // para el conteo de 24h
   }
 
   if (!mounted) return null
