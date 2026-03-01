@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export const metadata = {
-  title: 'Cuadro · Ripio Mundial 2026',
+  title: 'Fixture · Ripio Mundial 2026',
 }
 
 export default async function CuadroPage() {
@@ -30,8 +30,8 @@ export default async function CuadroPage() {
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">
           Ripio Mundial 2026
         </p>
-        <h1 className="text-3xl sm:text-4xl font-bold">Cuadro</h1>
-        <p className="text-gray-400 mt-2">Posiciones de grupos y cuadro de eliminación directa</p>
+        <h1 className="text-3xl sm:text-4xl font-bold">Fixture</h1>
+        <p className="text-gray-400 mt-2">Posiciones de grupos y eliminación directa</p>
       </div>
 
       <CuadroClient

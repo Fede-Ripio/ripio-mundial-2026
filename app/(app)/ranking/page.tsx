@@ -39,6 +39,14 @@ export default async function LeaderboardPage() {
           <p className="text-gray-400">
             Liga Ripio · {leaderboard.length} participantes
           </p>
+          {!user && (
+            <p className="text-sm text-purple-400 mt-2">
+              ¿Todavía no jugás?{' '}
+              <a href="/registro" className="font-semibold hover:text-purple-300 underline">
+                Registrarse gratis →
+              </a>
+            </p>
+          )}
         </div>
 
         {/* Premios Podio */}

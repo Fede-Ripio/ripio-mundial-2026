@@ -56,7 +56,7 @@ function NavAvatar({ profile, size = 'sm' }: { profile: NavProfile | null; size?
 
 const NAV_LINKS = [
   { href: '/pronosticos',  label: 'Pronósticos',  Icon: ClipboardList },
-  { href: '/cuadro',       label: 'Cuadro',        Icon: LayoutGrid    },
+  { href: '/cuadro',       label: 'Fixture',       Icon: LayoutGrid    },
   { href: '/ranking',      label: 'Ranking',       Icon: Trophy        },
   { href: '/ligas',        label: 'Ligas',         Icon: Users         },
   { href: '/reglas',       label: 'Reglas',        Icon: BookOpen      },
