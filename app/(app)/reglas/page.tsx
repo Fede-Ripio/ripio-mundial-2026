@@ -14,7 +14,7 @@ export default function RulesPage() {
         <h1 className="text-3xl sm:text-4xl font-bold">Reglas</h1>
       </div>
 
-      <div className="max-w-2xl space-y-10">
+      <div className="max-w-2xl mx-auto space-y-10">
 
         {/* Cómo jugar */}
         <section className="space-y-3">
