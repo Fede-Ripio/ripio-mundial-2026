@@ -70,18 +70,18 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
           <h1 className="text-4xl sm:text-5xl font-bold mb-3">{league.name}</h1>
           <div className="flex items-center gap-4 text-sm">
             {league.is_public ? (
-              <span className="bg-green-600/20 text-green-400 px-3 py-1 rounded-full flex items-center gap-1">
-                🌐 Pública
+              <span className="bg-green-600/20 text-green-400 px-3 py-1 rounded-full">
+                Pública
               </span>
             ) : (
-              <span className="bg-purple-600/20 text-purple-400 px-3 py-1 rounded-full flex items-center gap-1">
-                🔒 Privada
+              <span className="bg-purple-600/20 text-purple-400 px-3 py-1 rounded-full">
+                Privada
               </span>
             )}
             <span className="text-gray-400">{leaderboard.length} miembros</span>
             {membership?.role === 'owner' && (
               <span className="bg-yellow-600/20 text-yellow-400 px-3 py-1 rounded-full">
-                👑 Admin
+                Admin
               </span>
             )}
           </div>

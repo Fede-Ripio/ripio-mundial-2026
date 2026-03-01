@@ -92,9 +92,6 @@ export default async function LeaguesPage() {
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-2xl">
-                          {membership.role === 'owner' ? '👑' : '🏅'}
-                        </span>
                         <h3 className="font-bold text-2xl group-hover:text-purple-300 transition-colors">
                           {membership.leagues.name}
                         </h3>
