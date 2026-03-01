@@ -84,10 +84,10 @@ export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
 
           {!isLoggedIn ? (
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-              <Link href="/register" className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-10 py-4 rounded-xl text-lg transition-all transform hover:scale-105 shadow-2xl min-w-[220px]">
+              <Link href="/registro" className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-10 py-4 rounded-xl text-lg transition-all transform hover:scale-105 shadow-2xl min-w-[220px]">
                 Empezar ahora
               </Link>
-              <Link href="/login" className="bg-white/10 backdrop-blur-sm hover:bg-white/20 border-2 border-white/40 text-white font-semibold px-10 py-4 rounded-xl text-lg transition-all min-w-[220px]">
+              <Link href="/ingresa" className="bg-white/10 backdrop-blur-sm hover:bg-white/20 border-2 border-white/40 text-white font-semibold px-10 py-4 rounded-xl text-lg transition-all min-w-[220px]">
                 Iniciar sesión
               </Link>
             </div>

@@ -70,12 +70,12 @@ export default function NavbarClient({
   }
 
   const links = [
-    { href: '/matches', label: 'Partidos' },
-    { href: '/cuadro', label: 'Cuadro' },
-    { href: '/leaderboard', label: 'Ranking' },
-    { href: '/leagues', label: 'Ligas' },
-    { href: '/rules', label: 'Reglas' },
-    { href: '/predictions-wars', label: 'Predecí wARS' },
+    { href: '/pronosticos', label: 'Pronósticos' },
+    { href: '/cuadro', label: 'Partidos' },
+    { href: '/ranking', label: 'Ranking' },
+    { href: '/ligas', label: 'Ligas' },
+    { href: '/reglas', label: 'Reglas' },
+    { href: '/predeci-wars', label: 'Predecí wARS' },
   ]
 
   return (
@@ -108,13 +108,13 @@ export default function NavbarClient({
             {!user ? (
               <>
                 <Link
-                  href="/login"
+                  href="/ingresa"
                   className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
                 >
                   Ingresar
                 </Link>
                 <Link
-                  href="/register"
+                  href="/registro"
                   className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
                   Registrarse
@@ -123,7 +123,7 @@ export default function NavbarClient({
             ) : (
               <div className="flex items-center gap-3">
                 <Link
-                  href="/me"
+                  href="/perfil"
                   className="flex items-center gap-2 text-sm text-gray-300 hover:text-white bg-gray-900 hover:bg-gray-800 px-3 py-2 rounded-lg transition-colors"
                 >
                   <NavAvatar profile={profile} />
@@ -169,14 +169,14 @@ export default function NavbarClient({
                 {!user ? (
                   <>
                     <Link
-                      href="/login"
+                      href="/ingresa"
                       onClick={() => setIsOpen(false)}
                       className="text-sm font-medium text-gray-400"
                     >
                       Ingresar
                     </Link>
                     <Link
-                      href="/register"
+                      href="/registro"
                       onClick={() => setIsOpen(false)}
                       className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium text-center"
                     >
@@ -186,7 +186,7 @@ export default function NavbarClient({
                 ) : (
                   <>
                     <Link
-                      href="/me"
+                      href="/perfil"
                       onClick={() => setIsOpen(false)}
                       className="flex items-center gap-3 bg-gray-900 px-4 py-3 rounded-lg"
                     >

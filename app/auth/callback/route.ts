@@ -5,7 +5,7 @@ import { cookies } from 'next/headers'
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
-  const next = requestUrl.searchParams.get('next') ?? '/matches'
+  const next = requestUrl.searchParams.get('next') ?? '/pronosticos'
 
   if (code) {
     const cookieStore = await cookies()
@@ -40,5 +40,5 @@ export async function GET(request: Request) {
     console.error('Auth error:', error)
   }
 
-  return NextResponse.redirect(new URL('/login?error=invalid_link', requestUrl.origin))
+  return NextResponse.redirect(new URL('/ingresa?error=invalid_link', requestUrl.origin))
 }
