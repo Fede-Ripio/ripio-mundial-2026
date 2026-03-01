@@ -43,10 +43,10 @@ export default async function MatchesPage() {
         <div className="max-w-2xl mx-auto mb-6">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
           <div className="flex items-end justify-between gap-3">
-            <h1 className="text-3xl sm:text-4xl font-bold">Partidos</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold shrink-0">Partidos</h1>
             {!user && (
-              <Link href="/register" className="text-purple-400 hover:text-purple-300 font-semibold text-sm mb-1">
-                Registrate para jugar →
+              <Link href="/register" className="text-purple-400 hover:text-purple-300 font-semibold text-sm mb-1 text-right leading-tight">
+                Registrate<br className="sm:hidden" /> para jugar →
               </Link>
             )}
           </div>

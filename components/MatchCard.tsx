@@ -236,15 +236,15 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
   const TeamCol = ({ name, code, align }: { name: string; code?: string | null; align: 'left' | 'right' }) => {
     const flagUrl = getFlagUrl(code)
     return (
-      <div className={`flex flex-col items-center gap-1.5 max-[374px]:w-14 w-20 sm:w-28 flex-shrink-0`}>
+      <div className={`flex flex-col items-center gap-1.5 w-14 sm:w-28 flex-shrink-0`}>
         {flagUrl ? (
           <img
             src={flagUrl}
             alt={name}
-            className="w-12 h-9 max-[374px]:w-10 max-[374px]:h-7 sm:w-16 sm:h-12 object-cover rounded-md sm:rounded-lg shadow-md"
+            className="w-10 h-7 sm:w-16 sm:h-12 object-cover rounded-md sm:rounded-lg shadow-md"
           />
         ) : (
-          <div className="w-12 h-9 max-[374px]:w-10 max-[374px]:h-7 sm:w-16 sm:h-12 rounded-md sm:rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-lg sm:text-2xl">
+          <div className="w-10 h-7 sm:w-16 sm:h-12 rounded-md sm:rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-lg sm:text-2xl">
             🏴
           </div>
         )}
