@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+import AppShell from "@/components/AppShell";
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 const BASE_URL = "https://ripio-mundial-2026.vercel.app";
 
@@ -36,18 +37,30 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  let profile: { display_name: string | null; avatar_url: string | null } | null = null
+  if (user) {
+    const { data } = await supabase
+      .from('profiles')
+      .select('display_name, avatar_url')
+      .eq('id', user.id)
+      .single()
+    profile = data
+  }
+
   return (
     <html lang="es">
       <body className="bg-gray-950 text-gray-100">
-        <Navbar />
-        <main className="min-h-screen">
+        <AppShell user={user} profile={profile}>
           {children}
-        </main>
+        </AppShell>
       </body>
     </html>
   );
