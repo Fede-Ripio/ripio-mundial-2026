@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { calculatePredictionScore } from '@/lib/scoring'
+import { getFlagUrl } from '@/lib/flags'
 import type { Match, Prediction } from '@/types/match'
 
 interface MatchPrediction {
@@ -216,11 +217,6 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
     return () => clearInterval(interval)
   }, [match.kickoff_at, isFinished])
 
-  const getFlagUrl = (code: string | null | undefined) => {
-    if (!code) return null
-    return `https://flagcdn.com/160x120/${code.toLowerCase()}.png`
-  }
-
   const stageLabels: Record<string, string> = {
     ro32: 'R32',
     ro16: 'Octavos',
@@ -234,7 +230,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
 
   // Team column: flag + name stacked
   const TeamCol = ({ name, code, align }: { name: string; code?: string | null; align: 'left' | 'right' }) => {
-    const flagUrl = getFlagUrl(code)
+    const flagUrl = getFlagUrl(code, '160x120')
     return (
       <div className={`flex flex-col items-center gap-1.5 w-14 sm:w-28 flex-shrink-0`}>
         {flagUrl ? (
@@ -244,9 +240,7 @@ export default function MatchCard({ match, prediction, isLoggedIn }: {
             className="w-10 h-7 sm:w-16 sm:h-12 object-cover rounded-md sm:rounded-lg shadow-md"
           />
         ) : (
-          <div className="w-10 h-7 sm:w-16 sm:h-12 rounded-md sm:rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-lg sm:text-2xl">
-            🏴
-          </div>
+          <div className="w-10 h-7 sm:w-16 sm:h-12 rounded-md sm:rounded-lg bg-gray-800 border border-gray-700" />
         )}
         <span className="text-xs font-semibold text-center leading-tight line-clamp-3 w-full">{name}</span>
       </div>
