@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react'
 import { ChevronDown } from 'lucide-react'
 import RipioLogo from './RipioLogo'
 
-const IOS_URL = 'https://apps.apple.com/ar/app/ripio/id1146834723'
-const ANDROID_URL = 'https://play.google.com/store/apps/details?id=com.ripio.exchange'
+const IOS_URL = 'https://apps.apple.com/ar/app/ripio-app-crypto-wallet/id1221006761'
+const ANDROID_URL = 'https://play.google.com/store/apps/details?id=com.ripio.android'
 const STORAGE_KEY = 'ripio-app-banner-dismissed'
 
 function getDownloadUrl(): string {
@@ -63,8 +63,8 @@ export default function AppDownloadBanner() {
 
         {/* Text */}
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-white text-sm leading-tight">Conseguí wARS</p>
-          <p className="text-xs text-gray-400 leading-tight mt-0.5">Descargá la app de Ripio</p>
+          <p className="font-semibold text-white text-sm leading-tight">Conseguí wARS con Ripio</p>
+          <p className="text-xs text-gray-400 leading-tight mt-0.5">Generan rendimientos todos los días</p>
         </div>
 
         {/* CTA */}
