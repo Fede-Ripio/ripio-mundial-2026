@@ -23,7 +23,6 @@ const steps = [
   { n: '4', title: 'Ganá premios', desc: 'Los mejores del ranking ganan wARS al final del Mundial' },
 ]
 
-const MEDAL: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' }
 const PTS_COLOR: Record<number, string> = {
   1: 'text-yellow-400',
   2: 'text-gray-300',
@@ -84,19 +83,20 @@ export default async function Home() {
 
       {/* Mini ranking — solo si hay participantes */}
       {top5.length > 0 && (
-        <section className="py-16 bg-black border-t border-gray-900">
+        <section className="py-16 bg-black">
           <div className="max-w-xl mx-auto px-4">
             <div className="text-center mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-2">La competencia ya arrancó</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-2">
+                Ya hay {totalCount} {totalCount === 1 ? 'jugador' : 'jugadores'} en carrera
+              </h2>
               <p className="text-gray-500 text-sm">
-                {totalCount} {totalCount === 1 ? 'jugador compitiendo' : 'jugadores compitiendo'} por 1.75M wARS
+                El torneo arrancó. Todavía estás a tiempo de sumarte.
               </p>
             </div>
 
             <div className="bg-gray-900/50 border border-gray-800 rounded-2xl overflow-hidden mb-5">
               {top5.map((row, i) => {
                 const pos = i + 1
-                const medal = MEDAL[pos]
                 const ptColor = PTS_COLOR[pos] ?? 'text-gray-400'
                 return (
                   <div
@@ -105,10 +105,7 @@ export default async function Home() {
                   >
                     {/* Position */}
                     <span className="w-7 text-center flex-shrink-0">
-                      {medal
-                        ? <span className="text-lg">{medal}</span>
-                        : <span className="text-sm font-bold text-gray-600">#{pos}</span>
-                      }
+                      <span className="text-sm font-bold text-gray-500">#{pos}</span>
                     </span>
 
                     {/* Avatar initials */}
@@ -151,7 +148,7 @@ export default async function Home() {
       )}
 
       {/* ¿Qué es wARS? */}
-      <section className="py-16 bg-black border-t border-gray-900">
+      <section className="py-16 bg-black">
         <div className="max-w-3xl mx-auto px-4">
           <div className="flex flex-col sm:flex-row items-start gap-6 bg-gray-900/40 border border-gray-800 rounded-2xl p-6 sm:p-8">
             <img src={WARS_LOGO} alt="wARS" className="w-14 h-14 flex-shrink-0" />
