@@ -19,6 +19,7 @@ export default async function LeaderboardPage() {
   const leaderboard = ((rows ?? []) as LeaderboardRow[]).map((row, index) => ({
     id: row.user_id,
     display_name: row.display_name,
+    avatar_url: row.avatar_url,
     points: row.points,
     exactHits: row.exact_hits,
     correctOutcomes: row.correct_outcomes,

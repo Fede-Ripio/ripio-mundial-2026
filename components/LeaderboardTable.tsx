@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 interface LeaderboardEntry {
   id: string
   display_name: string | null
+  avatar_url?: string | null
   points: number
   exactHits: number
   correctOutcomes: number
@@ -18,6 +19,39 @@ interface LeaderboardTableProps {
 }
 
 const PAGE_SIZE = 50
+
+function getInitials(name: string | null | undefined): string {
+  if (!name) return '?'
+  return name
+    .trim()
+    .split(/\s+/)
+    .map(word => word[0]?.toUpperCase() ?? '')
+    .filter(Boolean)
+    .slice(0, 2)
+    .join('')
+}
+
+function Avatar({ url, name, size = 'sm' }: { url?: string | null; name: string | null; size?: 'sm' | 'md' }) {
+  const initials = getInitials(name)
+  const sizeClass = size === 'md' ? 'w-9 h-9 text-sm' : 'w-7 h-7 text-xs'
+
+  if (url) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={url}
+        alt={name ?? 'avatar'}
+        className={`${sizeClass} rounded-full object-cover flex-shrink-0 border border-purple-500/30`}
+      />
+    )
+  }
+
+  return (
+    <div className={`${sizeClass} rounded-full bg-purple-900/50 border border-purple-500/30 flex items-center justify-center flex-shrink-0`}>
+      <span className="font-bold text-purple-300 select-none leading-none">{initials}</span>
+    </div>
+  )
+}
 
 export default function LeaderboardTable({ entries, currentUserId, totalCount }: LeaderboardTableProps) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
@@ -119,8 +153,9 @@ export default function LeaderboardTable({ entries, currentUserId, totalCount }:
                     <td className="px-4 sm:px-6 py-4 font-semibold text-gray-400">
                       {entry.position}
                     </td>
-                    <td className="px-4 sm:px-6 py-4 max-w-[140px] sm:max-w-none">
+                    <td className="px-4 sm:px-6 py-4 max-w-[160px] sm:max-w-none">
                       <div className="flex items-center gap-2 min-w-0">
+                        <Avatar url={entry.avatar_url} name={entry.display_name} />
                         <div className="font-semibold truncate">{entry.display_name || 'Anónimo'}</div>
                         {isCurrentUser && (
                           <span className="bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full font-semibold flex-shrink-0">
@@ -160,6 +195,7 @@ export default function LeaderboardTable({ entries, currentUserId, totalCount }:
         <div className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-t border-purple-500/40 px-4 py-3">
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
+              <Avatar url={currentUserEntry.avatar_url} name={currentUserEntry.display_name} size="md" />
               <span className="text-purple-400 font-bold text-2xl flex-shrink-0">
                 #{currentUserEntry.position}
               </span>

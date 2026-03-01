@@ -2,6 +2,7 @@
 export interface LeaderboardRow {
   user_id: string
   display_name: string | null
+  avatar_url: string | null
   points: number
   exact_hits: number
   correct_outcomes: number
