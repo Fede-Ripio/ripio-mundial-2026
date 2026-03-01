@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   Menu, X, LogOut, ChevronLeft, ChevronRight,
-  ClipboardList, LayoutGrid, Trophy, Users, BookOpen, Zap,
+  ClipboardList, LayoutGrid, Trophy, Users, BookOpen, Zap, Star,
 } from 'lucide-react'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
@@ -63,6 +63,8 @@ const NAV_LINKS = [
   { href: '/predeci-wars', label: 'Predecí wARS',  Icon: Zap           },
 ]
 
+const RIPIO_CUP_LINK = { href: '/ripio-cup', label: 'Ripio Cup', Icon: Star }
+
 export default function AppShell({
   user,
   profile,
@@ -78,6 +80,7 @@ export default function AppShell({
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const displayName = profile?.display_name || user?.email?.split('@')[0] || 'Usuario'
+  const isRipioEmployee = !!user?.email?.endsWith('@ripio.com')
 
   const handleLogout = async () => {
     const supabase = createClient()
@@ -127,6 +130,39 @@ export default function AppShell({
 
         {/* Nav links */}
         <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3">
+
+          {/* Ripio Cup — solo para @ripio.com */}
+          {isRipioEmployee && (() => {
+            const { href, label, Icon } = RIPIO_CUP_LINK
+            const isActive = pathname === href || pathname.startsWith(href + '/')
+            return (
+              <>
+                <Link
+                  href={href}
+                  title={!sidebarOpen ? label : undefined}
+                  className={`flex items-center h-11 transition-colors border-r-2 ${
+                    sidebarOpen ? 'px-4 gap-3' : 'justify-center px-2'
+                  } ${
+                    isActive
+                      ? 'text-purple-300 bg-purple-600/20 border-purple-400'
+                      : 'text-purple-400/80 hover:text-purple-300 bg-purple-900/10 hover:bg-purple-900/20 border-transparent'
+                  }`}
+                >
+                  <Icon className="w-5 h-5 flex-shrink-0 text-purple-400" />
+                  <span
+                    className={`text-sm font-semibold whitespace-nowrap transition-all duration-300 ${
+                      sidebarOpen ? 'opacity-100 max-w-[160px]' : 'opacity-0 max-w-0 overflow-hidden'
+                    }`}
+                  >
+                    {label}
+                  </span>
+                </Link>
+                {/* Separador */}
+                <div className={`my-2 transition-all duration-300 ${sidebarOpen ? 'mx-4' : 'mx-2'} h-px bg-gray-800`} />
+              </>
+            )
+          })()}
+
           {NAV_LINKS.map(({ href, label, Icon }) => {
             const isActive = pathname === href || pathname.startsWith(href + '/')
             return (
@@ -283,6 +319,30 @@ export default function AppShell({
 
         {/* Nav links */}
         <nav className="flex-1 overflow-y-auto py-2">
+
+          {/* Ripio Cup — solo para @ripio.com */}
+          {isRipioEmployee && (() => {
+            const { href, label, Icon } = RIPIO_CUP_LINK
+            const isActive = pathname === href
+            return (
+              <>
+                <Link
+                  href={href}
+                  onClick={closeMobile}
+                  className={`flex items-center gap-4 px-6 py-3.5 text-sm font-semibold transition-colors ${
+                    isActive
+                      ? 'text-purple-300 bg-purple-600/20 border-l-2 border-purple-400'
+                      : 'text-purple-400/80 hover:text-purple-300 bg-purple-900/10 hover:bg-purple-900/20 border-l-2 border-transparent'
+                  }`}
+                >
+                  <Icon className="w-5 h-5 flex-shrink-0 text-purple-400" />
+                  {label}
+                </Link>
+                <div className="mx-5 my-2 h-px bg-gray-800" />
+              </>
+            )
+          })()}
+
           {NAV_LINKS.map(({ href, label, Icon }) => {
             const isActive = pathname === href
             return (
