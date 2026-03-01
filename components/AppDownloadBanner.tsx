@@ -68,14 +68,21 @@ export default function AppDownloadBanner() {
       {/* Banner */}
       <div className="bg-gray-950 border-t border-gray-800 px-4 py-3 flex items-center gap-3 shadow-2xl">
 
-        {/* Icon */}
-        <div className="w-10 h-10 rounded-xl bg-purple-700 flex items-center justify-center flex-shrink-0 border border-purple-500/30">
-          <RipioLogo className="h-4 text-white" />
+        {/* Icons: wARS + Ripio */}
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <img
+            src="https://cdn.prod.website-files.com/640b8191d2fdcfb39b135a5b/69121e0c7b24a0930d8e4efa_world_logos_wars_logo.svg"
+            alt="wARS"
+            className="w-8 h-8"
+          />
+          <div className="w-8 h-8 rounded-lg bg-purple-700 flex items-center justify-center border border-purple-500/30">
+            <RipioLogo className="h-3.5 text-white" />
+          </div>
         </div>
 
         {/* Text */}
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-white text-sm leading-tight">Conseguí wARS con Ripio</p>
+          <p className="font-semibold text-white text-sm leading-tight">Conseguí wARS en Ripio</p>
           <p className="text-xs text-gray-400 leading-tight mt-0.5">Generan rendimientos todos los días</p>
         </div>
 
