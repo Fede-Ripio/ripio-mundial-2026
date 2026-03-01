@@ -59,7 +59,7 @@ export default function CuadroClient({
 
       {/* Content */}
       {activeTab === 'grupos' && (
-        <div className="px-4 sm:px-6 max-w-7xl">
+        <div className="px-4 sm:px-6 max-w-7xl mx-auto">
           {standings.length === 0 ? (
             <p className="text-gray-500 text-center py-12">
               Las posiciones se calcularán una vez que comiencen los partidos.
