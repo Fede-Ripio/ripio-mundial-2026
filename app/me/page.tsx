@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import EditDisplayName from '@/components/EditDisplayName'
+import AvatarUpload from '@/components/AvatarUpload'
 import { GENERAL_LEAGUE_ID } from '@/lib/constants'
 import type { LeaderboardRow } from '@/lib/scoring'
 
@@ -42,7 +43,16 @@ export default async function MePage() {
   return (
     <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl sm:text-5xl font-bold mb-12">👤 Mi Perfil</h1>
+
+        {/* Avatar + nombre */}
+        <div className="flex flex-col items-center mb-10">
+          <AvatarUpload
+            userId={user.id}
+            displayName={displayName}
+            currentAvatarUrl={profile?.avatar_url ?? null}
+          />
+          <h1 className="text-3xl sm:text-4xl font-bold mt-4">{displayName}</h1>
+        </div>
 
         {/* STATS */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">

@@ -122,12 +122,31 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
                         {index > 2 && <span className="text-gray-500">{index + 1}</span>}
                       </td>
                       <td className="px-4 sm:px-6 py-4">
-                        <div className="font-semibold text-sm sm:text-base">
-                          {row.display_name || 'Anónimo'}
+                        <div className="flex items-center gap-2">
+                          {/* Avatar circular con fallback de iniciales */}
+                          {row.avatar_url ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={row.avatar_url}
+                              alt={row.display_name ?? 'avatar'}
+                              className="w-7 h-7 rounded-full object-cover flex-shrink-0 border border-purple-500/30"
+                            />
+                          ) : (
+                            <div className="w-7 h-7 rounded-full bg-purple-900/50 border border-purple-500/30 flex items-center justify-center flex-shrink-0">
+                              <span className="text-xs font-bold text-purple-300 select-none leading-none">
+                                {(row.display_name || '?').trim().split(/\s+/).map((w: string) => w[0]?.toUpperCase() ?? '').filter(Boolean).slice(0, 2).join('')}
+                              </span>
+                            </div>
+                          )}
+                          <div>
+                            <div className="font-semibold text-sm sm:text-base">
+                              {row.display_name || 'Anónimo'}
+                            </div>
+                            {row.user_id === user.id && (
+                              <div className="text-xs text-purple-400">Vos</div>
+                            )}
+                          </div>
                         </div>
-                        {row.user_id === user.id && (
-                          <div className="text-xs text-purple-400">Vos</div>
-                        )}
                       </td>
                       <td className="px-4 sm:px-6 py-4 text-center">
                         <span className="text-xl sm:text-2xl font-bold text-purple-400">{row.points}</span>
