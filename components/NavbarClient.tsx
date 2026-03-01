@@ -145,13 +145,17 @@ export default function NavbarClient({
               )}
             </div>
 
-            {/* Mobile hamburger */}
+            {/* Mobile: avatar del usuario (o hamburger si no está logueado) */}
             <button
               onClick={() => setIsOpen(true)}
-              className="md:hidden p-2 text-gray-400 hover:text-white"
+              className="md:hidden p-1 text-gray-400 hover:text-white"
               aria-label="Abrir menú"
             >
-              <Menu className="w-6 h-6" />
+              {user ? (
+                <NavAvatar profile={profile} size="sm" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -173,28 +177,26 @@ export default function NavbarClient({
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        {/* Drawer header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
-          <Link href="/" onClick={close} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <RipioLogo className="h-8 text-white" />
-            <span className="font-bold text-white">Mundial 2026</span>
-          </Link>
+        {/* Drawer header — minimal: solo el botón X */}
+        <div className="flex items-center justify-end px-4 pt-4 pb-2">
           <button onClick={close} className="p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-gray-800 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* User section */}
+        {/* User section — protagonista */}
         {user ? (
           <Link
             href="/perfil"
             onClick={close}
-            className="flex items-center gap-4 px-5 py-5 border-b border-gray-800 hover:bg-gray-900 transition-colors"
+            className="flex items-center gap-4 px-5 pb-5 pt-1 border-b border-gray-800 hover:bg-gray-900/50 transition-colors"
           >
             <NavAvatar profile={profile} size="lg" />
             <div className="min-w-0">
-              <div className="font-semibold text-white truncate">{displayName}</div>
-              <div className="text-sm text-gray-400 mt-0.5">Ver perfil</div>
+              <div className="font-bold text-white text-base truncate">{displayName}</div>
+              <div className="text-sm text-gray-500 truncate mt-0.5">
+                {user.email}
+              </div>
             </div>
           </Link>
         ) : (
