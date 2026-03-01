@@ -36,11 +36,11 @@ export default async function LeaguesPage() {
   )
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6">
+    <div className="min-h-screen bg-black text-white py-10 sm:py-12 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
 
         {/* HEADER */}
-        <div className="mb-10">
+        <div className="mb-8">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">Ligas Privadas</h1>
           <p className="text-gray-400">

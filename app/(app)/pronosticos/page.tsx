@@ -37,8 +37,8 @@ export default async function MatchesPage() {
   }).length
 
   return (
-    <div className="min-h-screen bg-black text-white py-6 sm:py-10">
-      <div className="px-4 sm:px-6 max-w-2xl mb-6">
+    <div className="min-h-screen bg-black text-white py-10 sm:py-12">
+      <div className="px-4 sm:px-6 mb-8">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
         <div className="flex items-end justify-between gap-3">
           <h1 className="text-3xl sm:text-4xl font-bold shrink-0">Pronósticos</h1>

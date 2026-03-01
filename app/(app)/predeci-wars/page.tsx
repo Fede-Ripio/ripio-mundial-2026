@@ -22,22 +22,19 @@ const markets = [
 
 export default async function PredictionsWarsPage() {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white py-10 sm:py-12 px-4 sm:px-6">
 
       {/* Header */}
-      <div className="border-b border-gray-800 py-8 px-4">
-        <div className="max-w-2xl mx-auto">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
-          <h1 className="text-3xl sm:text-4xl font-bold mb-1">Predecí con wARS</h1>
-          <p className="text-gray-500 text-sm">
-            Mercados de predicción en Base Network · Powered by Precog
-          </p>
-        </div>
+      <div className="mb-8">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
+        <h1 className="text-3xl sm:text-4xl font-bold mb-1">Predecí con wARS</h1>
+        <p className="text-gray-500 text-sm">
+          Mercados de predicción en Base Network · Powered by Precog
+        </p>
       </div>
 
       {/* Mercados */}
-      <div className="py-8 px-4">
-        <div className="max-w-2xl mx-auto space-y-10">
+      <div className="max-w-2xl space-y-10">
 
           {markets.map((market) => (
             <div key={market.id}>
@@ -75,12 +72,11 @@ export default async function PredictionsWarsPage() {
             </div>
           ))}
 
-        </div>
       </div>
 
       {/* Footer */}
-      <div className="border-t border-gray-800 py-10 px-4">
-        <div className="max-w-2xl mx-auto text-center">
+      <div className="border-t border-gray-800 pt-10 mt-12">
+        <div className="max-w-2xl text-center">
           <Link
             href="/matches"
             className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
