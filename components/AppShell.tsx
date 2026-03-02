@@ -222,18 +222,18 @@ export default function AppShell({
               <Link
                 href="/perfil"
                 title={!sidebarOpen ? displayName : undefined}
-                className={`flex items-center transition-colors hover:bg-gray-900 overflow-hidden ${
-                  sidebarOpen ? 'gap-3 px-4 py-3.5' : 'justify-center py-3'
+                className={`flex transition-colors hover:bg-gray-900 overflow-hidden ${
+                  sidebarOpen ? 'flex-col items-center gap-2 px-4 py-5' : 'justify-center py-3'
                 }`}
               >
-                <NavAvatar profile={profile} size="sm" />
+                <NavAvatar profile={profile} size={sidebarOpen ? 'md' : 'sm'} />
                 <div
-                  className={`min-w-0 transition-all duration-300 ${
-                    sidebarOpen ? 'opacity-100 max-w-[160px]' : 'opacity-0 max-w-0 overflow-hidden'
+                  className={`text-center transition-all duration-300 ${
+                    sidebarOpen ? 'opacity-100 max-w-[180px]' : 'opacity-0 max-w-0 overflow-hidden'
                   }`}
                 >
                   <div className="text-sm font-semibold text-white truncate">{displayName}</div>
-                  <div className="text-xs text-gray-500 truncate">{user.email}</div>
+                  <div className="text-xs text-gray-500 truncate mt-0.5">{user.email}</div>
                 </div>
               </Link>
               <button
