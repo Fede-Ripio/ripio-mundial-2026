@@ -423,17 +423,13 @@ export default function AppShell({
             <RipioLogo className="h-8 text-white" />
             <span className="font-bold text-white text-sm">Mundial 2026</span>
           </Link>
-          {/* Avatar / hamburger abre el drawer */}
+          {/* Hamburger abre el drawer */}
           <button
             onClick={() => setMobileOpen(true)}
             className="p-1 text-gray-400 hover:text-white"
             aria-label="Abrir menú"
           >
-            {user ? (
-              <NavAvatar profile={profile} size="sm" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
+            <Menu className="w-6 h-6" />
           </button>
         </header>
 

@@ -145,17 +145,13 @@ export default function NavbarClient({
               )}
             </div>
 
-            {/* Mobile: avatar del usuario (o hamburger si no está logueado) */}
+            {/* Mobile: hamburger abre el drawer */}
             <button
               onClick={() => setIsOpen(true)}
               className="md:hidden p-1 text-gray-400 hover:text-white"
               aria-label="Abrir menú"
             >
-              {user ? (
-                <NavAvatar profile={profile} size="sm" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
+              <Menu className="w-6 h-6" />
             </button>
           </div>
         </div>
