@@ -40,7 +40,7 @@ export default async function LeaguesPage() {
       <div className="max-w-5xl mx-auto">
 
         {/* HEADER */}
-        <div className="mb-8">
+        <div className="mb-8 text-center">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">Ligas Privadas</h1>
           <p className="text-gray-400">
