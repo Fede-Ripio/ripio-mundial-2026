@@ -118,9 +118,9 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
                     >
                       <td className="px-4 sm:px-6 py-4">
                         <span className="text-lg sm:text-xl font-bold">
-                          {index === 0 && '🥇'}
-                          {index === 1 && '🥈'}
-                          {index === 2 && '🥉'}
+                          {index === 0 && <span className="text-yellow-400">1</span>}
+                          {index === 1 && <span className="text-gray-300">2</span>}
+                          {index === 2 && <span className="text-amber-600">3</span>}
                           {index > 2 && <span className="text-gray-500">{index + 1}</span>}
                         </span>
                       </td>
