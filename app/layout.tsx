@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const BASE_URL = "https://ripio-mundial-2026.vercel.app";
@@ -44,6 +45,7 @@ export default function RootLayout({
     <html lang="es">
       <body className="bg-gray-950 text-gray-100">
         {children}
+        <Analytics />
       </body>
     </html>
   );
