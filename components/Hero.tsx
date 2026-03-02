@@ -7,11 +7,11 @@ export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
     <section className="relative min-h-[calc(100dvh-4rem)] w-full overflow-x-hidden bg-gradient-to-b from-purple-950 via-purple-900 to-black flex flex-col">
 
       <picture className="absolute inset-0">
-        <source media="(min-width: 768px)" srcSet="/images/hero-desktop.jpg" />
-        <source media="(min-width: 640px)" srcSet="/images/hero-tablet.jpg" />
+        <source media="(min-width: 768px)" srcSet="/images/hero-desktop.webp" />
+        <source media="(min-width: 640px)" srcSet="/images/hero-tablet.webp" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/images/hero-mobile.jpg"
+          src="/images/hero-mobile.webp"
           alt="Ripio Mundial 2026"
           fetchPriority="high"
           decoding="async"
