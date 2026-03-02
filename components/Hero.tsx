@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
 const WARS_LOGO = 'https://cdn.prod.website-files.com/640b8191d2fdcfb39b135a5b/69121e0c7b24a0930d8e4efa_world_logos_wars_logo.svg'
@@ -7,35 +6,18 @@ export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
     <section className="relative min-h-[calc(100dvh-4rem)] w-full overflow-x-hidden bg-gradient-to-b from-purple-950 via-purple-900 to-black flex flex-col">
 
-      <div className="absolute inset-0">
-        <Image
-          src="/images/hero-desktop.jpg"
-          alt="Ripio Mundial 2026"
-          fill
-          priority
-          quality={75}
-          sizes="100vw"
-          className="object-cover hidden md:block"
-        />
-        <Image
-          src="/images/hero-tablet.jpg"
-          alt="Ripio Mundial 2026"
-          fill
-          priority
-          quality={75}
-          sizes="100vw"
-          className="object-cover hidden sm:block md:hidden"
-        />
-        <Image
+      <picture className="absolute inset-0">
+        <source media="(min-width: 768px)" srcSet="/images/hero-desktop.jpg" />
+        <source media="(min-width: 640px)" srcSet="/images/hero-tablet.jpg" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src="/images/hero-mobile.jpg"
           alt="Ripio Mundial 2026"
-          fill
-          priority
-          quality={75}
-          sizes="100vw"
-          className="object-cover block sm:hidden"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover object-top sm:object-left-bottom"
         />
-      </div>
+      </picture>
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/50" />
 
