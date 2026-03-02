@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import EditDisplayName from '@/components/EditDisplayName'
 import AvatarUpload from '@/components/AvatarUpload'
+import ShareProfileButton from '@/components/ShareProfileButton'
 import { GENERAL_LEAGUE_ID } from '@/lib/constants'
 import type { LeaderboardRow } from '@/lib/scoring'
 
@@ -44,14 +45,17 @@ export default async function MePage() {
     <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
 
-        {/* Avatar + nombre */}
-        <div className="flex flex-col items-center mb-10">
-          <AvatarUpload
-            userId={user.id}
-            displayName={displayName}
-            currentAvatarUrl={profile?.avatar_url ?? null}
-          />
-          <h1 className="text-3xl sm:text-4xl font-bold mt-4">{displayName}</h1>
+        {/* Header */}
+        <div className="mb-10 text-center">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-6">Ripio Mundial 2026</p>
+          <div className="flex flex-col items-center">
+            <AvatarUpload
+              userId={user.id}
+              displayName={displayName}
+              currentAvatarUrl={profile?.avatar_url ?? null}
+            />
+            <h1 className="text-3xl sm:text-4xl font-bold mt-4">{displayName}</h1>
+          </div>
         </div>
 
         {/* STATS */}
@@ -121,10 +125,15 @@ export default async function MePage() {
           </Link>
           <Link
             href="/ranking"
-            className="flex-1 border border-purple-500/50 hover:bg-purple-900/20 text-white text-center font-semibold px-6 py-4 rounded-xl transition-colors"
+            className="flex-1 border border-gray-700 hover:bg-gray-900/30 text-white text-center font-semibold px-6 py-4 rounded-xl transition-colors"
           >
             Ver clasificación
           </Link>
+          <ShareProfileButton
+            position={generalPosition}
+            points={points}
+            total={generalTotal}
+          />
         </div>
 
       </div>

@@ -66,22 +66,23 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
         </Link>
 
         {/* HEADER */}
-        <div className="mb-8">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-3">{league.name}</h1>
-          <div className="flex items-center gap-4 text-sm">
+        <div className="mb-8 text-center">
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-3">{league.name}</h1>
+          <div className="flex items-center justify-center gap-3 text-sm flex-wrap">
             {league.is_public ? (
-              <span className="bg-green-600/20 text-green-400 px-3 py-1 rounded-full flex items-center gap-1">
-                🌐 Pública
+              <span className="bg-green-600/20 text-green-400 px-3 py-1 rounded-full">
+                Pública
               </span>
             ) : (
-              <span className="bg-purple-600/20 text-purple-400 px-3 py-1 rounded-full flex items-center gap-1">
-                🔒 Privada
+              <span className="bg-purple-600/20 text-purple-400 px-3 py-1 rounded-full">
+                Privada
               </span>
             )}
-            <span className="text-gray-400">{leaderboard.length} miembros</span>
+            <span className="text-gray-500">{leaderboard.length} miembros</span>
             {membership?.role === 'owner' && (
               <span className="bg-yellow-600/20 text-yellow-400 px-3 py-1 rounded-full">
-                👑 Admin
+                Admin
               </span>
             )}
           </div>
@@ -91,9 +92,8 @@ export default async function LeagueDetailPage({ params }: { params: Promise<{ i
         <div className="mb-8">
           <div className="bg-gray-900/50 border border-purple-500/30 rounded-2xl overflow-hidden">
             <div className="bg-purple-900/20 px-6 py-4 border-b border-purple-500/30">
-              <h2 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
-                <span>📊</span>
-                <span>Clasificación</span>
+              <h2 className="text-2xl sm:text-3xl font-bold">
+                Clasificación
               </h2>
             </div>
 
