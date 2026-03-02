@@ -38,7 +38,7 @@ export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
           </p>
 
           {/* Prizes box */}
-          <div className="bg-black/70 rounded-2xl p-6 sm:p-8 mb-10 max-w-2xl mx-auto">
+          <div className="bg-gradient-to-b from-black/80 via-black/70 to-black/20 rounded-2xl p-6 sm:p-8 mb-10 max-w-2xl mx-auto">
             {/* wARS logo + label */}
             <div className="flex items-center justify-center gap-3 mb-6">
               <img src={WARS_LOGO} alt="wARS" className="w-10 h-10" />
