@@ -51,16 +51,6 @@ export default function RegisterPage() {
     try {
       const supabase = createClient()
 
-      const { data: existingUser } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', email)
-        .single()
-
-      if (existingUser) {
-        throw new Error('Este email ya está registrado. Intentá iniciar sesión.')
-      }
-
       const isAvailable = await checkUsernameAvailable(displayName.trim())
       if (!isAvailable) {
         setLoading(false)

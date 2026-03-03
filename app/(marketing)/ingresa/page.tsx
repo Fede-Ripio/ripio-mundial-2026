@@ -22,18 +22,8 @@ function LoginForm() {
 
     try {
       const supabase = createClient()
-      
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', email)
-        .single()
 
-      if (!profile) {
-        throw new Error('Este email no está registrado. ¿Querés crear una cuenta?')
-      }
-
-      const redirectUrl = typeof window !== 'undefined' 
+      const redirectUrl = typeof window !== 'undefined'
         ? `${window.location.origin}/auth/callback`
         : 'https://ripio-mundial-2026.vercel.app/auth/callback'
 
@@ -41,6 +31,7 @@ function LoginForm() {
         email,
         options: {
           emailRedirectTo: redirectUrl,
+          shouldCreateUser: false,
         },
       })
 
@@ -90,15 +81,7 @@ function LoginForm() {
 
           {error && (
             <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-3 text-red-400 text-sm">
-              <div className="mb-2">❌ {error}</div>
-              {error.includes('no está registrado') && (
-                <Link 
-                  href="/registro"
-                  className="inline-block mt-2 text-purple-400 hover:text-purple-300 font-semibold underline"
-                >
-                  Crear cuenta →
-                </Link>
-              )}
+              ❌ {error}
             </div>
           )}
 
