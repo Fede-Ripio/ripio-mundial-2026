@@ -12,6 +12,37 @@ interface Props {
   awayCryptoFact?: CryptoCountryFact
 }
 
+// ── Flag map ──────────────────────────────────────────────────────────────────
+const FLAGS: Record<string, string> = {
+  'argentina': '🇦🇷', 'brasil': '🇧🇷', 'méxico': '🇲🇽', 'colombia': '🇨🇴',
+  'venezuela': '🇻🇪', 'ecuador': '🇪🇨', 'uruguay': '🇺🇾', 'perú': '🇵🇪',
+  'chile': '🇨🇱', 'bolivia': '🇧🇴', 'paraguay': '🇵🇾',
+  'el salvador': '🇸🇻', 'estados unidos': '🇺🇸', 'canadá': '🇨🇦',
+  'costa rica': '🇨🇷', 'panamá': '🇵🇦', 'honduras': '🇭🇳',
+  'jamaica': '🇯🇲', 'trinidad y tobago': '🇹🇹', 'cuba': '🇨🇺',
+  'alemania': '🇩🇪', 'francia': '🇫🇷', 'españa': '🇪🇸', 'portugal': '🇵🇹',
+  'países bajos': '🇳🇱', 'bélgica': '🇧🇪', 'italia': '🇮🇹',
+  'inglaterra': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'croacia': '🇭🇷', 'austria': '🇦🇹',
+  'suiza': '🇨🇭', 'serbia': '🇷🇸', 'rumanía': '🇷🇴', 'turquía': '🇹🇷',
+  'ucrania': '🇺🇦', 'hungría': '🇭🇺', 'escocia': '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+  'gales': '🏴󠁧󠁢󠁷󠁬󠁳󠁿', 'república checa': '🇨🇿', 'eslovenia': '🇸🇮',
+  'eslovaquia': '🇸🇰', 'albania': '🇦🇱', 'grecia': '🇬🇷', 'dinamarca': '🇩🇰',
+  'noruega': '🇳🇴', 'suecia': '🇸🇪', 'finlandia': '🇫🇮',
+  'japón': '🇯🇵', 'corea del sur': '🇰🇷', 'república de corea': '🇰🇷',
+  'australia': '🇦🇺', 'china': '🇨🇳', 'irán': '🇮🇷',
+  'arabia saudita': '🇸🇦', 'qatar': '🇶🇦', 'irak': '🇮🇶',
+  'uzbekistán': '🇺🇿', 'indonesia': '🇮🇩', 'tailandia': '🇹🇭',
+  'nigeria': '🇳🇬', 'marruecos': '🇲🇦', 'senegal': '🇸🇳',
+  'ghana': '🇬🇭', 'sudáfrica': '🇿🇦', 'costa de marfil': '🇨🇮',
+  'túnez': '🇹🇳', 'camerún': '🇨🇲', 'mali': '🇲🇱', 'angola': '🇦🇴',
+  'egipto': '🇪🇬', 'argelia': '🇩🇿', 'nueva zelanda': '🇳🇿',
+}
+
+function flag(team: string): string {
+  return FLAGS[team.toLowerCase()] ?? ''
+}
+
+// ── Stage labels ───────────────────────────────────────────────────────────────
 const STAGE_LABELS: Record<string, string> = {
   group:        'Fase de Grupos',
   ro32:         'Ronda de 32',
@@ -58,7 +89,6 @@ export default function MatchDayCard({
   const isFinished = m.status === 'finished'
   const isLive = m.status === 'in_progress'
 
-  // Pick one crypto fact to show (home team has priority)
   const cryptoFact = homeCryptoFact ?? awayCryptoFact
   const cryptoTeamLabel = homeCryptoFact
     ? m.homeTeam
@@ -66,11 +96,16 @@ export default function MatchDayCard({
 
   const hasAnyFact = homeCountryFact || awayCountryFact || cryptoFact
 
+  const homeFlag = flag(m.homeTeam)
+  const awayFlag = flag(m.awayTeam)
+
   return (
     <div className="bg-gray-900/40 border border-gray-800 rounded-xl overflow-hidden">
 
       {/* ── Match header ─────────────────────────────────────────── */}
       <div className="px-5 pt-4 pb-3 border-b border-gray-800/60">
+
+        {/* Stage + status row */}
         <div className="flex items-center justify-between mb-3">
           <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest">
             {stageLabel}
@@ -93,23 +128,36 @@ export default function MatchDayCard({
           </div>
         </div>
 
-        {/* Teams */}
-        <div className="flex items-center justify-between">
-          <span className={`text-base sm:text-lg font-bold leading-tight ${
-            winner === 'home' && !isEmpty ? 'text-white' : 'text-gray-300'
-          }`}>
-            {m.homeTeam}
-          </span>
-          <span className="text-xs text-gray-600 mx-3 flex-shrink-0">vs</span>
-          <span className={`text-base sm:text-lg font-bold leading-tight text-right ${
-            winner === 'away' && !isEmpty ? 'text-white' : 'text-gray-300'
-          }`}>
-            {m.awayTeam}
-          </span>
+        {/* Teams with LOCAL / VISITANTE labels */}
+        <div className="flex items-center justify-between gap-2">
+
+          {/* Home */}
+          <div className="flex-1 min-w-0">
+            <div className="text-[9px] font-semibold text-gray-600 uppercase tracking-widest mb-0.5">Local</div>
+            <div className={`text-base sm:text-lg font-bold leading-tight truncate ${
+              winner === 'home' && !isEmpty ? 'text-white' : 'text-gray-300'
+            }`}>
+              {homeFlag && <span className="mr-1">{homeFlag}</span>}
+              {m.homeTeam}
+            </div>
+          </div>
+
+          <span className="text-xs text-gray-600 flex-shrink-0 px-1">vs</span>
+
+          {/* Away */}
+          <div className="flex-1 min-w-0 text-right">
+            <div className="text-[9px] font-semibold text-gray-600 uppercase tracking-widest mb-0.5">Visitante</div>
+            <div className={`text-base sm:text-lg font-bold leading-tight truncate ${
+              winner === 'away' && !isEmpty ? 'text-white' : 'text-gray-300'
+            }`}>
+              {m.awayTeam}
+              {awayFlag && <span className="ml-1">{awayFlag}</span>}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* ── Consensus bar ────────────────────────────────────────── */}
+      {/* ── Consensus + score distribution ───────────────────────── */}
       <div className="px-5 py-4 border-b border-gray-800/60">
         {isEmpty ? (
           <div className="h-7 bg-gray-800/60 rounded-full flex items-center justify-center">
@@ -117,7 +165,8 @@ export default function MatchDayCard({
           </div>
         ) : (
           <>
-            <div className="flex h-7 rounded-full overflow-hidden text-[10px] font-bold">
+            {/* Win/draw/loss bar */}
+            <div className="flex h-7 rounded-full overflow-hidden text-[10px] font-bold mb-2">
               {homeWinPct > 0 && (
                 <div
                   className="flex items-center justify-center bg-gradient-to-r from-purple-700 to-purple-500 transition-all duration-700"
@@ -144,19 +193,47 @@ export default function MatchDayCard({
               )}
             </div>
 
-            <div className="flex justify-between mt-2 text-[10px] text-gray-500">
+            <div className="flex justify-between text-[10px] text-gray-500 mb-5">
               <span className={winner === 'home' ? 'text-purple-400 font-semibold' : ''}>{homeWinPct}% local</span>
               <span className={winner === 'draw' ? 'text-gray-300 font-semibold' : ''}>{drawPct}% empate</span>
               <span className={winner === 'away' ? 'text-gray-300 font-semibold' : ''}>{awayWinPct}% visitante</span>
             </div>
 
-            {m.mostPredictedScore && (
-              <div className="mt-2 text-[11px] text-gray-500">
-                Marcador más elegido:{' '}
-                <span className="text-gray-300 font-mono font-bold">
-                  {m.mostPredictedScore.homeGoals}–{m.mostPredictedScore.awayGoals}
-                </span>
-                {' '}· {m.totalPredictions.toLocaleString('es-AR')} pronóstico{m.totalPredictions !== 1 ? 's' : ''}
+            {/* Score distribution */}
+            {m.topScores.length > 0 && (
+              <div>
+                <div className="text-[10px] font-semibold text-gray-600 uppercase tracking-widest mb-2">
+                  Distribución de marcadores
+                </div>
+                <div className="space-y-1.5">
+                  {m.topScores.map((s, i) => {
+                    const pct = Math.round((s.count / m.totalPredictions) * 100)
+                    const isHomeWin = s.homeGoals > s.awayGoals
+                    const isDraw = s.homeGoals === s.awayGoals
+                    const barColor = isHomeWin
+                      ? 'bg-purple-600'
+                      : isDraw
+                      ? 'bg-gray-600'
+                      : 'bg-slate-500'
+                    return (
+                      <div key={i} className="flex items-center gap-2">
+                        <span className="text-[11px] font-mono font-semibold text-gray-300 w-7 text-right flex-shrink-0">
+                          {s.homeGoals}-{s.awayGoals}
+                        </span>
+                        <div className="flex-1 h-2 bg-gray-800 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${barColor} transition-all duration-700`}
+                            style={{ width: `${Math.max(pct, 2)}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] text-gray-500 w-7 flex-shrink-0">{pct}%</span>
+                      </div>
+                    )
+                  })}
+                </div>
+                <div className="text-[10px] text-gray-600 mt-2 text-right">
+                  {m.totalPredictions.toLocaleString('es-AR')} pronóstico{m.totalPredictions !== 1 ? 's' : ''}
+                </div>
               </div>
             )}
           </>
@@ -167,21 +244,19 @@ export default function MatchDayCard({
       {hasAnyFact && (
         <div className="px-5 py-4 space-y-4">
 
-          {/* Two country columns */}
           {(homeCountryFact || awayCountryFact) && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {homeCountryFact && (
-                <CountryFactCard name={m.homeTeam} fact={homeCountryFact} />
+                <CountryFactCard name={m.homeTeam} countryFlag={homeFlag} fact={homeCountryFact} />
               )}
               {awayCountryFact && (
-                <CountryFactCard name={m.awayTeam} fact={awayCountryFact} />
+                <CountryFactCard name={m.awayTeam} countryFlag={awayFlag} fact={awayCountryFact} />
               )}
             </div>
           )}
 
-          {/* Crypto fact */}
           {cryptoFact && cryptoTeamLabel && (
-            <CryptoCard teamName={cryptoTeamLabel} fact={cryptoFact} />
+            <CryptoCard teamName={cryptoTeamLabel} teamFlag={flag(cryptoTeamLabel)} fact={cryptoFact} />
           )}
         </div>
       )}
@@ -189,22 +264,24 @@ export default function MatchDayCard({
   )
 }
 
-function CountryFactCard({ name, fact }: { name: string; fact: CountryFact }) {
+function CountryFactCard({ name, countryFlag, fact }: { name: string; countryFlag: string; fact: CountryFact }) {
   return (
     <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4 space-y-1.5">
-      <div className="text-[10px] font-semibold text-purple-400 uppercase tracking-widest">{name}</div>
+      <div className="text-[10px] font-semibold text-purple-400 uppercase tracking-widest">
+        {countryFlag && <span className="mr-1">{countryFlag}</span>}{name}
+      </div>
       <div className="text-xs font-semibold text-gray-300">{fact.wcRecord}</div>
       <p className="text-[11px] text-gray-500 leading-relaxed">{fact.curiosity}</p>
     </div>
   )
 }
 
-function CryptoCard({ teamName, fact }: { teamName: string; fact: CryptoCountryFact }) {
+function CryptoCard({ teamName, teamFlag, fact }: { teamName: string; teamFlag: string; fact: CryptoCountryFact }) {
   return (
     <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4 flex gap-4 items-start">
       <div className="flex-shrink-0">
         <div className="text-[10px] font-semibold text-purple-400 uppercase tracking-widest mb-1">
-          Cripto · {teamName}
+          Cripto · {teamFlag && <span className="mr-0.5">{teamFlag}</span>}{teamName}
         </div>
         <div className="text-xl font-bold text-purple-400 leading-none">{fact.highlight}</div>
         <div className="text-[10px] text-gray-600 mt-0.5 max-w-[120px] leading-tight">{fact.highlightLabel}</div>

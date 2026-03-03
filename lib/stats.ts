@@ -103,7 +103,7 @@ export function buildMatchConsensus(rows: MatchConsensusRow[]): MatchConsensus[]
       drawPct: totalPredictions > 0 ? Math.round((draws / totalPredictions) * 100) : 0,
       awayWinPct: totalPredictions > 0 ? Math.round((awayWins / totalPredictions) * 100) : 0,
       mostPredictedScore: sorted[0] ?? null,
-      topScores: sorted.slice(0, 3),
+      topScores: sorted.slice(0, 5),
     })
   }
 
