@@ -130,6 +130,27 @@ export default function AppShell({
           </button>
         </div>
 
+        {/* User profile — justo debajo del logo */}
+        {user && (
+          <Link
+            href="/perfil"
+            title={!sidebarOpen ? displayName : undefined}
+            className={`flex flex-shrink-0 transition-colors hover:bg-gray-900 border-b border-gray-800 overflow-hidden ${
+              sidebarOpen ? 'flex-col items-center gap-2 px-4 py-4' : 'justify-center py-3'
+            }`}
+          >
+            <NavAvatar profile={profile} size={sidebarOpen ? 'md' : 'sm'} />
+            <div
+              className={`text-center transition-all duration-300 ${
+                sidebarOpen ? 'opacity-100 max-w-[180px]' : 'opacity-0 max-w-0 overflow-hidden'
+              }`}
+            >
+              <div className="text-sm font-semibold text-white truncate">{displayName}</div>
+              <div className="text-xs text-gray-500 truncate mt-0.5">{user.email}</div>
+            </div>
+          </Link>
+        )}
+
         {/* Nav links */}
         <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3">
 
@@ -215,44 +236,25 @@ export default function AppShell({
 
         </nav>
 
-        {/* User section */}
+        {/* Bottom: logout / auth */}
         <div className="border-t border-gray-800 flex-shrink-0">
           {user ? (
-            <>
-              <Link
-                href="/perfil"
-                title={!sidebarOpen ? displayName : undefined}
-                className={`flex items-center transition-colors hover:bg-gray-900 overflow-hidden ${
-                  sidebarOpen ? 'gap-3 px-4 py-3.5' : 'justify-center py-3'
+            <button
+              onClick={handleLogout}
+              title={!sidebarOpen ? 'Cerrar sesión' : undefined}
+              className={`flex items-center w-full transition-colors text-gray-500 hover:text-red-400 hover:bg-gray-900 overflow-hidden ${
+                sidebarOpen ? 'gap-3 px-4 py-3 text-sm' : 'justify-center py-3'
+              }`}
+            >
+              <LogOut className="w-4 h-4 flex-shrink-0" />
+              <span
+                className={`whitespace-nowrap transition-all duration-300 ${
+                  sidebarOpen ? 'opacity-100 max-w-[120px]' : 'opacity-0 max-w-0 overflow-hidden'
                 }`}
               >
-                <NavAvatar profile={profile} size="sm" />
-                <div
-                  className={`min-w-0 transition-all duration-300 ${
-                    sidebarOpen ? 'opacity-100 max-w-[160px]' : 'opacity-0 max-w-0 overflow-hidden'
-                  }`}
-                >
-                  <div className="text-sm font-semibold text-white truncate">{displayName}</div>
-                  <div className="text-xs text-gray-500">Ver perfil</div>
-                </div>
-              </Link>
-              <button
-                onClick={handleLogout}
-                title={!sidebarOpen ? 'Cerrar sesión' : undefined}
-                className={`flex items-center w-full transition-colors text-gray-500 hover:text-red-400 hover:bg-gray-900 overflow-hidden ${
-                  sidebarOpen ? 'gap-3 px-4 py-3 text-sm' : 'justify-center py-3'
-                }`}
-              >
-                <LogOut className="w-4 h-4 flex-shrink-0" />
-                <span
-                  className={`whitespace-nowrap transition-all duration-300 ${
-                    sidebarOpen ? 'opacity-100 max-w-[120px]' : 'opacity-0 max-w-0 overflow-hidden'
-                  }`}
-                >
-                  Cerrar sesión
-                </span>
-              </button>
-            </>
+                Cerrar sesión
+              </span>
+            </button>
           ) : (
             <div className={`py-3 ${sidebarOpen ? 'px-4 space-y-2' : 'px-2 flex flex-col items-center gap-2'}`}>
               {sidebarOpen ? (
@@ -298,28 +300,24 @@ export default function AppShell({
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        {/* Drawer header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
-          <Link href="/" onClick={closeMobile} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <RipioLogo className="h-8 text-white" />
-            <span className="font-bold text-white">Mundial 2026</span>
-          </Link>
+        {/* Drawer header — minimal: solo botón X */}
+        <div className="flex items-center justify-end px-4 pt-4 pb-2">
           <button onClick={closeMobile} className="p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-gray-800 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* User section */}
+        {/* User section — protagonista */}
         {user ? (
           <Link
             href="/perfil"
             onClick={closeMobile}
-            className="flex items-center gap-4 px-5 py-5 border-b border-gray-800 hover:bg-gray-900 transition-colors"
+            className="flex items-center gap-4 px-5 pb-5 pt-1 border-b border-gray-800 hover:bg-gray-900/50 transition-colors"
           >
             <NavAvatar profile={profile} size="lg" />
             <div className="min-w-0">
-              <div className="font-semibold text-white truncate">{displayName}</div>
-              <div className="text-sm text-gray-400 mt-0.5">Ver perfil</div>
+              <div className="font-bold text-white text-base truncate">{displayName}</div>
+              <div className="text-sm text-gray-500 truncate mt-0.5">{user.email}</div>
             </div>
           </Link>
         ) : (
@@ -422,18 +420,19 @@ export default function AppShell({
         }`}
       >
         {/* Mobile topbar */}
-        <header className="md:hidden sticky top-0 z-40 bg-black border-b border-gray-900 h-16 flex items-center px-4 gap-3">
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="p-2 text-gray-400 hover:text-white"
-            aria-label="Abrir menú"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
+        <header className="md:hidden sticky top-0 z-40 bg-black border-b border-gray-900 h-16 flex items-center justify-between px-4">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <RipioLogo className="h-8 text-white" />
             <span className="font-bold text-white text-sm">Mundial 2026</span>
           </Link>
+          {/* Hamburger abre el drawer */}
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="p-1 text-gray-400 hover:text-white"
+            aria-label="Abrir menú"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
         </header>
 
         {/* Page content */}
