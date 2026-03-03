@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   Menu, X, LogOut, ChevronLeft, ChevronRight,
-  ClipboardList, LayoutGrid, Trophy, Users, BookOpen, Zap, Star, ExternalLink,
+  ClipboardList, LayoutGrid, Trophy, Users, BookOpen, Zap, Star, ExternalLink, BarChart2,
 } from 'lucide-react'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
@@ -56,12 +56,13 @@ function NavAvatar({ profile, size = 'sm' }: { profile: NavProfile | null; size?
 }
 
 const NAV_LINKS = [
-  { href: '/cuadro',       label: 'Fixture',       Icon: LayoutGrid    },
-  { href: '/ranking',      label: 'Ranking',       Icon: Trophy        },
-  { href: '/pronosticos',  label: 'Pronósticos',   Icon: ClipboardList },
-  { href: '/ligas',        label: 'Ligas',         Icon: Users         },
-  { href: '/predeci-wars', label: 'Predecí wARS',  Icon: Zap           },
-  { href: '/reglas',       label: 'Reglas',        Icon: BookOpen      },
+  { href: '/cuadro',        label: 'Fixture',        Icon: LayoutGrid    },
+  { href: '/ranking',       label: 'Ranking',        Icon: Trophy        },
+  { href: '/pronosticos',   label: 'Pronósticos',    Icon: ClipboardList },
+  { href: '/ligas',         label: 'Ligas',          Icon: Users         },
+  { href: '/estadisticas',  label: 'Estadísticas',   Icon: BarChart2     },
+  { href: '/predeci-wars',  label: 'Predecí wARS',   Icon: Zap           },
+  { href: '/reglas',        label: 'Reglas',         Icon: BookOpen      },
 ]
 
 const RIPIO_CUP_LINK = { href: '/ripio-cup', label: 'Ripio Cup', Icon: Star }
