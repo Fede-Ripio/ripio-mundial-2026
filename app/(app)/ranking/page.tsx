@@ -2,6 +2,31 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { GENERAL_LEAGUE_ID } from '@/lib/constants'
 import LeaderboardTable from '@/components/LeaderboardTable'
 import type { LeaderboardRow } from '@/lib/scoring'
+import Image from 'next/image'
+
+function PodiumAvatar({ url, name }: { url?: string | null; name: string | null }) {
+  const initials = name
+    ? name.trim().split(/\s+/).map(w => w[0]?.toUpperCase() ?? '').filter(Boolean).slice(0, 2).join('')
+    : '?'
+
+  if (url) {
+    return (
+      <Image
+        src={url}
+        alt={name ?? 'avatar'}
+        width={72}
+        height={72}
+        className="w-16 h-16 rounded-full object-cover mx-auto mb-3 border-2 border-purple-500/50 ring-2 ring-offset-2 ring-offset-black ring-purple-500/30"
+      />
+    )
+  }
+
+  return (
+    <div className="w-16 h-16 rounded-full bg-purple-900/60 border-2 border-purple-500/40 flex items-center justify-center mx-auto mb-3">
+      <span className="text-xl font-bold text-purple-300 select-none">{initials}</span>
+    </div>
+  )
+}
 
 export const dynamic = 'force-dynamic'
 
@@ -65,6 +90,7 @@ export default async function LeaderboardPage() {
             <div className="text-sm text-gray-500 mb-4">Primer Puesto</div>
             {top3[0] && (
               <div className="pt-4 border-t border-purple-500/30">
+                <PodiumAvatar url={top3[0].avatar_url} name={top3[0].display_name} />
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <div className="font-semibold text-lg">{top3[0].display_name || 'Anónimo'}</div>
                   {user && top3[0].id === user.id && (
@@ -96,6 +122,7 @@ export default async function LeaderboardPage() {
             <div className="text-sm text-gray-500 mb-4">Segundo Puesto</div>
             {top3[1] && (
               <div className="pt-4 border-t border-purple-500/30">
+                <PodiumAvatar url={top3[1].avatar_url} name={top3[1].display_name} />
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <div className="font-semibold text-lg">{top3[1].display_name || 'Anónimo'}</div>
                   {user && top3[1].id === user.id && (
@@ -127,6 +154,7 @@ export default async function LeaderboardPage() {
             <div className="text-sm text-gray-500 mb-4">Tercer Puesto</div>
             {top3[2] && (
               <div className="pt-4 border-t border-purple-500/30">
+                <PodiumAvatar url={top3[2].avatar_url} name={top3[2].display_name} />
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <div className="font-semibold text-lg">{top3[2].display_name || 'Anónimo'}</div>
                   {user && top3[2].id === user.id && (
