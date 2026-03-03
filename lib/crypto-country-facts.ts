@@ -369,6 +369,118 @@ export const CRYPTO_COUNTRY_FACTS: Record<string, CryptoCountryFact[]> = {
       source: 'Financial Sector Conduct Authority (FSCA), Sudáfrica, 2023',
     },
   ],
+
+  'argelia': [
+    {
+      highlight: 'Top 10',
+      highlightLabel: 'en P2P cripto de África del Norte (Chainalysis)',
+      body: 'Argelia figura entre los países africanos con mayor actividad P2P en criptomonedas. Pese a la prohibición formal, el uso de canales informales impulsó el volumen transaccionado.',
+      source: 'Chainalysis, Geography of Cryptocurrency Report (Africa, 2023)',
+    },
+  ],
+
+  'túnez': [
+    {
+      highlight: 'eDinar',
+      highlightLabel: 'proyecto de CBDC del banco central (BCT)',
+      body: 'El Banco Central de Túnez exploró el eDinar, una iniciativa de moneda digital que lo posicionó como uno de los primeros países africanos en investigar formalmente una CBDC.',
+      source: 'Banque Centrale de Tunisie (BCT), comunicaciones sobre digitalización monetaria',
+    },
+  ],
+
+  'nueva zelanda': [
+    {
+      highlight: 'CBDC',
+      highlightLabel: 'consulta pública del banco central (RBNZ 2023)',
+      body: 'El Banco de la Reserva de Nueva Zelanda lanzó una consulta pública sobre el futuro del dinero y una posible CBDC en 2023, recibiendo miles de respuestas ciudadanas.',
+      source: 'Reserve Bank of New Zealand (RBNZ), "The Future of Money" consultation (2023)',
+    },
+  ],
+
+  'suiza': [
+    {
+      highlight: 'Crypto Valley',
+      highlightLabel: 'hub blockchain global en Zug (desde 2013)',
+      body: 'El cantón de Zug es conocido mundialmente como el "Crypto Valley": alberga más de 1.000 empresas blockchain, incluyendo la Fundación Ethereum, registrada allí en 2014.',
+      source: 'Crypto Valley Association / Ethereum Foundation, Zug (registro 2014)',
+    },
+    {
+      highlight: 'DLT Act',
+      highlightLabel: 'primera ley de valores en blockchain del mundo (2021)',
+      body: 'La Ley DLT suiza (2021) fue el primer marco legal del mundo específicamente diseñado para valores basados en tecnología de registro distribuido, habilitando activos financieros nativamente digitales.',
+      source: 'Federal Council of Switzerland, DLT Act (1 Feb 2021)',
+    },
+  ],
+
+  'españa': [
+    {
+      highlight: 'CNMV',
+      highlightLabel: 'primera regulación de publicidad cripto en Europa (2022)',
+      body: 'España fue pionera en Europa: desde 2022, la CNMV exige registro previo y advertencias de riesgo en toda publicidad de criptoactivos dirigida a más de 100.000 personas.',
+      source: 'CNMV, Circular 1/2022 sobre publicidad de criptoactivos',
+    },
+    {
+      highlight: 'Banco de España',
+      highlightLabel: 'registro formal de proveedores cripto',
+      body: 'El Banco de España mantiene el registro oficial de proveedores de servicios de criptomonedas bajo el marco de prevención de blanqueo de capitales, alineado con las directivas europeas.',
+      source: 'Banco de España, registro de proveedores de servicios de cambio de moneda virtual (AML5)',
+    },
+  ],
+
+  'francia': [
+    {
+      highlight: 'PSAN',
+      highlightLabel: 'régimen cripto pionero en Europa (Loi PACTE 2019)',
+      body: 'Con la Loi PACTE (2019), Francia creó el PSAN (Prestataires de Services sur Actifs Numériques), uno de los primeros marcos formales de registro y supervisión cripto en toda Europa.',
+      source: 'AMF / Loi PACTE n°2019-486, République Française (2019)',
+    },
+    {
+      highlight: 'AMF',
+      highlightLabel: 'barómetro anual de inversores en cripto (2024)',
+      body: 'La AMF (regulador financiero francés) publica un barómetro anual con datos específicos de tenencia e inversión en criptoactivos, uno de los estudios de adopción institucional más completos de Europa.',
+      source: 'AMF, Savings & Investment Barometer (2024 edition)',
+    },
+  ],
+
+  'croacia': [
+    {
+      highlight: 'Ene 2023',
+      highlightLabel: 'miembro más nuevo de la eurozona',
+      body: 'Croacia adoptó el euro el 1 de enero de 2023, siendo el miembro más reciente de la eurozona. El cambio de kuna a euro intensificó el debate local sobre soberanía monetaria y activos digitales alternativos.',
+      source: 'European Central Bank / Hrvatska narodna banka, comunicaciones de transición (2023)',
+    },
+  ],
+
+  'arabia saudí': [
+    {
+      highlight: 'Project Aber',
+      highlightLabel: 'CBDC experimental con Emiratos Árabes (SAMA 2020)',
+      body: 'Arabia Saudí y los Emiratos Árabes Unidos ejecutaron el Proyecto Aber (2019-2020): un experimento conjunto de moneda digital de banco central para pagos transfronterizos interbancarios, con resultados publicados por ambos bancos centrales.',
+      source: 'Saudi Central Bank (SAMA) + Central Bank of UAE, Project Aber Final Report (2020)',
+    },
+    {
+      highlight: 'Vision 2030',
+      highlightLabel: 'agenda de economía digital nacional',
+      body: 'La Visión 2030 de Arabia Saudí incluye la digitalización financiera como eje estratégico. SAMA publicó una Estrategia de Fintech con objetivos específicos de infraestructura de pagos digitales.',
+      source: 'Saudi Central Bank (SAMA), Fintech Strategy 2023-2025',
+    },
+  ],
+
+  // Alias para coincidir con ambas grafías posibles en la DB
+  'arabia saudita': [
+    {
+      highlight: 'Project Aber',
+      highlightLabel: 'CBDC experimental con Emiratos Árabes (SAMA 2020)',
+      body: 'Arabia Saudí y los Emiratos Árabes Unidos ejecutaron el Proyecto Aber (2019-2020): un experimento conjunto de moneda digital de banco central para pagos transfronterizos interbancarios.',
+      source: 'Saudi Central Bank (SAMA) + Central Bank of UAE, Project Aber Final Report (2020)',
+    },
+    {
+      highlight: 'Vision 2030',
+      highlightLabel: 'agenda de economía digital nacional',
+      body: 'La Visión 2030 de Arabia Saudí incluye la digitalización financiera como eje estratégico. SAMA publicó una Estrategia de Fintech con objetivos de infraestructura de pagos digitales.',
+      source: 'Saudi Central Bank (SAMA), Fintech Strategy 2023-2025',
+    },
+  ],
 }
 
 /** Fallback cuando ninguno de los dos países del partido tiene dato cripto propio. */

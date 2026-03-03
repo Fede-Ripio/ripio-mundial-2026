@@ -71,7 +71,7 @@ export const COUNTRY_FACTS: Record<string, CountryFact> = {
   },
   'panamá': {
     wcRecord: '1 Mundial · Debut: 2018',
-    curiosity: 'Panamá debutó en Rusia 2018. Felipe Baloy marcó el único gol de la selección en ese torneo, a los 78 años de edad del propio jugador... (tenía 37 años, el jugador de campo más veterano en anotar ese año).',
+    curiosity: 'Panamá debutó en Rusia 2018 y Felipe Baloy, con 37 años, marcó el único gol canalero del torneo, convirtiéndose en el jugador de campo más veterano en anotar en ese Mundial. Fue el primer —y único hasta 2026— gol de Panamá en una Copa del Mundo.',
   },
   'honduras': {
     wcRecord: '3 Mundiales (1982, 2010, 2014) · Mejor resultado: primera ronda',
@@ -84,6 +84,14 @@ export const COUNTRY_FACTS: Record<string, CountryFact> = {
   'jamaica': {
     wcRecord: '1 Mundial (1998) · Mejor resultado: primera ronda',
     curiosity: 'Jamaica debutó en Francia 1998 y venció a Japón 2-1, convirtiéndose en el primer país del Caribe en ganar un partido en una Copa del Mundo.',
+  },
+  'haití': {
+    wcRecord: '1 Mundial (1974) · Mejor resultado: primera ronda',
+    curiosity: 'En Alemania 1974, el haítiano Emmanuel Sanon marcó el gol que cortó el invicto del portero italiano Dino Zoff: 1.143 minutos sin recibir un gol en torneos de selecciones. Fue uno de los hitos más recordados de ese Mundial.',
+  },
+  'curazao': {
+    wcRecord: '0 Mundiales previos · Debut: 2026',
+    curiosity: 'Curazao debutará en el Mundial 2026. La isla neerlandesa del Caribe tiene una larga tradición de jugadores que emigraron a los Países Bajos: Gullit, Seedorf, Davids y Frank Rijkaard son descendientes de la diáspora curazaleña.',
   },
 
   // ── UEFA ──────────────────────────────────────────────────────────────────
@@ -162,7 +170,7 @@ export const COUNTRY_FACTS: Record<string, CountryFact> = {
   },
   'albania': {
     wcRecord: '0 Mundiales previos · Debut: 2026',
-    curiosity: 'Albania disputaría por primera vez en su historia una Copa del Mundo, un hito histórico para una de las naciones europeas con menos apariciones en torneos mayores.',
+    curiosity: 'Albania debuta en el Mundial 2026, un hito histórico para una de las naciones europeas con menos apariciones en torneos mayores. La selección se apoya en su numerosa diáspora en Italia y Grecia, con varios jugadores formados en academias europeas.',
   },
   'turquía': {
     wcRecord: '2 Mundiales · Mejor resultado: 3.er lugar 2002',
@@ -183,6 +191,14 @@ export const COUNTRY_FACTS: Record<string, CountryFact> = {
   'eslovaquia': {
     wcRecord: '2 Mundiales · Mejor resultado: segunda ronda (2010)',
     curiosity: 'Eslovaquia se independizó en 1993 y ya llegó a los octavos de final en 2010, eliminando a Italia (campeona vigente) en la primera ronda.',
+  },
+  'noruega': {
+    wcRecord: '3 Mundiales (1938, 1994, 1998) · Mejor resultado: octavos de final 1998',
+    curiosity: 'En Francia 1998, Noruega venció a Brasil 2-1 en la fase de grupos, la única derrota de los brasileños en esa fase durante ese torneo. Ole Gunnar Solskjær fue la figura de esa generación.',
+  },
+  'suecia': {
+    wcRecord: '12 Mundiales · Mejor resultado: finalista (1958)',
+    curiosity: 'En 1958, siendo anfitriona, Suecia llegó a la final pero cayó 5-2 ante Brasil — el mismo torneo en que Pelé, con 17 años, marcó el comienzo de una leyenda. En 1994 volvió al podio con el 3.er puesto.',
   },
 
   // ── AFC ───────────────────────────────────────────────────────────────────
@@ -226,6 +242,10 @@ export const COUNTRY_FACTS: Record<string, CountryFact> = {
   'indonesia': {
     wcRecord: '1 Mundial (como Indias Orientales Holandesas, 1938) · Debut moderno: 2026',
     curiosity: 'Indonesia (como Indias Orientales Holandesas) jugó en 1938, siendo la primera nación asiática en disputar un Mundial. Regresa 88 años después en 2026.',
+  },
+  'china': {
+    wcRecord: '1 Mundial · Debut y única aparición: 2002',
+    curiosity: 'China debutó en el Mundial 2002 (Corea del Sur/Japón) y disputó sus tres partidos sin marcar ningún gol y recibiendo 9. Pese a los resultados, la clasificación fue vivida como el mayor hito del fútbol chino, con millones de espectadores en el país.',
   },
   'jordania': {
     wcRecord: '0 Mundiales previos · Debut: 2026',
@@ -284,15 +304,19 @@ export const COUNTRY_FACTS: Record<string, CountryFact> = {
   },
   'mali': {
     wcRecord: '0 Mundiales previos · Debut: 2026',
-    curiosity: 'Mali clasificaría al Mundial 2026 por primera vez, impulsado por una generación de jugadores que militan en las principales ligas europeas.',
+    curiosity: 'Mali debuta en el Mundial 2026 impulsado por una generación que milita en las principales ligas europeas. Es el primer país francófono del África Occidental en clasificar al torneo en décadas.',
   },
   'tanzania': {
     wcRecord: '0 Mundiales previos · Debut: 2026',
-    curiosity: 'Tanzania disputaría su primer Mundial en 2026, marcando un hito histórico para el fútbol de Africa Oriental.',
+    curiosity: 'Tanzania debuta en el Mundial 2026, un hito histórico para el fútbol del África Oriental. Su clasificación es el resultado de años de inversión en formación juvenil y la consolidación de la liga doméstica.',
   },
   'kenia': {
     wcRecord: '0 Mundiales previos · Debut: 2026',
     curiosity: 'Kenia clasifica al Mundial 2026 por primera vez, respaldada por el crecimiento del fútbol profesional en la región de Africa Oriental.',
+  },
+  'cabo verde': {
+    wcRecord: '0 Mundiales previos · Debut: 2026',
+    curiosity: 'Con apenas 600.000 habitantes, Cabo Verde debuta en el Mundial 2026. El archipiélago tiene una notable cantera diaspórica: la mayoría de sus internacionales nacieron o crecieron en Portugal, Francia o los Países Bajos, lo que lo convierte en uno de los casos más únicos de fútbol diáspora de este torneo.',
   },
 
   // ── OFC ───────────────────────────────────────────────────────────────────
