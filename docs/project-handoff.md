@@ -1,6 +1,6 @@
 # Ripio Mundial 2026 — Project Handoff
 
-**Última actualización**: 1 marzo 2026
+**Última actualización**: 3 marzo 2026
 **Proyecto**: App de pronósticos para el Mundial 2026, desarrollada por Ripio
 **Stack**: Next.js 16 (App Router) · Supabase (Auth, DB, Storage) · Tailwind CSS v4 · TypeScript · Vercel
 
@@ -47,42 +47,53 @@ CRON_SECRET=<secret_string>
 ## Estructura del proyecto
 
 ```
-app/                          # Next.js App Router (pages y API routes)
-  ├── page.tsx                # Landing page (home)
-  ├── layout.tsx              # Root layout con Navbar
-  ├── login/page.tsx          # Login con OTP/magic link
-  ├── register/page.tsx       # Registro: email + display_name + OTP
-  ├── rules/page.tsx          # Reglas del juego
-  ├── matches/page.tsx        # Partidos y formulario de pronósticos
-  ├── me/page.tsx             # Perfil: stats, avatar, nombre
-  ├── leaderboard/page.tsx    # Ranking general con podio top 3
-  ├── leagues/page.tsx        # Mis ligas (crear/unirse)
-  ├── leagues/[id]/page.tsx   # Detalle de una liga + ranking + pronósticos
-  ├── admin/page.tsx          # Panel de admin (restringido)
+app/
+  ├── page.tsx                     # Landing page (home)
+  ├── layout.tsx                   # Root layout con AppShell + Vercel Analytics
+  ├── error.tsx                    # Error boundary global (pantalla completa)
+  ├── not-found.tsx                # Página 404
+  ├── (marketing)/                 # Route group sin sidebar (layout público)
+  │   ├── ingresa/page.tsx         # Login con OTP/magic link
+  │   └── registro/page.tsx        # Registro: email + display_name + OTP
+  ├── (app)/                       # Route group con AppShell (sidebar nav)
+  │   ├── error.tsx                # Error boundary para rutas internas
+  │   ├── cuadro/page.tsx + loading.tsx      # Fixture / fase de grupos
+  │   ├── pronosticos/page.tsx + loading.tsx # Formulario de pronósticos
+  │   ├── ranking/page.tsx + loading.tsx     # Ranking general con podio
+  │   ├── ligas/page.tsx + loading.tsx       # Mis ligas (crear/unirse)
+  │   ├── ligas/[id]/page.tsx                # Detalle de liga
+  │   ├── perfil/page.tsx          # Perfil: stats, avatar, nombre, compartir posición
+  │   ├── reglas/page.tsx
+  │   ├── predeci-wars/page.tsx
+  │   └── ripio-cup/page.tsx
+  ├── admin/page.tsx               # Panel de admin (restringido a ADMIN_EMAILS)
   ├── auth/
-  │   ├── callback/route.ts   # OTP callback → crea sesión
-  │   └── check-email/        # Pantalla "revisá tu email"
+  │   ├── callback/page.tsx        # Auth callback CLIENT-SIDE (ver sección Auth)
+  │   └── check-email/page.tsx     # Pantalla "revisá tu email"
   └── api/
-      ├── predictions/route.ts            # Guardar/obtener pronósticos
-      ├── leagues/create/route.ts         # Crear liga privada
-      ├── leagues/join/route.ts           # Unirse con invite_code
-      ├── admin/recalculate/route.ts      # Recalcular bracket
-      └── cron/sync-results/route.ts      # Sync resultados desde TheSportsDB
+      ├── predictions/route.ts
+      ├── leagues/create/route.ts
+      ├── leagues/join/route.ts
+      ├── admin/recalculate/route.ts
+      └── cron/sync-results/route.ts
 
 components/
-  ├── MatchCard.tsx            # Tarjeta de partido con inputs de pronóstico
-  ├── MatchesList.tsx          # Lista de partidos con filtros
-  ├── LeaderboardTable.tsx     # Tabla de ranking con scroll infinito y avatares
-  ├── AvatarUpload.tsx         # Subida de foto de perfil (Supabase Storage)
-  ├── EditDisplayName.tsx      # Edición inline del nombre de usuario
-  ├── GroupStandingsTable.tsx  # Tabla de posiciones de grupos
+  ├── AppShell.tsx               # Sidebar desktop colapsable + drawer mobile con perfil prominente
+  ├── MatchCard.tsx              # Tarjeta de partido con inputs, countdown, pronósticos de otros
+  ├── MatchesList.tsx            # Lista con tabs por fase, badge de pendientes, "Próximo partido"
+  ├── Hero.tsx                   # Hero de landing con <picture> responsive (WebP + JPG)
+  ├── NavbarClient.tsx           # Topbar mobile + drawer
+  ├── NavAvatar.tsx              # Avatar circular con iniciales de fallback
+  ├── ShareProfileButton.tsx     # Compartir posición (Web Share API + fallback clipboard)
+  ├── LeaderboardTable.tsx       # Tabla de ranking con podio y avatares
+  ├── AvatarUpload.tsx           # Subida de foto de perfil (Supabase Storage)
+  ├── EditDisplayName.tsx        # Edición inline del nombre de usuario
+  ├── GroupStandingsTable.tsx    # Tabla de posiciones de grupos
   ├── LeaguePredictionsPanel.tsx # Panel de pronósticos por partido en liga
-  ├── ShareLeagueCompact.tsx   # Botones de compartir liga
-  ├── NavbarClient.tsx         # Navbar con estado de auth
-  ├── Hero.tsx                 # Sección hero de la landing
-  ├── AdminMatchForm.tsx       # Form de admin para actualizar resultados
-  ├── SyncButton.tsx           # Botón de sincronización API (admin)
-  └── RecalculateButton.tsx    # Botón de recálculo bracket (admin)
+  ├── ShareLeagueCompact.tsx     # Botones de compartir liga
+  ├── AdminMatchForm.tsx
+  ├── SyncButton.tsx
+  └── RecalculateButton.tsx
 
 lib/
   ├── scoring.ts               # Lógica de puntos + interfaces TypeScript
@@ -90,7 +101,14 @@ lib/
   ├── supabase-browser.ts      # Cliente Supabase para Client Components
   ├── supabase.ts              # Config base de Supabase
   ├── constants.ts             # GENERAL_LEAGUE_ID y otras constantes
-  └── team-names.ts            # Normalización de nombres de equipos (ES→EN)
+  ├── team-names.ts            # Normalización de nombres de equipos (ES→EN)
+  ├── email-validation.ts      # Detección de emails desechables (offline list + mailcheck.ai)
+  └── flags.ts                 # URLs de banderas por código de país
+
+public/images/
+  ├── hero-desktop.jpg / .webp   # Hero optimizado (~120KB JPG, ~74KB WebP)
+  ├── hero-tablet.jpg / .webp
+  └── hero-mobile.jpg / .webp
 
 supabase/migrations/           # Migraciones de base de datos
   ├── add_leaderboard_function.sql
@@ -220,19 +238,31 @@ Vista que calcula la tabla de posiciones de cada grupo (para la fase de grupos).
 Usa **Supabase Auth con OTP por email** (magic links). No hay contraseñas.
 
 **Flujo de registro:**
-1. `/register` → usuario ingresa email + display_name
-2. Se valida que el display_name sea único
-3. Se llama `signInWithOtp({ email, options: { data: { display_name } } })`
-4. Usuario recibe email con magic link
-5. Clic en el link → `/auth/callback?code=...` → `exchangeCodeForSession(code)`
-6. Supabase trigger crea el perfil en `profiles` automáticamente (o lo crea el callback)
-7. Redirige a `/matches`
+1. `/registro` → usuario ingresa email + display_name
+2. Se valida que el display_name sea único (query a `profiles`)
+3. Se valida que el email no sea desechable (`isDisposableEmail()`)
+4. Se llama `signInWithOtp({ email, options: { data: { display_name } } })`
+5. Usuario recibe email con magic link
+6. Clic en el link → `/auth/callback?token_hash=XXX&type=email` → `verifyOtp()` en el browser
+7. Redirige a `/pronosticos`
 
 **Flujo de login:**
-1. `/login` → usuario ingresa email
-2. Se verifica que el perfil exista (para distinguir entre registrado y no registrado)
-3. `signInWithOtp({ email })`
-4. Mismo callback flow
+1. `/ingresa` → usuario ingresa email
+2. `signInWithOtp({ email, options: { shouldCreateUser: false } })`
+   - Si el email no está registrado, Supabase devuelve "Signups not allowed" → se suprime el error y se muestra la pantalla de "revisá tu email" igual (previene enumeración de usuarios)
+3. Mismo callback flow
+
+### Auth Callback — por qué es client-side (`page.tsx` y no `route.ts`)
+
+Los **escáneres de seguridad corporativos** (Gmail, Outlook, Barracuda, etc.) hacen un GET al link del email antes de que el usuario lo abra. Si el callback fuera server-side, el scanner consumiría el token y el usuario recibiría "link inválido".
+
+**Solución implementada — flujo token_hash:**
+- El template de email en Supabase apunta a: `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=email`
+- El callback es un `page.tsx` (HTML estático para el scanner)
+- La verificación (`verifyOtp()`) ocurre en un `useEffect` — solo se ejecuta en el browser real del usuario, nunca en el scanner
+- Mantiene fallback al flujo `code` (PKCE) para links emitidos antes del cambio de template
+
+**Template configurado en:** Supabase Dashboard → Authentication → Email Templates → Magic Link
 
 ---
 
@@ -313,8 +343,36 @@ npm run dev
 4. **Sistema de ligas** — Liga general (hardcoded UUID), ligas privadas con invite codes, join/create flows
 5. **Bracket de eliminatoria** — match_refs en JSONB, `resolve_qualified_teams()` trigger, vista de bracket
 6. **Sync de resultados** — Endpoint cron que consume TheSportsDB, normalización de nombres
-7. **Mejoras de diseño** — Medallas emoji (🥇🥈🥉), responsive fixes, consistencia visual dark theme
-8. **Avatares de usuario** — Supabase Storage bucket `avatars`, `AvatarUpload` component, actualización de `get_leaderboard()` para incluir `avatar_url`, display en LeaderboardTable y leagues
+7. **Mejoras de diseño** — Medallas emoji, responsive fixes, consistencia visual dark theme
+8. **Avatares de usuario** — Supabase Storage bucket `avatars`, `AvatarUpload` component, `get_leaderboard()` incluye `avatar_url`
+
+### Sesión 2–3 marzo 2026
+
+9. **Refactor de rutas** — Route groups `(marketing)` y `(app)` con layouts separados; `AppShell` con sidebar colapsable desktop y drawer mobile
+
+10. **UX / diseño:**
+    - Loading skeletons para ranking, pronosticos, ligas y cuadro
+    - Páginas de error global (`app/error.tsx`) y de sección (`app/(app)/error.tsx`)
+    - Página 404 (`app/not-found.tsx`)
+    - Hero reescrito con `<picture>` responsive (WebP + JPG fallback), imágenes optimizadas (1.4MB → ~120KB)
+    - `ShareProfileButton` — comparte posición en el ranking via Web Share API con fallback a clipboard
+    - `MatchesList` — etiqueta "Próximo partido" con punto verde animado para el primer partido pendiente
+    - `MatchCard` — bordes grises en lugar de púrpura (menos pesado visualmente)
+    - `AppShell` — sección de perfil (avatar + nombre + email) encima de los links de navegación, más prominente
+    - Headers centrados en todas las páginas de la app
+    - Colores oro/plata/bronce consistentes en Hero y Ranking (yellow-400 / gray-300 / orange-400)
+
+11. **Seguridad:**
+    - **Eliminada enumeración de usuarios en login**: se quitó el pre-check a `profiles` que revelaba si un email estaba registrado; se agregó `shouldCreateUser: false`; el error "Signups not allowed" se suprime y el UX es idéntico para emails registrados y no registrados
+    - **Eliminada enumeración en registro**: se quitó el pre-check a `profiles` que confirmaba si un email ya tenía cuenta
+    - **Bloqueo de emails desechables**: `lib/email-validation.ts` con lista offline de dominios conocidos + fallback a mailcheck.ai API
+    - **Fix magic link para scanners corporativos**: callback reescrito como `page.tsx` client-side con flujo `token_hash` (el scanner ve HTML, no ejecuta JS, el token queda intacto para el usuario real); template de email en Supabase actualizado manualmente en el dashboard
+
+12. **Analytics** — Vercel Analytics integrado en `app/layout.tsx`
+
+13. **Proceso / git:**
+    - Sincronización completa entre rama `claude/hungry-knuth` y `main`
+    - Definido proceso: `main` es la única fuente de verdad para producción; los worktrees/branches son para desarrollo y se mergean a `main` antes de deployar
 
 ---
 
@@ -329,6 +387,10 @@ npm run dev
 | Invite codes de 6 chars | Balance entre comodidad de compartir y colisiones improbables |
 | Liga General con UUID hardcodeado | Simplicidad: todos los usuarios son miembros de la liga general automáticamente |
 | TheSportsDB para datos | API gratuita para el Mundial 2026, sin key requerida |
+| Auth callback como `page.tsx` client-side (no `route.ts`) | Los scanners corporativos siguen redirects y consumen tokens server-side; JS en `useEffect` solo corre en el browser real |
+| Flujo `token_hash` en el template de email | El link apunta directamente a nuestra app sin pasar por `/auth/v1/verify` de Supabase, eliminando el punto de consumo del token por scanners |
+| `shouldCreateUser: false` en login | Previene crear cuentas accidentalmente desde la pantalla de login |
+| `main` como único branch de producción | Evita inconsistencias cuando Vercel deploya múltiples branches con estados diferentes |
 
 ---
 
@@ -345,4 +407,10 @@ npm run dev
 
 ## Contacto del proyecto
 
-Este proyecto fue iniciado por el equipo de Ripio para el Mundial 2026. Si sos un Claude de otra sesión o cuenta leyendo esto: el código está en `/Users/ripio/Desktop/ripio-mundial-2026/`. La rama de trabajo activa puede estar en un worktree bajo `.claude/worktrees/`. Chequeá `git branch` y `git status` para orientarte.
+Este proyecto fue iniciado por el equipo de Ripio para el Mundial 2026. Si sos un Claude de otra sesión o cuenta leyendo esto: el código está en `/Users/ripio/Desktop/ripio-mundial-2026/`. La rama de trabajo activa puede estar en un worktree bajo `.claude/worktrees/`.
+
+**Proceso de trabajo definido:**
+- `main` es la única fuente de verdad para producción — Vercel deploya automáticamente desde `main`
+- Los worktrees y branches son para desarrollo; siempre mergear a `main` antes de considerar algo deployado
+- Antes de comenzar trabajo nuevo en un worktree, verificar que esté sincronizado con `main` (`git merge origin/main`)
+- Chequeá `git branch`, `git status` y `git log --oneline -5` para orientarte al inicio de cada sesión
