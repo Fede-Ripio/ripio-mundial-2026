@@ -43,6 +43,15 @@ body {
   display: none;
 }
 
+/* Animación de entrada para cards */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.35s ease-out forwards;
+}
+
 /* Forzar fondo oscuro en iframes de Precog */
 iframe[title*="precog-market"] {
   background-color: #000000 !important;

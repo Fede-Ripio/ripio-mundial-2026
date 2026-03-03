@@ -144,7 +144,7 @@ export default function MatchDayCard({
           {/* Home */}
           <div className="flex-1 min-w-0">
             <div className="text-[9px] font-semibold text-gray-600 uppercase tracking-widest mb-0.5">Local</div>
-            <div className={`text-base sm:text-lg font-bold leading-tight truncate ${
+            <div className={`text-base sm:text-lg font-bold leading-tight line-clamp-1 ${
               winner === 'home' && !isEmpty ? 'text-white' : 'text-gray-300'
             }`}>
               {homeFlag && <span className="mr-1">{homeFlag}</span>}
@@ -157,7 +157,7 @@ export default function MatchDayCard({
           {/* Away */}
           <div className="flex-1 min-w-0 text-right">
             <div className="text-[9px] font-semibold text-gray-600 uppercase tracking-widest mb-0.5">Visitante</div>
-            <div className={`text-base sm:text-lg font-bold leading-tight truncate ${
+            <div className={`text-base sm:text-lg font-bold leading-tight line-clamp-1 ${
               winner === 'away' && !isEmpty ? 'text-white' : 'text-gray-300'
             }`}>
               {m.awayTeam}
@@ -224,7 +224,7 @@ export default function MatchDayCard({
                       : 'bg-gray-700'
                     return (
                       <div key={i} className="flex items-center gap-2">
-                        <span className="text-[11px] font-mono font-semibold text-gray-300 w-7 text-right flex-shrink-0">
+                        <span className="text-[11px] font-mono font-semibold text-gray-300 min-w-[28px] text-right flex-shrink-0">
                           {s.homeGoals}-{s.awayGoals}
                         </span>
                         <div className="flex-1 h-2 bg-gray-800 rounded-full overflow-hidden">
@@ -335,17 +335,19 @@ function CountryFactCard({ name, countryFlag, fact }: { name: string; countryFla
 
 function CryptoCard({ teamName, teamFlag, fact }: { teamName: string; teamFlag: string; fact: CryptoCountryFact }) {
   return (
-    <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4 flex gap-4 items-start">
-      <div className="flex-shrink-0">
-        <div className="text-[10px] font-semibold text-purple-400 uppercase tracking-widest mb-1">
-          Cripto · {teamFlag && <span className="mr-0.5">{teamFlag}</span>}{teamName}
-        </div>
-        <div className="text-xl font-bold text-purple-400 leading-none">{fact.highlight}</div>
-        <div className="text-[10px] text-gray-600 mt-0.5 max-w-[120px] leading-tight">{fact.highlightLabel}</div>
+    <div className="bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+      <div className="text-[10px] font-semibold text-purple-400 uppercase tracking-widest mb-2">
+        Cripto · {teamFlag && <span className="mr-0.5">{teamFlag}</span>}{teamName}
       </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-[11px] text-gray-400 leading-relaxed">{fact.body}</p>
-        <p className="text-[10px] text-gray-700 mt-1.5">Fuente: {fact.source}</p>
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-start">
+        <div className="flex-shrink-0">
+          <div className="text-xl font-bold text-purple-400 leading-none">{fact.highlight}</div>
+          <div className="text-[10px] text-gray-600 mt-0.5 leading-tight">{fact.highlightLabel}</div>
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[11px] text-gray-400 leading-relaxed">{fact.body}</p>
+          <p className="text-[10px] text-gray-700 mt-1.5">Fuente: {fact.source}</p>
+        </div>
       </div>
     </div>
   )

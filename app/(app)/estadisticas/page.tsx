@@ -62,8 +62,9 @@ export default async function EstadisticasPage() {
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">
             Ripio Mundial 2026
           </p>
-          <h1 className="text-3xl sm:text-4xl font-bold mb-3">{headerLabel}</h1>
-          <p className="text-gray-400 text-sm">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-1">Datos</h1>
+          <p className="text-gray-500 text-sm mb-2">{headerLabel}</p>
+          <p className="text-gray-600 text-xs">
             Pronósticos de la comunidad · Datos de los países · Cripto y fútbol
           </p>
         </div>

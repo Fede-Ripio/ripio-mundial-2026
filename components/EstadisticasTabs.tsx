@@ -33,8 +33,10 @@ export default function EstadisticasTabs({
 }: Props) {
   if (!matches || matches.length === 0) {
     return (
-      <div className="text-center py-16 text-gray-500">
-        El torneo ha finalizado.
+      <div className="text-center py-16">
+        <span className="text-4xl mb-4 block">🏆</span>
+        <p className="text-lg font-semibold text-gray-500">El torneo ha finalizado</p>
+        <p className="text-sm text-gray-600 mt-1">Gracias por jugar el prode del Mundial 2026</p>
       </div>
     )
   }
@@ -54,6 +56,8 @@ export default function EstadisticasTabs({
     groups[seen.get(key)!].matches.push(m)
   }
 
+  let globalIndex = 0
+
   return (
     <div className="space-y-10">
       {groups.map(group => (
@@ -65,15 +69,21 @@ export default function EstadisticasTabs({
             {group.matches.map(m => {
               const homeKey = m.homeTeam.toLowerCase()
               const awayKey = m.awayTeam.toLowerCase()
+              const idx = globalIndex++
               return (
-                <MatchDayCard
+                <div
                   key={m.matchId}
-                  match={m}
-                  homeCountryFact={countryFacts[homeKey]}
-                  awayCountryFact={countryFacts[awayKey]}
-                  homeCryptoFact={cryptoCountryFacts[homeKey]}
-                  awayCryptoFact={cryptoCountryFacts[awayKey]}
-                />
+                  className="animate-fade-in-up"
+                  style={{ animationDelay: `${idx * 80}ms` }}
+                >
+                  <MatchDayCard
+                    match={m}
+                    homeCountryFact={countryFacts[homeKey]}
+                    awayCountryFact={countryFacts[awayKey]}
+                    homeCryptoFact={cryptoCountryFacts[homeKey]}
+                    awayCryptoFact={cryptoCountryFacts[awayKey]}
+                  />
+                </div>
               )
             })}
           </div>

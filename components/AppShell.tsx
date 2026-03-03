@@ -60,7 +60,7 @@ const NAV_LINKS = [
   { href: '/ranking',       label: 'Ranking',        Icon: Trophy        },
   { href: '/pronosticos',   label: 'Pronósticos',    Icon: ClipboardList },
   { href: '/ligas',         label: 'Ligas',          Icon: Users         },
-  { href: '/estadisticas',  label: 'Estadísticas',   Icon: BarChart2     },
+  { href: '/estadisticas',  label: 'Datos',           Icon: BarChart2     },
   { href: '/predeci-wars',  label: 'Predecí wARS',   Icon: Zap           },
   { href: '/reglas',        label: 'Reglas',         Icon: BookOpen      },
 ]
