@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase-browser'
+import { isDisposableEmail } from '@/lib/email-validation'
 import EmailInput from '@/components/EmailInput'
 
 export default function RegisterPage() {
@@ -51,18 +52,16 @@ export default function RegisterPage() {
     try {
       const supabase = createClient()
 
-      const { data: existingUser } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', email)
-        .single()
-
-      if (existingUser) {
-        throw new Error('Este email ya está registrado. Intentá iniciar sesión.')
-      }
-
       const isAvailable = await checkUsernameAvailable(displayName.trim())
       if (!isAvailable) {
+        setLoading(false)
+        return
+      }
+
+      // Bloquear emails temporales o desechables
+      const disposable = await isDisposableEmail(email)
+      if (disposable) {
+        setError('No se permiten emails temporales o desechables')
         setLoading(false)
         return
       }
