@@ -3,12 +3,13 @@
 import type { MatchConsensus } from '@/lib/stats'
 import type { CountryFact } from '@/lib/country-facts'
 import type { CryptoCountryFact } from '@/lib/crypto-country-facts'
+type CryptoCountryFacts = CryptoCountryFact[]
 import MatchDayCard from './MatchDayCard'
 
 interface Props {
   matches: MatchConsensus[]
   countryFacts: Record<string, CountryFact>
-  cryptoCountryFacts: Record<string, CryptoCountryFact>
+  cryptoCountryFacts: Record<string, CryptoCountryFacts>
   headerLabel: string
 }
 
@@ -80,8 +81,9 @@ export default function EstadisticasTabs({
                     match={m}
                     homeCountryFact={countryFacts[homeKey]}
                     awayCountryFact={countryFacts[awayKey]}
-                    homeCryptoFact={cryptoCountryFacts[homeKey]}
-                    awayCryptoFact={cryptoCountryFacts[awayKey]}
+                    homeCryptoFacts={cryptoCountryFacts[homeKey]}
+                    awayCryptoFacts={cryptoCountryFacts[awayKey]}
+                    matchIndex={idx}
                   />
                 </div>
               )

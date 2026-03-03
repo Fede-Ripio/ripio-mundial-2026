@@ -4,6 +4,7 @@ import type { MatchConsensus } from '@/lib/stats'
 import type { CountryFact } from '@/lib/country-facts'
 import type { CryptoCountryFact } from '@/lib/crypto-country-facts'
 import { WORLD_CUP_CRYPTO_FALLBACK } from '@/lib/crypto-country-facts'
+type CryptoCountryFacts = CryptoCountryFact[]
 import { getHeadToHead } from '@/lib/wc-history'
 import { normalizeTeamName } from '@/lib/team-names'
 
@@ -11,8 +12,9 @@ interface Props {
   match: MatchConsensus
   homeCountryFact?: CountryFact
   awayCountryFact?: CountryFact
-  homeCryptoFact?: CryptoCountryFact
-  awayCryptoFact?: CryptoCountryFact
+  homeCryptoFacts?: CryptoCountryFacts
+  awayCryptoFacts?: CryptoCountryFacts
+  matchIndex?: number
 }
 
 // ── Flag map ──────────────────────────────────────────────────────────────────
@@ -78,8 +80,9 @@ export default function MatchDayCard({
   match: m,
   homeCountryFact,
   awayCountryFact,
-  homeCryptoFact,
-  awayCryptoFact,
+  homeCryptoFacts,
+  awayCryptoFacts,
+  matchIndex = 0,
 }: Props) {
   const isEmpty = m.totalPredictions === 0
   const { homeWinPct, drawPct, awayWinPct } = m
@@ -92,10 +95,11 @@ export default function MatchDayCard({
   const isFinished = m.status === 'finished'
   const isLive = m.status === 'in_progress'
 
-  const cryptoFact = homeCryptoFact ?? awayCryptoFact ?? WORLD_CUP_CRYPTO_FALLBACK
-  const cryptoTeamLabel = homeCryptoFact
+  const cryptoFacts = homeCryptoFacts ?? awayCryptoFacts ?? WORLD_CUP_CRYPTO_FALLBACK
+  const cryptoFact = cryptoFacts[matchIndex % cryptoFacts.length]
+  const cryptoTeamLabel = homeCryptoFacts
     ? m.homeTeam
-    : awayCryptoFact ? m.awayTeam : null
+    : awayCryptoFacts ? m.awayTeam : null
 
   const hasAnyFact = homeCountryFact || awayCountryFact || cryptoFact
 
