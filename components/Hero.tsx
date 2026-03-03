@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
 const WARS_LOGO = 'https://cdn.prod.website-files.com/640b8191d2fdcfb39b135a5b/69121e0c7b24a0930d8e4efa_world_logos_wars_logo.svg'
@@ -7,35 +6,18 @@ export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
     <section className="relative min-h-[calc(100dvh-4rem)] w-full overflow-x-hidden bg-gradient-to-b from-purple-950 via-purple-900 to-black flex flex-col">
 
-      <div className="absolute inset-0">
-        <Image
-          src="/images/hero-desktop.jpg"
-          alt="Ripio Mundial 2026"
-          fill
-          priority
-          quality={75}
-          sizes="100vw"
-          className="object-cover hidden md:block"
-        />
-        <Image
-          src="/images/hero-tablet.jpg"
-          alt="Ripio Mundial 2026"
-          fill
-          priority
-          quality={75}
-          sizes="100vw"
-          className="object-cover hidden sm:block md:hidden"
-        />
-        <Image
+      <picture className="absolute inset-0">
+        <source media="(min-width: 768px)" srcSet="/images/hero-desktop.jpg" />
+        <source media="(min-width: 640px)" srcSet="/images/hero-tablet.jpg" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src="/images/hero-mobile.jpg"
           alt="Ripio Mundial 2026"
-          fill
-          priority
-          quality={75}
-          sizes="100vw"
-          className="object-cover block sm:hidden"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover object-top sm:object-left-bottom"
         />
-      </div>
+      </picture>
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/50" />
 
@@ -56,7 +38,7 @@ export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
           </p>
 
           {/* Prizes box */}
-          <div className="bg-black/70 backdrop-blur-md border border-purple-500/30 rounded-2xl p-6 sm:p-8 mb-10 max-w-2xl mx-auto shadow-2xl">
+          <div className="bg-gradient-to-b from-black/80 via-black/70 to-transparent rounded-2xl p-6 sm:p-8 mb-10 max-w-2xl mx-auto">
             {/* wARS logo + label */}
             <div className="flex items-center justify-center gap-3 mb-6">
               <img src={WARS_LOGO} alt="wARS" className="w-10 h-10" />
@@ -65,18 +47,18 @@ export default function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
             {/* Prize amounts */}
             <div className="flex items-end justify-center gap-6 sm:gap-12">
               <div className="text-center">
-                <div className="text-4xl sm:text-5xl font-black text-yellow-400 mb-2">1°</div>
+                <div className="text-4xl sm:text-5xl font-bold text-yellow-400 mb-2">1°</div>
                 <div className="text-2xl sm:text-3xl font-bold text-yellow-400">1MM</div>
                 <div className="text-xs text-gray-500 mt-1">1er puesto</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl sm:text-5xl font-black text-gray-300 mb-2">2°</div>
+                <div className="text-4xl sm:text-5xl font-bold text-gray-300 mb-2">2°</div>
                 <div className="text-2xl sm:text-3xl font-bold text-gray-300">500K</div>
                 <div className="text-xs text-gray-500 mt-1">2do puesto</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl sm:text-5xl font-black text-orange-400 mb-2">3°</div>
-                <div className="text-2xl sm:text-3xl font-bold text-purple-300">250K</div>
+                <div className="text-4xl sm:text-5xl font-bold text-orange-400 mb-2">3°</div>
+                <div className="text-2xl sm:text-3xl font-bold text-orange-400">250K</div>
                 <div className="text-xs text-gray-500 mt-1">3er puesto</div>
               </div>
             </div>

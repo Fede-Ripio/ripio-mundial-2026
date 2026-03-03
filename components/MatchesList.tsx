@@ -109,13 +109,36 @@ export default function MatchesList({ matches, predictions, isLoggedIn, nextMatc
               <p className="text-center text-gray-600 py-8">No hay partidos próximos</p>
             ) : (
               <div className="flex flex-col items-center space-y-3">
-                {upcomingMatches.map(match => (
-                  <MatchCard
-                    key={match.id}
-                    match={match}
-                    prediction={predictionsMap.get(match.id)}
-                    isLoggedIn={isLoggedIn}
-                  />
+                {upcomingMatches.map((match, idx) => (
+                  <div key={match.id} className="w-full flex flex-col items-center">
+                    {/* Etiqueta "Próximo" solo para el primer partido */}
+                    {idx === 0 && (
+                      <div className="max-w-xl w-full mb-2 flex items-center gap-2 px-1">
+                        <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse flex-shrink-0" />
+                        <span className="text-xs font-semibold text-green-400 uppercase tracking-wide">
+                          Próximo partido
+                        </span>
+                        {isLoggedIn && !predictionsMap.has(match.id) && (
+                          <span className="ml-auto text-xs text-yellow-400 font-medium">
+                            ¡Completá tu pronóstico!
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    {/* Separador antes del segundo partido */}
+                    {idx === 1 && upcomingMatches.length > 1 && (
+                      <div className="max-w-xl w-full mb-2 mt-2 px-1">
+                        <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                          Próximamente
+                        </p>
+                      </div>
+                    )}
+                    <MatchCard
+                      match={match}
+                      prediction={predictionsMap.get(match.id)}
+                      isLoggedIn={isLoggedIn}
+                    />
+                  </div>
                 ))}
               </div>
             )}

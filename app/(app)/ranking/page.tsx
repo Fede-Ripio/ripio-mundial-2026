@@ -33,7 +33,7 @@ export default async function LeaderboardPage() {
     <div className="min-h-screen bg-black text-white py-10 sm:py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
 
-        <div className="mb-8">
+        <div className="mb-8 text-center">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Ripio Mundial 2026</p>
           <h1 className="text-3xl sm:text-4xl font-bold mb-3">Ranking General</h1>
           <p className="text-gray-400">
@@ -61,7 +61,7 @@ export default async function LeaderboardPage() {
             <div className="w-12 h-12 rounded-full bg-yellow-400/20 border-2 border-yellow-400/60 flex items-center justify-center mx-auto mb-4">
               <span className="text-xl font-black text-yellow-400">1</span>
             </div>
-            <div className="text-3xl font-bold text-purple-400 mb-2">1MM wARS</div>
+            <div className="text-3xl font-bold text-yellow-400 mb-2">1MM wARS</div>
             <div className="text-sm text-gray-500 mb-4">Primer Puesto</div>
             {top3[0] && (
               <div className="pt-4 border-t border-purple-500/30">
