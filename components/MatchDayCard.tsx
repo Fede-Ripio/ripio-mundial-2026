@@ -4,6 +4,8 @@ import type { MatchConsensus } from '@/lib/stats'
 import type { CountryFact } from '@/lib/country-facts'
 import type { CryptoCountryFact } from '@/lib/crypto-country-facts'
 import { WORLD_CUP_CRYPTO_FALLBACK } from '@/lib/crypto-country-facts'
+import { getHeadToHead } from '@/lib/wc-history'
+import { normalizeTeamName } from '@/lib/team-names'
 
 interface Props {
   match: MatchConsensus
@@ -99,6 +101,13 @@ export default function MatchDayCard({
 
   const homeFlag = flag(m.homeTeam)
   const awayFlag = flag(m.awayTeam)
+
+  // Head-to-head history (1930-2022)
+  const h2h = getHeadToHead(m.homeTeam, m.awayTeam)
+  const homeEngName = normalizeTeamName(m.homeTeam)
+  const homeIsTeam1 = h2h ? h2h.team1.toLowerCase() === homeEngName.toLowerCase() : false
+  const homeH2HWins = h2h ? (homeIsTeam1 ? h2h.t1wins : h2h.t2wins) : 0
+  const awayH2HWins = h2h ? (homeIsTeam1 ? h2h.t2wins : h2h.t1wins) : 0
 
   return (
     <div className="bg-gray-900/40 border border-gray-800 rounded-xl overflow-hidden">
@@ -238,6 +247,52 @@ export default function MatchDayCard({
               </div>
             )}
           </>
+        )}
+      </div>
+
+      {/* ── H2H history ───────────────────────────────────────────── */}
+      <div className="px-5 py-3 border-b border-gray-800/60">
+        <div className="text-[10px] font-semibold text-gray-600 uppercase tracking-widest mb-2">
+          Historial en Mundiales{h2h ? ` · ${h2h.total} encuentro${h2h.total !== 1 ? 's' : ''}` : ''}
+        </div>
+        {h2h ? (
+          <>
+            <div className="flex h-5 rounded-full overflow-hidden text-[9px] font-bold mb-1.5">
+              {homeH2HWins > 0 && (
+                <div
+                  className="flex items-center justify-center bg-gradient-to-r from-purple-700 to-purple-500"
+                  style={{ width: `${Math.round((homeH2HWins / h2h.total) * 100)}%` }}
+                >
+                  {homeH2HWins}
+                </div>
+              )}
+              {h2h.draws > 0 && (
+                <div
+                  className="flex items-center justify-center bg-gray-600"
+                  style={{ width: `${Math.round((h2h.draws / h2h.total) * 100)}%` }}
+                >
+                  {h2h.draws}
+                </div>
+              )}
+              {awayH2HWins > 0 && (
+                <div
+                  className="flex items-center justify-center bg-gradient-to-r from-purple-900 to-purple-800"
+                  style={{ width: `${Math.round((awayH2HWins / h2h.total) * 100)}%` }}
+                >
+                  {awayH2HWins}
+                </div>
+              )}
+            </div>
+            <div className="flex justify-between text-[10px] text-gray-600">
+              <span>{homeH2HWins} victoria{homeH2HWins !== 1 ? 's' : ''} local</span>
+              <span>{h2h.draws} empate{h2h.draws !== 1 ? 's' : ''}</span>
+              <span>{awayH2HWins} victoria{awayH2HWins !== 1 ? 's' : ''} visitante</span>
+            </div>
+          </>
+        ) : (
+          <p className="text-[11px] text-gray-600 italic">
+            Se enfrentan por primera vez en la historia del Mundial.
+          </p>
         )}
       </div>
 
