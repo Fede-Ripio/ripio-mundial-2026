@@ -3,6 +3,7 @@
 import type { MatchConsensus } from '@/lib/stats'
 import type { CountryFact } from '@/lib/country-facts'
 import type { CryptoCountryFact } from '@/lib/crypto-country-facts'
+import { WORLD_CUP_CRYPTO_FALLBACK } from '@/lib/crypto-country-facts'
 
 interface Props {
   match: MatchConsensus
@@ -89,7 +90,7 @@ export default function MatchDayCard({
   const isFinished = m.status === 'finished'
   const isLive = m.status === 'in_progress'
 
-  const cryptoFact = homeCryptoFact ?? awayCryptoFact
+  const cryptoFact = homeCryptoFact ?? awayCryptoFact ?? WORLD_CUP_CRYPTO_FALLBACK
   const cryptoTeamLabel = homeCryptoFact
     ? m.homeTeam
     : awayCryptoFact ? m.awayTeam : null
@@ -177,7 +178,7 @@ export default function MatchDayCard({
               )}
               {drawPct > 0 && (
                 <div
-                  className="flex items-center justify-center bg-gray-700 transition-all duration-700"
+                  className="flex items-center justify-center bg-gray-600 transition-all duration-700"
                   style={{ width: `${drawPct}%` }}
                 >
                   {drawPct >= 12 && `${drawPct}%`}
@@ -185,7 +186,7 @@ export default function MatchDayCard({
               )}
               {awayWinPct > 0 && (
                 <div
-                  className="flex items-center justify-center bg-gradient-to-r from-gray-600 to-gray-500 transition-all duration-700"
+                  className="flex items-center justify-center bg-gradient-to-r from-purple-900 to-purple-800 transition-all duration-700"
                   style={{ width: `${awayWinPct}%` }}
                 >
                   {awayWinPct >= 15 && `${awayWinPct}%`}
@@ -196,7 +197,7 @@ export default function MatchDayCard({
             <div className="flex justify-between text-[10px] text-gray-500 mb-5">
               <span className={winner === 'home' ? 'text-purple-400 font-semibold' : ''}>{homeWinPct}% local</span>
               <span className={winner === 'draw' ? 'text-gray-300 font-semibold' : ''}>{drawPct}% empate</span>
-              <span className={winner === 'away' ? 'text-gray-300 font-semibold' : ''}>{awayWinPct}% visitante</span>
+              <span className={winner === 'away' ? 'text-purple-300 font-semibold' : ''}>{awayWinPct}% visitante</span>
             </div>
 
             {/* Score distribution */}
@@ -255,8 +256,12 @@ export default function MatchDayCard({
             </div>
           )}
 
-          {cryptoFact && cryptoTeamLabel && (
-            <CryptoCard teamName={cryptoTeamLabel} teamFlag={flag(cryptoTeamLabel)} fact={cryptoFact} />
+          {cryptoFact && (
+            <CryptoCard
+              teamName={cryptoTeamLabel ?? 'Mundial 2026'}
+              teamFlag={cryptoTeamLabel ? flag(cryptoTeamLabel) : '🏆'}
+              fact={cryptoFact}
+            />
           )}
         </div>
       )}

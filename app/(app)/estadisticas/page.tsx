@@ -31,11 +31,25 @@ export default async function EstadisticasPage() {
     return matchDate === today
   })
 
-  // If no matches today, show next 8 upcoming (not finished)
-  const upcomingMatches = allMatches
+  // If no matches today, show only the next day that has matches
+  const sortedUpcoming = allMatches
     .filter(m => m.status !== 'finished' && m.kickoffAt)
     .sort((a, b) => (a.kickoffAt ?? '').localeCompare(b.kickoffAt ?? ''))
-    .slice(0, 8)
+
+  const nextDayKey = sortedUpcoming.length > 0
+    ? new Date(sortedUpcoming[0].kickoffAt!).toLocaleDateString('en-CA', {
+        timeZone: 'America/Argentina/Buenos_Aires',
+      })
+    : null
+
+  const upcomingMatches = nextDayKey
+    ? sortedUpcoming.filter(m => {
+        const d = new Date(m.kickoffAt!).toLocaleDateString('en-CA', {
+          timeZone: 'America/Argentina/Buenos_Aires',
+        })
+        return d === nextDayKey
+      })
+    : []
 
   const matches = todayMatches.length > 0 ? todayMatches : upcomingMatches
   const headerLabel = todayMatches.length > 0 ? 'Partidos de hoy' : 'Próximos partidos'

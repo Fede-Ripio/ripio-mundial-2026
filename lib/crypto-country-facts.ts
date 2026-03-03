@@ -28,10 +28,10 @@ export const CRYPTO_COUNTRY_FACTS: Record<string, CryptoCountryFact> = {
   },
 
   'méxico': {
-    highlight: '$64.7 B',
-    highlightLabel: 'en remesas recibidas en 2023',
-    body: 'México es el segundo receptor de remesas más grande del mundo y lidera en LATAM el uso de criptomonedas para transferencias internacionales de bajo costo.',
-    source: 'Banco de México, Informe de Remesas 2023',
+    highlight: '$71.2 B',
+    highlightLabel: 'en cripto transaccionados (2024)',
+    body: 'México es el 3er mercado cripto de América Latina con $71,2 mil millones movilizados en 2024 y lidera la región en uso de stablecoins, con crecimiento interanual superior al 60%.',
+    source: 'Chainalysis Geography of Cryptocurrency Report 2025',
   },
 
   'colombia': {
@@ -174,4 +174,12 @@ export const CRYPTO_COUNTRY_FACTS: Record<string, CryptoCountryFact> = {
     body: 'Sudáfrica reguló los activos cripto como instrumentos financieros en 2023, siendo el primer país de África Austral en establecer un marco legal completo para el sector.',
     source: 'Financial Sector Conduct Authority (FSCA), Sudáfrica, 2023',
   },
+}
+
+/** Fallback cuando ninguno de los dos países del partido tiene dato cripto propio. */
+export const WORLD_CUP_CRYPTO_FALLBACK: CryptoCountryFact = {
+  highlight: '2026',
+  highlightLabel: 'el primer Mundial con tickets en blockchain',
+  body: 'El Mundial 2026 (USA, Canadá y México) es el primero en emitir entradas digitales sobre blockchain, a través de FIFA Collect en la red Avalanche, marcando una nueva era en la venta de tickets deportivos.',
+  source: 'FIFA Collect / Avalanche, 2024',
 }
