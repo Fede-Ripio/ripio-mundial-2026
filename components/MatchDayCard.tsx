@@ -218,7 +218,8 @@ export default function MatchDayCard({
                 <div className="space-y-1.5">
                   {m.topScores.map((s, i) => {
                     const pct = Math.round((s.count / m.totalPredictions) * 100)
-                    const barColor = i === 0
+                    const topCount = m.topScores[0].count
+                    const barColor = s.count === topCount
                       ? 'bg-gradient-to-r from-purple-600 to-purple-500'
                       : 'bg-gray-700'
                     return (
