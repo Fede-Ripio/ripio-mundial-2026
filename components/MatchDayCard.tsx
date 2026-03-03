@@ -218,13 +218,9 @@ export default function MatchDayCard({
                 <div className="space-y-1.5">
                   {m.topScores.map((s, i) => {
                     const pct = Math.round((s.count / m.totalPredictions) * 100)
-                    const isHomeWin = s.homeGoals > s.awayGoals
-                    const isDraw = s.homeGoals === s.awayGoals
-                    const barColor = isHomeWin
-                      ? 'bg-purple-600'
-                      : isDraw
-                      ? 'bg-gray-600'
-                      : 'bg-slate-500'
+                    const barColor = i === 0
+                      ? 'bg-gradient-to-r from-purple-600 to-purple-500'
+                      : 'bg-gray-700'
                     return (
                       <div key={i} className="flex items-center gap-2">
                         <span className="text-[11px] font-mono font-semibold text-gray-300 w-7 text-right flex-shrink-0">
