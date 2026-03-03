@@ -35,7 +35,12 @@ function LoginForm() {
         },
       })
 
-      if (error) throw error
+      // "Signups not allowed for otp" ocurre cuando el email no está registrado.
+      // Lo suprimimos para no revelar si el email existe o no.
+      // Cualquier otro error (red, rate limit, etc.) sí se muestra.
+      if (error && !error.message.toLowerCase().includes('signups not allowed')) {
+        throw error
+      }
 
       router.push(`/auth/check-email?email=${encodeURIComponent(email)}`)
     } catch (err: any) {
