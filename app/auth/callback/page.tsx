@@ -3,16 +3,20 @@
 /**
  * Auth Callback — procesado CLIENT-SIDE intencionalmente.
  *
- * Por qué client-side y no un Route Handler (route.ts):
+ * Por qué client-side:
  * Los escáneres de seguridad de email (Gmail, Outlook, Barracuda, etc.)
- * hacen un GET al link del email antes de que el usuario lo abra,
- * para verificar que no sea phishing. Si el exchange ocurre server-side,
- * el escáner consume el código OTP de un solo uso y el usuario recibe
- * "link expirado" al intentar ingresar.
+ * hacen un GET al link del email antes de que el usuario lo abra.
+ * Al hacer el exchange en un useEffect, los escáneres (que no ejecutan JS)
+ * no consumen el token.
  *
- * Los escáneres no ejecutan JavaScript, así que al hacer el exchange
- * en un useEffect, el código queda intacto hasta que el navegador del
- * usuario real ejecuta el JS.
+ * Flujo token_hash (preferido, activado via Supabase email template):
+ * El email apunta directamente a este callback con ?token_hash=XXX&type=email.
+ * Nunca pasa por el endpoint /auth/v1/verify de Supabase en el servidor, por
+ * lo que scanners corporativos que sigan la cadena completa de redirects
+ * tampoco pueden consumir el OTP.
+ *
+ * Flujo code (fallback PKCE):
+ * Para links generados con el template anterior. Se mantiene por compatibilidad.
  */
 
 import { useEffect, useState, Suspense } from 'react'
@@ -25,28 +29,43 @@ function CallbackContent() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    const tokenHash = searchParams.get('token_hash')
+    const type = searchParams.get('type') as 'email' | 'recovery' | 'invite' | null
     const code = searchParams.get('code')
     const next = searchParams.get('next') ?? '/pronosticos'
 
-    if (!code) {
-      router.replace('/ingresa?error=invalid_link')
+    const supabase = createClient()
+
+    if (tokenHash && type) {
+      // Flujo token_hash: la verificación ocurre en el browser del usuario real.
+      // Scanners obtienen HTML (200) y no ejecutan JS → token intacto.
+      supabase.auth.verifyOtp({ token_hash: tokenHash, type }).then(({ error }) => {
+        if (error) {
+          console.error('Auth callback error (token_hash):', error.message)
+          setError(error.message)
+          setTimeout(() => router.replace('/ingresa?error=invalid_link'), 1500)
+          return
+        }
+        router.replace(next)
+      })
       return
     }
 
-    const supabase = createClient()
+    if (code) {
+      // Flujo PKCE code (fallback para links emitidos con template anterior)
+      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
+        if (error) {
+          console.error('Auth callback error (code):', error.message)
+          setError(error.message)
+          setTimeout(() => router.replace('/ingresa?error=invalid_link'), 1500)
+          return
+        }
+        router.replace(next)
+      })
+      return
+    }
 
-    supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
-      if (error) {
-        console.error('Auth callback error:', error.message)
-        setError(error.message)
-        setTimeout(() => {
-          router.replace('/ingresa?error=invalid_link')
-        }, 1500)
-        return
-      }
-
-      router.replace(next)
-    })
+    router.replace('/ingresa?error=invalid_link')
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (error) {
