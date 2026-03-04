@@ -11,7 +11,7 @@ export default function ChatLoading() {
 
       {/* Chat area skeleton */}
       <div className="max-w-2xl mx-auto px-4 sm:px-6 pb-6">
-        <div className="h-[calc(100vh-13rem)] md:h-[calc(100vh-10rem)] rounded-2xl border border-purple-500/10 flex flex-col overflow-hidden">
+        <div className="h-[calc(100vh-19rem)] md:h-[calc(100vh-16rem)] rounded-2xl border border-purple-500/10 flex flex-col overflow-hidden">
 
           {/* Messages skeleton */}
           <div className="flex-1 px-4 py-6 space-y-5 overflow-hidden">
