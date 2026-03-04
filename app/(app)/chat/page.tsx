@@ -27,6 +27,15 @@ export default async function ChatPage() {
       .limit(100),
   ])
 
+  // Perfil del usuario actual (para mostrar en mensajes optimistas)
+  const { data: profile } = user
+    ? await supabase
+        .from('profiles')
+        .select('display_name, avatar_url')
+        .eq('id', user.id)
+        .single()
+    : { data: null }
+
   return (
     <div className="min-h-screen bg-black text-white">
 
@@ -47,6 +56,8 @@ export default async function ChatPage() {
           initialMessages={(messages ?? []) as ChatMessage[]}
           currentUserId={user?.id ?? null}
           currentUserEmail={user?.email ?? null}
+          currentUserName={profile?.display_name ?? null}
+          currentUserAvatar={profile?.avatar_url ?? null}
         />
       </div>
 

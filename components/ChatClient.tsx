@@ -41,12 +41,14 @@ function Avatar({ url, name, size = 'sm' }: { url?: string | null; name: string 
   )
 }
 
-function relativeTime(dateStr: string): string {
-  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
-  if (diff < 60) return 'ahora'
-  if (diff < 3600) return `hace ${Math.floor(diff / 60)} min`
-  if (diff < 86400) return `hace ${Math.floor(diff / 3600)} h`
-  return new Date(dateStr).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })
+function argentineTime(dateStr: string): string {
+  return new Date(dateStr).toLocaleString('es-AR', {
+    timeZone: 'America/Argentina/Buenos_Aires',
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 
 // ─── component ────────────────────────────────────────────────────────────────
@@ -55,9 +57,17 @@ interface Props {
   initialMessages: ChatMessage[]
   currentUserId: string | null
   currentUserEmail: string | null
+  currentUserName: string | null
+  currentUserAvatar: string | null
 }
 
-export default function ChatClient({ initialMessages, currentUserId, currentUserEmail }: Props) {
+export default function ChatClient({
+  initialMessages,
+  currentUserId,
+  currentUserEmail,
+  currentUserName,
+  currentUserAvatar,
+}: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages)
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
@@ -152,15 +162,15 @@ export default function ChatClient({ initialMessages, currentUserId, currentUser
     setSending(true)
     setError(null)
 
-    // Optimistic update
+    // Optimistic update — con nombre y avatar del usuario actual
     const tempId = `temp-${Date.now()}`
     const optimistic: ChatMessage = {
       id: tempId,
       user_id: currentUserId,
       content,
       created_at: new Date().toISOString(),
-      display_name: null, // se actualiza desde realtime
-      avatar_url: null,
+      display_name: currentUserName,
+      avatar_url: currentUserAvatar,
     }
     setMessages(prev => [...prev, optimistic])
     setInput('')
@@ -206,11 +216,20 @@ export default function ChatClient({ initialMessages, currentUserId, currentUser
     if (!isAdmin || deletingId) return
     setDeletingId(id)
     try {
-      await fetch('/api/messages', {
+      const res = await fetch('/api/messages', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),
       })
+      if (res.ok) {
+        // Eliminar del estado local inmediatamente, sin esperar evento realtime
+        setMessages(prev => prev.filter(m => m.id !== id))
+      } else {
+        const data = await res.json().catch(() => ({}))
+        setError(data.error ?? 'No se pudo borrar el mensaje')
+      }
+    } catch {
+      setError('Error de conexión al borrar el mensaje')
     } finally {
       setDeletingId(null)
     }
@@ -243,29 +262,25 @@ export default function ChatClient({ initialMessages, currentUserId, currentUser
               key={msg.id}
               className={`flex gap-2.5 group ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}
             >
-              {/* Avatar */}
-              {!isOwn && (
-                <div className="flex-shrink-0 mt-1">
-                  <Avatar url={msg.avatar_url} name={msg.display_name} />
-                </div>
-              )}
+              {/* Avatar — todos los mensajes */}
+              <div className="flex-shrink-0 mt-1">
+                <Avatar url={msg.avatar_url} name={msg.display_name} />
+              </div>
 
               {/* Bubble */}
               <div className={`flex flex-col gap-1 max-w-[75%] ${isOwn ? 'items-end' : 'items-start'}`}>
-                {/* Nombre + tiempo */}
-                {!isOwn && (
-                  <span className="text-xs text-gray-500 px-1">
-                    {msg.display_name ?? 'Anónimo'}
-                  </span>
-                )}
+                {/* Nombre */}
+                <span className="text-xs text-gray-500 px-1">
+                  {msg.display_name ?? 'Anónimo'}
+                </span>
 
                 <div className="relative">
-                  {/* Botón borrar (solo admin, en hover) */}
+                  {/* Botón borrar (solo admin) — siempre visible en baja opacidad */}
                   {isAdmin && !isTemp && (
                     <button
                       onClick={() => handleDelete(msg.id)}
                       disabled={deletingId === msg.id}
-                      className={`absolute -top-2 ${isOwn ? '-left-7' : '-right-7'} opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full bg-gray-800 hover:bg-red-900/60 text-gray-500 hover:text-red-400`}
+                      className={`absolute -top-2 ${isOwn ? '-left-7' : '-right-7'} opacity-40 hover:opacity-100 transition-opacity p-1 rounded-full bg-gray-800 hover:bg-red-900/60 text-gray-500 hover:text-red-400`}
                       title="Borrar mensaje"
                     >
                       {deletingId === msg.id
@@ -286,9 +301,9 @@ export default function ChatClient({ initialMessages, currentUserId, currentUser
                   </div>
                 </div>
 
-                {/* Timestamp */}
+                {/* Timestamp — fecha y hora argentina */}
                 <span className="text-xs text-gray-600 px-1">
-                  {isTemp ? 'Enviando…' : relativeTime(msg.created_at)}
+                  {argentineTime(msg.created_at)}
                 </span>
               </div>
             </div>
