@@ -224,7 +224,7 @@ export default function ChatClient({ initialMessages, currentUserId, currentUser
     <div className="flex flex-col h-[calc(100vh-13rem)] md:h-[calc(100vh-10rem)] rounded-2xl border border-purple-500/10">
 
       {/* ── Lista de mensajes ──────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-purple-800/40 [&::-webkit-scrollbar-thumb]:rounded-full">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
 
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center py-16">
@@ -344,9 +344,6 @@ export default function ChatClient({ initialMessages, currentUserId, currentUser
           </button>
         </div>
 
-        <p className="text-xs text-gray-700 mt-2 text-center">
-          Sé respetuoso con todos los participantes
-        </p>
       </div>
 
     </div>
