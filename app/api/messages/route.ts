@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { createServerSupabaseClient, createAdminSupabaseClient } from '@/lib/supabase-server'
 import { containsBadWords } from '@/lib/bad-words'
 
 export async function POST(req: Request) {
@@ -76,8 +76,11 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: 'id requerido' }, { status: 400 })
   }
 
-  const { error } = await supabase.from('messages').delete().eq('id', id)
+  // Usamos el cliente admin (service_role) para bypassear el RLS del DELETE
+  const adminSupabase = createAdminSupabaseClient()
+  const { error } = await adminSupabase.from('messages').delete().eq('id', id)
   if (error) {
+    console.error('[messages/route] delete error:', error)
     return NextResponse.json({ error: 'Error al borrar el mensaje' }, { status: 500 })
   }
 
