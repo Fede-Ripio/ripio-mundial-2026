@@ -28,26 +28,28 @@ export default async function ChatPage() {
   ])
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="max-w-2xl mx-auto">
+    <div className="flex flex-col min-h-screen bg-black text-white">
 
-        <div className="sticky top-0 md:static z-10 bg-black/95 backdrop-blur-sm border-b border-gray-800 px-4 py-4">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1">
-            Ripio Mundial 2026
-          </p>
-          <h1 className="text-2xl font-bold">Chat</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
-            Mensajes de todos los participantes · en tiempo real
-          </p>
-        </div>
+      {/* Header — mismo patrón que Ranking y Datos */}
+      <div className="pt-10 sm:pt-12 pb-6 px-4 text-center">
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">
+          Ripio Mundial 2026
+        </p>
+        <h1 className="text-3xl sm:text-4xl font-bold mb-1">Chat</h1>
+        <p className="text-sm text-gray-500">
+          Mensajes de todos los participantes · en tiempo real
+        </p>
+      </div>
 
+      {/* Chat area — ocupa el espacio restante de la pantalla */}
+      <div className="flex-1 max-w-2xl w-full mx-auto flex flex-col min-h-0 px-4 sm:px-6 pb-6">
         <ChatClient
           initialMessages={(messages ?? []) as ChatMessage[]}
           currentUserId={user?.id ?? null}
           currentUserEmail={user?.email ?? null}
         />
-
       </div>
+
     </div>
   )
 }
