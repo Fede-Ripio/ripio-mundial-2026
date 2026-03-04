@@ -219,7 +219,7 @@ export default function ChatClient({ initialMessages, currentUserId, currentUser
 
   // ─── render ───────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col flex-1 min-h-0 rounded-2xl border border-purple-500/10">
+    <div className="flex flex-col h-[calc(100vh-13rem)] md:h-[calc(100vh-10rem)] rounded-2xl border border-purple-500/10">
 
       {/* ── Lista de mensajes ──────────────────────────────────────────── */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-purple-800/40 [&::-webkit-scrollbar-thumb]:rounded-full">

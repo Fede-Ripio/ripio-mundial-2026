@@ -1,6 +1,6 @@
 export default function ChatLoading() {
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white">
 
       {/* Header skeleton — centrado, sin borde */}
       <div className="pt-10 sm:pt-12 pb-6 px-4 text-center">
@@ -10,11 +10,11 @@ export default function ChatLoading() {
       </div>
 
       {/* Chat area skeleton */}
-      <div className="flex-1 max-w-2xl w-full mx-auto px-4 sm:px-6 pb-6 flex flex-col min-h-0">
-        <div className="flex-1 rounded-2xl border border-purple-500/10 flex flex-col overflow-hidden">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 pb-6">
+        <div className="h-[calc(100vh-13rem)] md:h-[calc(100vh-10rem)] rounded-2xl border border-purple-500/10 flex flex-col overflow-hidden">
 
           {/* Messages skeleton */}
-          <div className="flex-1 px-4 py-6 space-y-5">
+          <div className="flex-1 px-4 py-6 space-y-5 overflow-hidden">
             {[false, true, false, false, true, false].map((isRight, i) => (
               <div
                 key={i}
@@ -24,7 +24,7 @@ export default function ChatLoading() {
                 <div className={`flex flex-col gap-1 max-w-[70%] ${isRight ? 'items-end' : 'items-start'}`}>
                   {!isRight && <div className="h-3 w-20 bg-gray-800 rounded" />}
                   <div
-                    className={`rounded-2xl bg-gray-800 ${isRight ? 'bg-purple-900/40' : ''}`}
+                    className={`rounded-2xl ${isRight ? 'bg-purple-900/40' : 'bg-gray-800'}`}
                     style={{ width: `${[180, 240, 160, 200, 220, 150][i]}px`, height: '38px' }}
                   />
                 </div>

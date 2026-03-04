@@ -28,7 +28,7 @@ export default async function ChatPage() {
   ])
 
   return (
-    <div className="flex flex-col min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white">
 
       {/* Header — mismo patrón que Ranking y Datos */}
       <div className="pt-10 sm:pt-12 pb-6 px-4 text-center">
@@ -41,8 +41,8 @@ export default async function ChatPage() {
         </p>
       </div>
 
-      {/* Chat area — ocupa el espacio restante de la pantalla */}
-      <div className="flex-1 max-w-2xl w-full mx-auto flex flex-col min-h-0 px-4 sm:px-6 pb-6">
+      {/* Chat area */}
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 pb-6">
         <ChatClient
           initialMessages={(messages ?? []) as ChatMessage[]}
           currentUserId={user?.id ?? null}
