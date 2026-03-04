@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   Menu, X, LogOut, ChevronLeft, ChevronRight,
-  ClipboardList, LayoutGrid, Trophy, Users, BookOpen, Zap, Star, ExternalLink, BarChart2,
+  ClipboardList, LayoutGrid, Trophy, Users, BookOpen, Zap, Star, ExternalLink, BarChart2, MessageCircle,
 } from 'lucide-react'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
@@ -60,7 +60,8 @@ const NAV_LINKS = [
   { href: '/ranking',       label: 'Ranking',        Icon: Trophy        },
   { href: '/pronosticos',   label: 'Pronósticos',    Icon: ClipboardList },
   { href: '/ligas',         label: 'Ligas',          Icon: Users         },
-  { href: '/estadisticas',  label: 'Datos',           Icon: BarChart2     },
+  { href: '/chat',          label: 'Chat',           Icon: MessageCircle },
+  { href: '/estadisticas',  label: 'Datos',          Icon: BarChart2     },
   { href: '/predeci-wars',  label: 'Predecí wARS',   Icon: Zap           },
   { href: '/reglas',        label: 'Reglas',         Icon: BookOpen      },
 ]
