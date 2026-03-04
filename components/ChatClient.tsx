@@ -309,7 +309,7 @@ export default function ChatClient({ initialMessages, currentUserId, currentUser
           </div>
         )}
 
-        <div className="flex gap-2 items-end">
+        <div className="flex gap-2 items-center">
           <div className="flex-1 relative">
             <textarea
               ref={textareaRef}
