@@ -73,9 +73,11 @@ export default function ChatClient({ initialMessages, currentUserId, currentUser
     bottomRef.current?.scrollIntoView({ behavior })
   }, [])
 
-  // Scroll instantáneo al cargar la página
+  // Scroll instantáneo al cargar la página (solo si hay mensajes)
   useEffect(() => {
-    scrollToBottom('instant')
+    if (initialMessages.length > 0) {
+      scrollToBottom('instant')
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Scroll suave cuando llega un mensaje nuevo
